@@ -1,9 +1,3 @@
-import React from "react";
-import { Heading } from "./heading";
-import { Subheading } from "./subheading";
-import { cn } from "@/lib/utils";
-import { GridLineHorizontal, GridLineVertical } from "./grid-lines";
-import { SkeletonOne } from "./skeletons/first";
 import { SkeletonTwo } from "./skeletons/second";
 import { SkeletonFour } from "./skeletons/fourth";
 import { SkeletonThree } from "./skeletons/third";
@@ -42,10 +36,9 @@ export const Features = () => {
   ];
   return (
     <div className="relative z-20 py-10 lg:py-40 overflow-hidden">
-      <Heading as="h2">Packed with thousands of features</Heading>
+      <Heading as="h2">custom intregration?</Heading>
       <Subheading className="text-center ">
-        From Image generation to video generation, Everything AI has APIs for
-        literally everything. It can even create this website copy for you.
+        “No worries — we customize everything to fit your business workflows perfectly.”
       </Subheading>
 
       <div className="relative">
@@ -112,13 +105,5 @@ const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
     <Heading as="h3" size="sm" className="text-left">
       {children}
     </Heading>
-  );
-};
-
-const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
-  return (
-    <Subheading className="text-left max-w-sm mx-0 lg:text-sm my-2">
-      {children}
-    </Subheading>
   );
 };
