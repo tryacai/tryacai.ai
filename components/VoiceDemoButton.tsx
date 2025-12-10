@@ -9,6 +9,13 @@ export interface VoiceDemoButtonProps {
   className?: string;
 }
 
+// Extend Window interface for live agent functionality
+declare global {
+  interface Window {
+    connectLiveAgent?: () => void;
+  }
+}
+
 export const VoiceDemoButton: React.FC<VoiceDemoButtonProps> = ({
   onClick,
   children = "Try ACAI",
@@ -16,11 +23,9 @@ export const VoiceDemoButton: React.FC<VoiceDemoButtonProps> = ({
   className,
 }) => {
   const handleClick = () => {
-    console.log("Voice demo button clicked");
-    
     // Check if live agent connection is available and enabled
     if (enableLiveAgent && typeof window !== "undefined") {
-      const connectLiveAgent = (window as any).connectLiveAgent;
+      const connectLiveAgent = window.connectLiveAgent;
       if (typeof connectLiveAgent === "function") {
         connectLiveAgent();
       }
