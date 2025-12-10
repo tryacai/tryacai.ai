@@ -7,8 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 // Helper function to get all logos from /public/logos/
 function getLogosFromPublic() {
-  // In a real implementation, we would use fs.readdirSync on the server
-  // For now, we'll hardcode the list of logos that exist in /public/logos/
+  // This is a client component, so we maintain a list of logo files
+  // that exist in /public/logos/ directory
   const logoFiles = [
     "amazon.png",
     "digital-ocean.svg",
