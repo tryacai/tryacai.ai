@@ -42,10 +42,9 @@ export const Features = () => {
   ];
   return (
     <div className="relative z-20 py-10 lg:py-40 overflow-hidden">
-      <Heading as="h2">Packed with thousands of features</Heading>
+      <Heading as="h2">custom intregration?</Heading>
       <Subheading className="text-center ">
-        From Image generation to video generation, Everything AI has APIs for
-        literally everything. It can even create this website copy for you.
+        No worries — we customize everything to fit your business workflows perfectly.
       </Subheading>
 
       <div className="relative">
