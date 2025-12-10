@@ -12,8 +12,9 @@ export const CTA = () => {
             <div
               className="absolute inset-0 w-full h-full opacity-10 bg-noise fade-vignette [mask-image:radial-gradient(#fff,transparent,75%)]"
               style={{
-                backgroundImage: "url(/noise.webp)",
-                backgroundSize: "30%",
+                backgroundImage: "url(/images/demo-gradient.svg), url(/noise.webp)",
+                backgroundSize: "cover, 30%",
+                backgroundBlendMode: "overlay",
               }}
             ></div>
             <div
