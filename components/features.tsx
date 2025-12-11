@@ -11,9 +11,9 @@ import { SkeletonThree } from "./skeletons/third";
 export const Features = () => {
   const features = [
     {
-      title: "Generate images with text",
+      title: "Our services",
       description:
-        "Generate images from a text prompt, a video, or a video segment in bulk at the speed of light.",
+        "Elevate your business and save time with our smart automation tools.",
       skeleton: <SkeletonOne />,
       className:
         "col-span-1 lg:col-span-4 border-b border-r dark:border-neutral-800",
@@ -42,9 +42,9 @@ export const Features = () => {
   ];
   return (
     <div className="relative z-20 py-10 lg:py-40 overflow-hidden">
-      <Heading as="h2">custom intregration?</Heading>
+      <Heading as="h2">Custom Integration</Heading>
       <Subheading className="text-center ">
-        No worries — we customize everything to fit your business workflows perfectly.
+        No worries! We customize AI tools designed to help your plumbing and HVAC businesses capture more jobs book faster and 𝑵𝒆𝒗𝒆𝒓 miss a call again.
       </Subheading>
 
       <div className="relative">

@@ -5,7 +5,7 @@ import { Button } from "./button";
 import { HiArrowRight } from "react-icons/hi2";
 import { Badge } from "./badge";
 import { motion } from "framer-motion";
-import { VoiceDemoButton } from "./VoiceDemoButton";
+import { Mic } from "lucide-react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -87,7 +87,12 @@ export const Hero = () => {
         }}
         className="flex justify-center mt-8 relative z-10"
       >
-        <VoiceDemoButton />
+        <button
+          className="w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95"
+          aria-label="Voice demo"
+        >
+          <Mic className="w-8 h-8 text-white" />
+        </button>
       </motion.div>
       <motion.div
         initial={{
