@@ -13,19 +13,19 @@ export const DashboardDemo = () => {
       label: "Appointments Booked",
       value: "42",
       icon: TrendingUp,
-      color: "from-pink-500 via-purple-500 to-blue-500",
+      color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
       label: "Missed Calls Saved",
       value: "18",
       icon: Phone,
-      color: "from-pink-500 via-purple-500 to-blue-500",
+      color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
       label: "After-Hours Pickup",
       value: "100%",
       icon: Clock,
-      color: "from-pink-500 via-purple-500 to-blue-500",
+      color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
       label: "Revenue Recovered",
@@ -47,13 +47,13 @@ export const DashboardDemo = () => {
   ];
 
   const leadSources = [
-    { name: "Yelp", value: 35, color: "from-pink-500 to-purple-500" },
+    { name: "Yelp", value: 35, color: "from-red-500 to-purple-500" },
     { name: "Angi", value: 40, color: "from-purple-500 to-blue-500" },
     { name: "Google", value: 25, color: "from-blue-500 to-cyan-500" },
   ];
 
   const jobTypes = [
-    { name: "Water Heater", value: 40, color: "#EC4899" },
+    { name: "Water Heater", value: 40, color: "#EF4444" },
     { name: "Leak", value: 35, color: "#A855F7" },
     { name: "Install", value: 25, color: "#3B82F6" },
   ];

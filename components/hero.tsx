@@ -19,17 +19,22 @@ const TypewriterText = () => {
   const fullText = "With ACAI";
 
   useEffect(() => {
-    let index = 0;
-    const timer = setInterval(() => {
-      if (index <= fullText.length) {
-        setText(fullText.slice(0, index));
-        index++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 300); // Slowed down from 150ms to 300ms
+    // Wait 1 second before starting to type
+    const initialDelay = setTimeout(() => {
+      let index = 0;
+      const timer = setInterval(() => {
+        if (index <= fullText.length) {
+          setText(fullText.slice(0, index));
+          index++;
+        } else {
+          clearInterval(timer);
+        }
+      }, 400); // Increased from 300ms to 400ms for more deliberate typing
 
-    return () => clearInterval(timer);
+      return () => clearInterval(timer);
+    }, 1000);
+
+    return () => clearTimeout(initialDelay);
   }, []);
 
   return (
@@ -39,26 +44,27 @@ const TypewriterText = () => {
       transition={{ duration: 0.5, delay: 0.8 }}
       className="text-center mt-4 relative z-10"
     >
-      <p className="text-xl md:text-3xl lg:text-5xl font-semibold inline-block max-w-md mx-auto">
+      <p className="text-xl md:text-3xl lg:text-5xl font-semibold inline-block max-w-md mx-auto tracking-wider">
         {text.split("").map((char, index) => (
           <motion.span
             key={index}
-            className="inline-block bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+            className="inline-block bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
             style={{
-              filter: "blur(0.4px) drop-shadow(0 0 8px rgba(236, 72, 153, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+              filter: hoveredIndex === index ? undefined : "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+              marginLeft: char === " " ? "0.5em" : undefined,
             }}
-            animate={{
+            animate={hoveredIndex === null ? {
               filter: [
-                "blur(0.4px) drop-shadow(0 0 8px rgba(236, 72, 153, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
-                "blur(0.4px) drop-shadow(0 0 12px rgba(236, 72, 153, 0.4)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.3)) drop-shadow(0 0 20px rgba(59, 130, 246, 0.2))",
-                "blur(0.4px) drop-shadow(0 0 8px rgba(236, 72, 153, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+                "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+                "blur(0.4px) drop-shadow(0 0 12px rgba(239, 68, 68, 0.4)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.3)) drop-shadow(0 0 20px rgba(59, 130, 246, 0.2))",
+                "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
               ],
-            }}
-            transition={{
+            } : {}}
+            transition={hoveredIndex === null ? {
               duration: 2,
               repeat: Infinity,
               ease: "easeInOut",
-            }}
+            } : {}}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
             whileHover={{
@@ -71,7 +77,7 @@ const TypewriterText = () => {
           </motion.span>
         ))}
         <motion.span
-          className="inline-block bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+          className="inline-block bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent ml-1"
           animate={{ opacity: [1, 0, 1] }}
           transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
         >
@@ -102,7 +108,7 @@ export const Hero = () => {
         className="flex justify-center"
       >
         <Badge onClick={() => router.push("/blog/top-5-llm-of-all-time")}>
-          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
+          <span className="bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
             Meet the ACAI Team
           </span>
         </Badge>

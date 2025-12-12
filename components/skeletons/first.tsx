@@ -43,7 +43,7 @@ const ServiceCard = ({ service }: { service: any }) => {
   const Icon = service.icon;
   return (
     <div className="flex flex-col items-start space-y-2 p-4 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:shadow-lg transition-shadow duration-200">
-      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 via-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
         <Icon className="w-6 h-6 text-white" />
       </div>
       <h4 className="text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-100">
