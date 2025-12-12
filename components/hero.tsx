@@ -32,38 +32,33 @@ const TypewriterText = () => {
     const pauseAfterTyping = 2000; // Pause for 2 seconds after typing completes
     const pauseAfterDeleting = 500; // Brief pause after deletion before next phrase
 
-    // Wait 1 second before starting the first phrase
-    const initialDelay = setTimeout(() => {
-      const typeOrDelete = () => {
-        if (!isDeleting) {
-          // Typing
-          if (text.length < currentPhrase.length) {
-            setText(currentPhrase.slice(0, text.length + 1));
-          } else {
-            // Finished typing, pause then start deleting
-            setTimeout(() => {
-              setIsDeleting(true);
-            }, pauseAfterTyping);
-            return;
-          }
+    const typeOrDelete = () => {
+      if (!isDeleting) {
+        // Typing
+        if (text.length < currentPhrase.length) {
+          setText(currentPhrase.slice(0, text.length + 1));
         } else {
-          // Deleting
-          if (text.length > 0) {
-            setText(text.slice(0, -1));
-          } else {
-            // Finished deleting, move to next phrase
-            setIsDeleting(false);
-            setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
-            setTimeout(() => {
-              // Small pause before typing next phrase
-            }, pauseAfterDeleting);
-            return;
-          }
+          // Finished typing, pause then start deleting
+          setTimeout(() => {
+            setIsDeleting(true);
+          }, pauseAfterTyping);
+          return;
         }
-      };
-
-      typeOrDelete();
-    }, currentPhraseIndex === 0 && text === "" ? 1000 : 0);
+      } else {
+        // Deleting
+        if (text.length > 0) {
+          setText(text.slice(0, -1));
+        } else {
+          // Finished deleting, move to next phrase
+          setIsDeleting(false);
+          setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+          setTimeout(() => {
+            // Small pause before typing next phrase
+          }, pauseAfterDeleting);
+          return;
+        }
+      }
+    };
 
     const timer = setTimeout(
       typeOrDelete,
@@ -71,7 +66,6 @@ const TypewriterText = () => {
     );
 
     return () => {
-      clearTimeout(initialDelay);
       clearTimeout(timer);
     };
   }, [text, isDeleting, currentPhraseIndex]);
