@@ -7,10 +7,44 @@ import { Badge } from "./badge";
 import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
 import { DashboardDemo } from "./dashboard-demo";
+import { useState, useEffect } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Link } from "next-view-transitions";
+
+const TypewriterText = () => {
+  const [text, setText] = useState("");
+  const fullText = "With ACAI";
+
+  useEffect(() => {
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index <= fullText.length) {
+        setText(fullText.slice(0, index));
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 150);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.8 }}
+      className="text-center mt-4 relative z-10"
+    >
+      <p className="text-xl md:text-3xl lg:text-5xl font-semibold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent inline-block max-w-md mx-auto blur-[0.4px]">
+        {text}
+        <span className="animate-pulse">|</span>
+      </p>
+    </motion.div>
+  );
+};
 
 export const Hero = () => {
   const router = useRouter();
@@ -32,7 +66,9 @@ export const Hero = () => {
         className="flex justify-center"
       >
         <Badge onClick={() => router.push("/blog/top-5-llm-of-all-time")}>
-          We&apos;ve raised $69M seed funding
+          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
+            Meet the ACAI Team
+          </span>
         </Badge>
       </motion.div>
       <motion.h1
@@ -52,6 +88,7 @@ export const Hero = () => {
       >
         <Balancer>Never Miss a Call Again</Balancer>
       </motion.h1>
+      <TypewriterText />
       <motion.p
         initial={{
           y: 40,
