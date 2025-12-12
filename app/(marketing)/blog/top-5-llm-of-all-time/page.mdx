@@ -18,15 +18,29 @@ export const metadata = {
 
 export default (props) => <BlogLayout blog={blog} {...props} />;
 
-<div className="space-y-8 md:space-y-10">
-  {/* Hero Image Placeholder */}
-  <div className="w-full h-64 md:h-80 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 rounded-lg flex items-center justify-center">
-    <span className="text-zinc-400 dark:text-zinc-600 text-sm">Team Photo Coming Soon</span>
-  </div>
+{/* Intro Text */}
+<p className="text-base md:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300 mb-12 md:mb-16">
+  We're a small, hands-on team building AI-powered tools designed to help service businesses grow without losing their personal touch. ACAI was created from real conversations, real frustrations, and a shared belief that technology should support people, not replace them. As co-founders, we bring different strengths to the table, but we're aligned by one goal: helping plumbers and HVAC professionals capture more opportunities and feel supported by the tools they use every day.
+</p>
 
-  {/* Intro Text */}
-  <p className="text-base md:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300">
-    We're a small, hands-on team building AI-powered tools designed to help service businesses grow without losing their personal touch. ACAI was created from real conversations, real frustrations, and a shared belief that technology should support people, not replace them. As co-founders, we bring different strengths to the table, but we're aligned by one goal: helping plumbers and HVAC professionals capture more opportunities and feel supported by the tools they use every day.
+{/* Why Us Section */}
+<div className="my-16 md:my-20 text-center space-y-6 md:space-y-8">
+  <h2 className="text-xl md:text-2xl font-semibold text-zinc-600 dark:text-zinc-400">Why Us</h2>
+  
+  <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
+    The A.C.A.I. Way
+  </h3>
+  
+  <p className="text-2xl md:text-3xl font-medium text-zinc-800 dark:text-zinc-200 hover:scale-105 transition-transform duration-200 hidden md:block">
+    Always connected. Always authentic. Always invested.
+  </p>
+  
+  <p className="text-2xl md:text-3xl font-medium text-zinc-800 dark:text-zinc-200 md:hidden">
+    Always connected. Always authentic. Always invested.
+  </p>
+  
+  <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400">
+    Aligned — built around your goals, not generic software.
   </p>
 </div>
 
@@ -108,7 +122,7 @@ export default (props) => <BlogLayout blog={blog} {...props} />;
       href="/blog/changelog-for-2024" 
       className="px-6 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-zinc-300 dark:hover:border-zinc-700"
     >
-      Check out Why ACAI?
+      Built on Xuna AI
     </a>
     <a 
       href="/pricing" 
