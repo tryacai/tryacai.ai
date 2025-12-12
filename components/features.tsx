@@ -42,7 +42,7 @@ export const Features = () => {
   ];
   return (
     <div className="relative z-20 py-10 lg:py-40 overflow-hidden">
-      <Heading as="h2">Custom Integration</Heading>
+      <Heading as="h2">Custom Integration?</Heading>
       <Subheading className="text-center ">
         No worries! We customize AI tools designed to help your plumbing and HVAC businesses capture more jobs book faster and 𝑵𝒆𝒗𝒆𝒓 miss a call again.
       </Subheading>

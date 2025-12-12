@@ -15,6 +15,7 @@ import { Link } from "next-view-transitions";
 
 const TypewriterText = () => {
   const [text, setText] = useState("");
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const fullText = "With ACAI";
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const TypewriterText = () => {
       } else {
         clearInterval(timer);
       }
-    }, 150);
+    }, 300); // Slowed down from 150ms to 300ms
 
     return () => clearInterval(timer);
   }, []);
@@ -38,9 +39,44 @@ const TypewriterText = () => {
       transition={{ duration: 0.5, delay: 0.8 }}
       className="text-center mt-4 relative z-10"
     >
-      <p className="text-xl md:text-3xl lg:text-5xl font-semibold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent inline-block max-w-md mx-auto blur-[0.4px]">
-        {text}
-        <span className="animate-pulse">|</span>
+      <p className="text-xl md:text-3xl lg:text-5xl font-semibold inline-block max-w-md mx-auto">
+        {text.split("").map((char, index) => (
+          <motion.span
+            key={index}
+            className="inline-block bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+            style={{
+              filter: "blur(0.4px) drop-shadow(0 0 8px rgba(236, 72, 153, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+            }}
+            animate={{
+              filter: [
+                "blur(0.4px) drop-shadow(0 0 8px rgba(236, 72, 153, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+                "blur(0.4px) drop-shadow(0 0 12px rgba(236, 72, 153, 0.4)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.3)) drop-shadow(0 0 20px rgba(59, 130, 246, 0.2))",
+                "blur(0.4px) drop-shadow(0 0 8px rgba(236, 72, 153, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+              ],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+            whileHover={{
+              y: -4,
+              scale: 1.1,
+              transition: { duration: 0.2 },
+            }}
+          >
+            {char}
+          </motion.span>
+        ))}
+        <motion.span
+          className="inline-block bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+        >
+          |
+        </motion.span>
       </p>
     </motion.div>
   );
