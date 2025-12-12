@@ -16,26 +16,65 @@ import { Link } from "next-view-transitions";
 const TypewriterText = () => {
   const [text, setText] = useState("");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const fullText = "With ACAI";
+  const phrases = [
+    "With ACAI",
+    "24/7 AI Call Answering",
+    "Instant Scheduling",
+    "Guaranteed ROI",
+  ];
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    // Wait 1 second before starting to type
+    const currentPhrase = phrases[currentPhraseIndex];
+    const typingSpeed = 250; // Slightly faster typing speed for better readability
+    const deletingSpeed = 100; // Faster deletion
+    const pauseAfterTyping = 2000; // Pause for 2 seconds after typing completes
+    const pauseAfterDeleting = 500; // Brief pause after deletion before next phrase
+
+    // Wait 1 second before starting the first phrase
     const initialDelay = setTimeout(() => {
-      let index = 0;
-      const timer = setInterval(() => {
-        if (index <= fullText.length) {
-          setText(fullText.slice(0, index));
-          index++;
+      const typeOrDelete = () => {
+        if (!isDeleting) {
+          // Typing
+          if (text.length < currentPhrase.length) {
+            setText(currentPhrase.slice(0, text.length + 1));
+          } else {
+            // Finished typing, pause then start deleting
+            setTimeout(() => {
+              setIsDeleting(true);
+            }, pauseAfterTyping);
+            return;
+          }
         } else {
-          clearInterval(timer);
+          // Deleting
+          if (text.length > 0) {
+            setText(text.slice(0, -1));
+          } else {
+            // Finished deleting, move to next phrase
+            setIsDeleting(false);
+            setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+            setTimeout(() => {
+              // Small pause before typing next phrase
+            }, pauseAfterDeleting);
+            return;
+          }
         }
-      }, 400); // Increased from 300ms to 400ms for more deliberate typing
+      };
 
-      return () => clearInterval(timer);
-    }, 1000);
+      typeOrDelete();
+    }, currentPhraseIndex === 0 && text === "" ? 1000 : 0);
 
-    return () => clearTimeout(initialDelay);
-  }, []);
+    const timer = setTimeout(
+      typeOrDelete,
+      currentPhraseIndex === 0 && text === "" ? 1000 : (isDeleting ? deletingSpeed : typingSpeed)
+    );
+
+    return () => {
+      clearTimeout(initialDelay);
+      clearTimeout(timer);
+    };
+  }, [text, isDeleting, currentPhraseIndex]);
 
   return (
     <motion.div
