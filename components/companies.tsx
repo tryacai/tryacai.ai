@@ -74,7 +74,7 @@ export const Companies = () => {
         Works instantly with the platforms that power your business from calendar tools to full automation systems.
       </Subheading>
 
-      <div className="flex gap-10 flex-wrap justify-center md:gap-40 relative h-full w-full mt-20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-20 max-w-5xl mx-auto mt-20 min-h-[80px] md:min-h-[120px]">
         <AnimatePresence
           mode="popLayout"
           onExitComplete={() => {
@@ -84,19 +84,19 @@ export const Companies = () => {
           {activeLogoSet.map((logo, idx) => (
             <motion.div
               initial={{
-                y: 40,
                 opacity: 0,
                 filter: "blur(10px)",
+                scale: 0.9,
               }}
               animate={{
-                y: 0,
                 opacity: 1,
                 filter: "blur(0px)",
+                scale: 1,
               }}
               exit={{
-                y: -40,
                 opacity: 0,
                 filter: "blur(10px)",
+                scale: 0.9,
               }}
               transition={{
                 duration: 0.8,
@@ -104,7 +104,7 @@ export const Companies = () => {
                 ease: [0.4, 0, 0.2, 1],
               }}
               key={logo.title}
-              className="relative"
+              className="relative flex items-center justify-center"
             >
               <Image
                 src={logo.src}

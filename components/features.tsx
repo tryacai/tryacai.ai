@@ -19,9 +19,9 @@ export const Features = () => {
         "col-span-1 lg:col-span-4 border-b border-r dark:border-neutral-800",
     },
     {
-      title: "Create stupid simple chatbots",
+      title: "Automated Follow-Ups That Keep Clients Coming Back",
       description:
-        "Create Chatbots with a single button click. Customize as per your requirements and the AI will take care of the rest.",
+        "On top of your 24/7 AI receptionist, ACAI includes a smart reminder and follow-up agent that sends timely messages before and after jobs. From appointment reminders to post-service check-ins, this helps you stay connected with existing customers while uncovering new opportunities without extra effort.",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
