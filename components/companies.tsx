@@ -13,6 +13,7 @@ import stripeLogo from "@/app/stripelogo.png";
 import yelpLogo from "@/app/yelplogo.png";
 import goHighLevelLogo from "@/app/gohighlevellogo.png";
 import slackLogo from "@/app/Slack_Technologies_Logo.svg.png";
+import outlookLogo from "@/app/outlooklogo2.png";
 
 // Helper function to get all logos
 function getLogosFromPublic() {
@@ -25,6 +26,7 @@ function getLogosFromPublic() {
     { title: "Yelp", src: yelpLogo, alt: "Yelp logo" },
     { title: "GoHighLevel", src: goHighLevelLogo, alt: "GoHighLevel logo" },
     { title: "Slack", src: slackLogo, alt: "Slack logo" },
+    { title: "Outlook", src: outlookLogo, alt: "Outlook logo" },
   ];
 
   return logos;
