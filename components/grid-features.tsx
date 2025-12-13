@@ -19,15 +19,15 @@ export const GridFeatures = () => {
       icon: <IconTerminal2 />,
     },
     {
-      title: "Set Up in Minutes",
+      title: "Fast Setup",
       description:
-        "No technical setup. No learning curve. We handle everything.",
+        "Easy technical setup with minimal effort required. We handle the heavy lifting.",
       icon: <IconEaseInOut />,
     },
     {
-      title: "Simple, Transparent Pricing",
+      title: "Simple, Flexible Pricing",
       description:
-        "One clear price. No contracts. No surprises.",
+        "One startup fee, flexible renewable contracts, and no surprises.",
       icon: <IconCurrencyDollar />,
     },
     {
@@ -43,7 +43,7 @@ export const GridFeatures = () => {
     {
       title: "Real Human Support",
       description:
-        "Talk to real people when you need help. No ticket limbo.",
+        "You always have a dedicated member of our team to reach out to whenever you need support.",
       icon: <IconHelp />,
     },
     {
