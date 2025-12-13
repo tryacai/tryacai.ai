@@ -33,20 +33,20 @@ export const SkeletonTwo = () => {
             ref={scope}
             className="content mt-4 w-[90%] mx-auto"
           >
-            <UserMessage>
-              Hello chat! Give me all the links from this website -
-              https://ui.aceternity.com
-            </UserMessage>
-            <AIMessage>Why don&apos;t you do it yourself?</AIMessage>
-            <UserMessage>
-              Umm.. Because I&apos;m paying $20/mo for your services?
-            </UserMessage>
-            <AIMessage>You think I work for the money?</AIMessage>
-            <UserMessage>Who do you think you are?</UserMessage>
-            <AIMessage>I&apos; batman.</AIMessage>
             <AIMessage>
-              Now Playing <br />{" "}
-              <span className="italic">Something in the way - Nirvana</span>
+              Hi Sarah, this is ACAI AI calling on behalf of Johnson Plumbing. You have a water heater maintenance appointment tomorrow at 9 AM. Does that still work for you?
+            </AIMessage>
+            <CustomerMessage>
+              Yes, that works.
+            </CustomerMessage>
+            <AIMessage>
+              Great! Your technician Mike will arrive within the 9–11 AM window. Would you like us to text you when he&apos;s on the way?
+            </AIMessage>
+            <CustomerMessage>
+              Yes please.
+            </CustomerMessage>
+            <AIMessage>
+              Perfect. We&apos;ll send a text as soon as he&apos;s on the way. Thanks for choosing Johnson Plumbing!
             </AIMessage>
           </div>
         </div>
@@ -55,16 +55,16 @@ export const SkeletonTwo = () => {
   );
 };
 
-const UserMessage = ({ children }: { children: React.ReactNode }) => {
+const CustomerMessage = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="message bg-neutral-100 dark:bg-neutral-800 dark:text-white text-black p-2 sm:p-4 text-[10px] sm:text-xs my-4 rounded-md">
+    <div className="message bg-neutral-200 dark:bg-neutral-700 dark:text-white text-black p-2 sm:p-4 text-[10px] sm:text-xs my-2 rounded-2xl max-w-[80%]">
       {children}
     </div>
   );
 };
 const AIMessage = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="message bg-black text-white dark:bg-white dark:text-black p-2 sm:p-4 text-[10px] sm:text-xs my-4 rounded-md">
+    <div className="message bg-blue-500 text-white p-2 sm:p-4 text-[10px] sm:text-xs my-2 rounded-2xl max-w-[80%] ml-auto">
       {children}
     </div>
   );

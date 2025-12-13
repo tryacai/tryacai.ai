@@ -5,45 +5,44 @@ import { Subheading } from "./subheading";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
+// Import logos from app directory
+import googleCalendarLogo from "@/app/googlecalendarlogo.png";
+import twilioLogo from "@/app/twiliologo.png";
+import zapierLogo from "@/app/zapierlogo.png";
+import stripeLogo from "@/app/stripelogo.png";
+import yelpLogo from "@/app/yelplogo.png";
+import goHighLevelLogo from "@/app/gohighlevellogo.png";
+import slackLogo from "@/app/Slack_Technologies_Logo.svg.png";
+import outlookLogo from "@/app/outlooklogo2.png";
+
+// Helper function to get all logos
+function getLogosFromPublic() {
+  // Updated logo list with new integration logos
+  const logos = [
+    { title: "Google Calendar", src: googleCalendarLogo, alt: "Google Calendar logo" },
+    { title: "Twilio", src: twilioLogo, alt: "Twilio logo" },
+    { title: "Zapier", src: zapierLogo, alt: "Zapier logo" },
+    { title: "Stripe", src: stripeLogo, alt: "Stripe logo" },
+    { title: "Yelp", src: yelpLogo, alt: "Yelp logo" },
+    { title: "GoHighLevel", src: goHighLevelLogo, alt: "GoHighLevel logo" },
+    { title: "Slack", src: slackLogo, alt: "Slack logo" },
+    { title: "Outlook", src: outlookLogo, alt: "Outlook logo" },
+  ];
+
+  return logos;
+}
+
 export const Companies = () => {
-  let [logos, setLogos] = useState([
-    [
-      {
-        title: "netflix",
-        src: "/logos/netflix.png",
-      },
-      {
-        title: "google",
-        src: "/logos/google.webp",
-      },
-      {
-        title: "meta",
-        src: "/logos/meta.png",
-      },
-      {
-        title: "onlyfans",
-        src: "/logos/onlyfans.png",
-      },
-    ],
-    [
-      {
-        title: "netflix second",
-        src: "/logos/netflix.png",
-      },
-      {
-        title: "google second",
-        src: "/logos/google.webp",
-      },
-      {
-        title: "meta second",
-        src: "/logos/meta.png",
-      },
-      {
-        title: "onlyfans second",
-        src: "/logos/onlyfans.png",
-      },
-    ],
-  ]);
+  const allLogos = getLogosFromPublic();
+  
+  // Split logos into sets of 4 for animation
+  const logosPerSet = 4;
+  const logoSets = [];
+  for (let i = 0; i < allLogos.length; i += logosPerSet) {
+    logoSets.push(allLogos.slice(i, i + logosPerSet));
+  }
+
+  let [logos, setLogos] = useState(logoSets);
   const [activeLogoSet, setActiveLogoSet] = useState(logos[0]);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
@@ -61,18 +60,23 @@ export const Companies = () => {
       const timer = setTimeout(() => {
         flipLogos();
       }, 3000);
-      return () => clearTimeout(timer); // Clear timeout if component unmounts or isAnimating changes
+      return () => clearTimeout(timer);
     }
   }, [isAnimating]);
 
+  // Only render if we have logos
+  if (allLogos.length === 0) {
+    return null;
+  }
+
   return (
     <div className="relative z-20 py-10 md:py-40">
-      <Heading as="h2">Trusted by the best companies</Heading>
+      <Heading as="h2">100+ Seamless Integrations</Heading>
       <Subheading className="text-center ">
-        Every AI is the choice of all the fortune 500 companies.
+        Works instantly with the platforms that power your business from calendar tools to full automation systems.
       </Subheading>
 
-      <div className="flex gap-10 flex-wrap justify-center md:gap-40 relative h-full w-full mt-20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-20 max-w-5xl mx-auto mt-20 min-h-[80px] md:min-h-[120px]">
         <AnimatePresence
           mode="popLayout"
           onExitComplete={() => {
@@ -82,19 +86,19 @@ export const Companies = () => {
           {activeLogoSet.map((logo, idx) => (
             <motion.div
               initial={{
-                y: 40,
                 opacity: 0,
                 filter: "blur(10px)",
+                scale: 0.9,
               }}
               animate={{
-                y: 0,
                 opacity: 1,
                 filter: "blur(0px)",
+                scale: 1,
               }}
               exit={{
-                y: -40,
                 opacity: 0,
                 filter: "blur(10px)",
+                scale: 0.9,
               }}
               transition={{
                 duration: 0.8,
@@ -102,11 +106,11 @@ export const Companies = () => {
                 ease: [0.4, 0, 0.2, 1],
               }}
               key={logo.title}
-              className="relative"
+              className="relative flex items-center justify-center"
             >
               <Image
                 src={logo.src}
-                alt={logo.title}
+                alt={logo.alt}
                 width="100"
                 height="100"
                 className="md:h-20 md:w-40 h-10 w-20 object-contain filter"
@@ -114,6 +118,14 @@ export const Companies = () => {
             </motion.div>
           ))}
         </AnimatePresence>
+      </div>
+
+      {/* Bridge Section */}
+      <div className="max-w-4xl mx-auto mt-20 text-center px-4">
+        <Heading as="h3">Built to Fit Your Workflow</Heading>
+        <Subheading className="text-center mt-4">
+          ACAI connects with the tools you already use, and if you don&apos;t see one listed, we build it. No rigid systems. No forced changes. Just AI that fits your business.
+        </Subheading>
       </div>
     </div>
   );

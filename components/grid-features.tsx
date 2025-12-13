@@ -13,48 +13,48 @@ import {
 export const GridFeatures = () => {
   const features = [
     {
-      title: "Built for developers",
+      title: "Built for Service Businesses",
       description:
-        "Built for engineers, developers, dreamers, thinkers and doers.",
+        "Designed specifically for plumbing and HVAC teams, not generic call centers.",
       icon: <IconTerminal2 />,
     },
     {
-      title: "Ease of use",
+      title: "Fast Setup",
       description:
-        "It's as easy as using an Apple, and as expensive as buying one.",
+        "Easy technical setup with minimal effort required. We handle the heavy lifting.",
       icon: <IconEaseInOut />,
     },
     {
-      title: "Pricing like no other",
+      title: "Simple, Flexible Pricing",
       description:
-        "Our prices are best in the market. No cap, no lock, no credit card required.",
+        "One startup fee, flexible renewable contracts, and no surprises.",
       icon: <IconCurrencyDollar />,
     },
     {
-      title: "100% Uptime guarantee",
-      description: "We just cannot be taken down by anyone.",
+      title: "Always-On Call Coverage",
+      description: "Your phones are answered 24/7, even after hours.",
       icon: <IconCloud />,
     },
     {
-      title: "Multi-tenant Architecture",
-      description: "You can simply share passwords instead of buying new seats",
+      title: "One System. Every Location.",
+      description: "Manage multiple technicians or locations from one dashboard.",
       icon: <IconRouteAltLeft />,
     },
     {
-      title: "24/7 Customer Support",
+      title: "Real Human Support",
       description:
-        "We are available a 100% of the time. Atleast our AI Agents are.",
+        "You always have a dedicated member of our team to reach out to whenever you need support.",
       icon: <IconHelp />,
     },
     {
-      title: "Money back guarantee",
+      title: "Risk-Free to Try",
       description:
-        "If you donot like EveryAI, we will convince you to like us.",
+        "If it's not working for you, we'll make it right.",
       icon: <IconAdjustmentsBolt />,
     },
     {
-      title: "And everything else",
-      description: "I just ran out of copy ideas. Accept my sincere apologies",
+      title: "Built to Grow With You",
+      description: "ACAI scales as your business grows with no rework required.",
       icon: <IconHeart />,
     },
   ];
