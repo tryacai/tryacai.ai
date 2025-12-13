@@ -59,7 +59,7 @@ export const DashboardDemo = () => {
   ];
 
   return (
-    <div className="w-full bg-white dark:bg-neutral-900 rounded-[18px] border border-neutral-200 dark:border-neutral-700 p-4 md:p-6">
+    <div className="w-full bg-white dark:bg-neutral-900 rounded-[18px] border-2 border-neutral-300 dark:border-neutral-600 p-4 md:p-6 shadow-xl dark:shadow-2xl shadow-neutral-200/50 dark:shadow-black/30">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
@@ -69,7 +69,7 @@ export const DashboardDemo = () => {
       >
         <div className="flex items-center gap-2 mb-1.5">
           <h2 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white">
-            Plumbing Brothers
+            Plumbing LLC
           </h2>
           <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
             Interactive Demo
