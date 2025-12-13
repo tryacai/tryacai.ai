@@ -5,32 +5,29 @@ import { Subheading } from "./subheading";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Helper function to get all logos from /public/logos/
+// Import logos from app directory
+import googleCalendarLogo from "@/app/googlecalendarlogo.png";
+import twilioLogo from "@/app/twiliologo.png";
+import zapierLogo from "@/app/zapierlogo.png";
+import stripeLogo from "@/app/stripelogo.png";
+import yelpLogo from "@/app/yelplogo.png";
+import goHighLevelLogo from "@/app/gohighlevellogo.png";
+import slackLogo from "@/app/Slack_Technologies_Logo.svg.png";
+
+// Helper function to get all logos
 function getLogosFromPublic() {
-  // This is a client component, so we maintain a list of logo files
-  // that exist in /public/logos/ directory
-  const logoFiles = [
-    "amazon.png",
-    "digital-ocean.svg",
-    "google.webp",
-    "logo-figma.svg",
-    "logo-google.svg",
-    "logo-zoom.svg",
-    "meta.png",
-    "netflix.png",
-    "onlyfans.png",
-    "uber.png",
-    "vercel.png",
+  // Updated logo list with new integration logos
+  const logos = [
+    { title: "Google Calendar", src: googleCalendarLogo, alt: "Google Calendar logo" },
+    { title: "Twilio", src: twilioLogo, alt: "Twilio logo" },
+    { title: "Zapier", src: zapierLogo, alt: "Zapier logo" },
+    { title: "Stripe", src: stripeLogo, alt: "Stripe logo" },
+    { title: "Yelp", src: yelpLogo, alt: "Yelp logo" },
+    { title: "GoHighLevel", src: goHighLevelLogo, alt: "GoHighLevel logo" },
+    { title: "Slack", src: slackLogo, alt: "Slack logo" },
   ];
 
-  return logoFiles.map((file) => {
-    const name = file.replace(/\.(png|svg|webp)$/, "").replace(/^logo-/, "");
-    return {
-      title: name.charAt(0).toUpperCase() + name.slice(1),
-      src: `/logos/${file}`,
-      alt: `${name.charAt(0).toUpperCase() + name.slice(1)} logo`,
-    };
-  });
+  return logos;
 }
 
 export const Companies = () => {
