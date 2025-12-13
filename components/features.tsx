@@ -26,17 +26,17 @@ export const Features = () => {
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
+      title: "Built on Reliable, Proven Technology",
+      description:
+        "Behind the scenes, ACAI runs on the same infrastructure trusted by global platforms. That means reliability, security, and performance, without you ever needing to think about it.",
+      skeleton: <SkeletonFour />,
+      className: "col-span-1 lg:col-span-3 border-r dark:border-neutral-800",
+    },
+    {
       title: "We support every single LLM",
       description:
         "Whether it's OpenAI, GroQ or Your Mom's Basement LLM, we support everything.",
       skeleton: <SkeletonThree />,
-      className: "col-span-1 lg:col-span-3 border-r dark:border-neutral-800",
-    },
-    {
-      title: "Deploy in seconds",
-      description:
-        "With our blazing fast, state of the art, cutting edge, we are so back cloud servies (read AWS) - you can deploy your model in seconds.",
-      skeleton: <SkeletonFour />,
       className: "col-span-1 lg:col-span-3",
     },
   ];

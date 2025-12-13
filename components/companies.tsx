@@ -117,6 +117,14 @@ export const Companies = () => {
           ))}
         </AnimatePresence>
       </div>
+
+      {/* Bridge Section */}
+      <div className="max-w-4xl mx-auto mt-20 text-center px-4">
+        <Heading as="h3">Built to Fit Your Workflow</Heading>
+        <Subheading className="text-center mt-4">
+          ACAI connects with the tools you already use, and if you don&apos;t see one listed, we build it. No rigid systems. No forced changes. Just AI that fits your business.
+        </Subheading>
+      </div>
     </div>
   );
 };
