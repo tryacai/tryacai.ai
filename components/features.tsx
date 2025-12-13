@@ -21,7 +21,7 @@ export const Features = () => {
     {
       title: "Automated Follow-Ups That Keep Clients Coming Back",
       description:
-        "On top of your 24/7 AI receptionist, ACAI includes a smart reminder and follow-up agent that sends timely messages before and after jobs. From appointment reminders to post-service check-ins, this helps you stay connected with existing customers while uncovering new opportunities without extra effort.",
+        "Alongside your 24/7 AI receptionist, ACAI automates reminders and follow-ups to keep customers engaged and uncover new opportunities.",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
