@@ -1,5 +1,5 @@
 "use client";
-import { IconCircleCheckFilled } from "@tabler/icons-react";
+import { IconCircleCheckFilled, IconInfoCircle } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { tiers } from "@/constants/tier";
 import { useState } from "react";
@@ -7,7 +7,8 @@ import { motion } from "framer-motion";
 import { Button } from "./button";
 
 export function Pricing() {
-  const [active, setActive] = useState("monthly");
+  const [active, setActive] = useState("yearly");
+  const [showTooltip, setShowTooltip] = useState(false);
   const tabs = [
     { name: "Monthly", value: "monthly" },
     { name: "Yearly", value: "yearly" },
@@ -53,17 +54,49 @@ export function Pricing() {
             )}
           >
             <div className="">
-              <h3
-                id={tier.id}
-                className={cn(
-                  tier.featured
-                    ? "text-white"
-                    : "text-muted dark:text-muted-dark",
-                  "text-base font-semibold leading-7"
-                )}
-              >
-                {tier.name}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3
+                  id={tier.id}
+                  className={cn(
+                    tier.featured
+                      ? "text-white"
+                      : "text-muted dark:text-muted-dark",
+                    "text-base font-semibold leading-7"
+                  )}
+                >
+                  {tier.name}
+                </h3>
+                <div className="relative">
+                  <button
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                    onClick={() => setShowTooltip(!showTooltip)}
+                    className={cn(
+                      tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-400",
+                      "hover:opacity-80 transition-opacity"
+                    )}
+                    aria-label="Pricing information"
+                  >
+                    <IconInfoCircle className="h-4 w-4" />
+                  </button>
+                  {showTooltip && (
+                    <div className="absolute left-0 top-6 w-80 sm:w-96 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-50 text-xs leading-relaxed">
+                      <p className="text-neutral-700 dark:text-neutral-300 font-semibold mb-2">
+                        ACAI Voice Agent Pricing Notice:
+                      </p>
+                      <p className="text-neutral-600 dark:text-neutral-400 mb-2">
+                        Pricing is based on ACAI's standard agent model and an initial assessment of scope, usage, integrations, and automation complexity.
+                      </p>
+                      <p className="text-neutral-600 dark:text-neutral-400 mb-2">
+                        All pricing, setup fees, and timelines are estimates and subject to change based on technical requirements, platform constraints, API access, data volume, customization depth, and third-party dependencies. Some implementations may be completed within hours, while others may require extended timelines depending on system architecture and platform requirements.
+                      </p>
+                      <p className="text-neutral-600 dark:text-neutral-400">
+                        Quoted pricing is non-binding and specific to the evaluated use case. A detailed scope and estimate will be provided prior to implementation. Final costs and delivery timelines are confirmed only after technical review. By proceeding with any service or package, you acknowledge that integration complexity, usage growth, or scope expansion may materially impact pricing and delivery schedules.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
               <p className="mt-4">
                 <motion.span
                   initial={{ x: -20, opacity: 0 }}
@@ -90,6 +123,14 @@ export function Pricing() {
               >
                 {tier.description}
               </p>
+              {active === "yearly" && tier.yearlyBenefits && (
+                <p className={cn(
+                  tier.featured ? "text-neutral-300" : "text-neutral-600 dark:text-neutral-400",
+                  "mt-2 text-sm leading-6"
+                )}>
+                  {tier.yearlyBenefits}
+                </p>
+              )}
               <ul
                 role="list"
                 className={cn(

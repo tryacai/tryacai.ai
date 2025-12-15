@@ -11,6 +11,7 @@ export type Tier = {
   onClick: () => void;
   footnote?: string;
   yearlyNote?: string;
+  yearlyBenefits?: string;
 };
 
 export const tiers: Tier[] = [
@@ -18,8 +19,8 @@ export const tiers: Tier[] = [
     name: "Setup & Onboarding",
     id: "tier-setup",
     href: "#",
-    priceMonthly: "$2,000 – $4,000",
-    priceYearly: "$2,000 – $4,000",
+    priceMonthly: "$2,000 – $4,000 one-time",
+    priceYearly: "$2,000 – $4,000 one-time",
     description: "One-time investment",
     features: [
       "System design and automation architecture",
@@ -40,7 +41,7 @@ export const tiers: Tier[] = [
     href: "#",
     priceMonthly: "$400 – $600 / month",
     priceYearly: "$320 – $480 / month",
-    description: "Monthly support",
+    description: "12-month commitment required.",
     features: [
       "Monitoring and maintenance",
       "Ongoing system optimizations",
@@ -49,9 +50,10 @@ export const tiers: Tier[] = [
       "Support and troubleshooting",
     ],
     featured: true,
-    cta: "Contact Us",
+    cta: "Get Started",
     onClick: () => {},
     footnote: "Pricing adjusts based on usage and services.",
     yearlyNote: "12-month commitment required. Priority support, expanded access, and preferred optimization cadence included.",
+    yearlyBenefits: "Priority support, expanded access, and preferred optimization cadence included.",
   },
 ];
