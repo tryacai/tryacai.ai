@@ -129,7 +129,7 @@ export function ContactForm() {
                           <input
                             id="name"
                             type="name"
-                            placeholder="Manu Arora"
+                            placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
                           />
@@ -155,7 +155,7 @@ export function ContactForm() {
                           <input
                             id="email"
                             type="email"
-                            placeholder="hello@johndoe.com"
+                            placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
                           />
@@ -181,7 +181,7 @@ export function ContactForm() {
                           <input
                             id="company"
                             type="company"
-                            placeholder="Aceternity Labs, LLC"
+                            placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
                           />
@@ -200,14 +200,14 @@ export function ContactForm() {
                         htmlFor="message"
                         className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
                       >
-                        message
+                        Brief reason for message
                       </label>
                       <FormControl>
                         <div className="mt-2">
                           <textarea
                             rows={5}
                             id="message"
-                            placeholder="Enter your message here"
+                            placeholder="Ex: interested in yearly plan, want to discuss more"
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
                           />
@@ -222,6 +222,17 @@ export function ContactForm() {
                   <Button className="w-full">Submit</Button>
                 </div>
               </form>
+              
+              <div className="mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-800">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">
+                  Looking to see how ACAI works?
+                </p>
+                <Link href="/schedule-demo">
+                  <Button variant="simple" className="w-full">
+                    Schedule a Demo
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-center space-x-4 py-4">

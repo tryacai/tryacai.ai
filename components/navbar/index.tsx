@@ -13,6 +13,10 @@ const navItems = [
     link: "/blog",
   },
   {
+    title: "Schedule Demo",
+    link: "/schedule-demo",
+  },
+  {
     title: "Contact",
     link: "/contact",
   },
