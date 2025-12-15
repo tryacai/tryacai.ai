@@ -20,7 +20,7 @@ export const tiers: Tier[] = [
   {
     name: "Setup & Onboarding",
     id: "tier-setup",
-    href: "#",
+    href: "/contact",
     priceMonthly: "$2,000 – $4,000 one-time",
     priceYearly: "$2,000 – $4,000 one-time",
     description: "One-time investment",
@@ -34,13 +34,17 @@ export const tiers: Tier[] = [
     ],
     featured: false,
     cta: "Get Started",
-    onClick: () => {},
+    onClick: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/contact';
+      }
+    },
     footnote: "Final setup cost depends on scope and complexity.",
   },
   {
     name: "Ongoing Management",
     id: "tier-monthly",
-    href: "#",
+    href: "/contact",
     priceMonthly: "$400 – $600 / month",
     priceYearly: "$320 – $480 / month",
     description: "12-month commitment required.",
@@ -69,7 +73,11 @@ export const tiers: Tier[] = [
     ],
     featured: true,
     cta: "Get Started",
-    onClick: () => {},
+    onClick: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/contact';
+      }
+    },
     footnote: "Pricing adjusts based on usage and services.",
     yearlyNote: "12-month commitment required. Priority support, expanded access, and preferred optimization cadence included.",
     yearlyBenefits: "Priority support, expanded access, and preferred optimization cadence included.",

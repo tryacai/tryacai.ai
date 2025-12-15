@@ -100,8 +100,10 @@ export function ContactForm() {
               Contact Us
             </h1>
             <p className="mt-4 text-muted dark:text-muted-dark  text-sm max-w-sm">
-              Please reach out to us and we will get back to you at the speed of
-              light.
+              Get started with ACAI. We're here to help.
+            </p>
+            <p className="mt-2 text-muted dark:text-muted-dark  text-sm max-w-sm">
+              Have questions or need assistance? Our team is ready to help you with any inquiries you may have. Fill out the form below, and we'll get back to you as soon as possible.
             </p>
           </div>
 
