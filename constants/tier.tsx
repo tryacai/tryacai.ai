@@ -6,6 +6,8 @@ export type Tier = {
   priceYearly: string;
   description: string;
   features: string[];
+  featuresMonthly?: string[];
+  featuresYearly?: string[];
   featured: boolean;
   cta: string;
   onClick: () => void;
@@ -48,6 +50,22 @@ export const tiers: Tier[] = [
       "Workflow adjustments",
       "Performance tracking",
       "Support and troubleshooting",
+    ],
+    featuresMonthly: [
+      "Monitoring and maintenance",
+      "Ongoing system optimizations",
+      "Workflow adjustments",
+      "Performance tracking",
+      "Support and troubleshooting",
+      "3-month minimum commitment",
+    ],
+    featuresYearly: [
+      "Monitoring and maintenance",
+      "Ongoing system optimizations",
+      "Workflow adjustments",
+      "Performance tracking",
+      "Support and troubleshooting",
+      "Fee reevaluation at 6-month mark",
     ],
     featured: true,
     cta: "Get Started",

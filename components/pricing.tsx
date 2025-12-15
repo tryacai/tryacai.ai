@@ -88,6 +88,9 @@ export function Pricing() {
                         Pricing is based on ACAI's standard agent model and an initial assessment of scope, usage, integrations, and automation complexity.
                       </p>
                       <p className="text-neutral-600 dark:text-neutral-400 mb-2">
+                        <strong>Commitment Terms:</strong> Monthly plans require a 3-month minimum commitment. Yearly plans (12-month commitment) include a fee reevaluation at the 6-month mark to ensure pricing reflects actual usage and value delivered.
+                      </p>
+                      <p className="text-neutral-600 dark:text-neutral-400 mb-2">
                         All pricing, setup fees, and timelines are estimates and subject to change based on technical requirements, platform constraints, API access, data volume, customization depth, and third-party dependencies. Some implementations may be completed within hours, while others may require extended timelines depending on system architecture and platform requirements.
                       </p>
                       <p className="text-neutral-600 dark:text-neutral-400">
@@ -140,7 +143,12 @@ export function Pricing() {
                   "mt-8 space-y-3 text-sm leading-6 sm:mt-10"
                 )}
               >
-                {tier.features.map((feature) => (
+                {(active === "yearly" && tier.featuresYearly 
+                  ? tier.featuresYearly 
+                  : active === "monthly" && tier.featuresMonthly 
+                  ? tier.featuresMonthly 
+                  : tier.features
+                ).map((feature) => (
                   <li key={feature} className="flex gap-x-3">
                     <IconCircleCheckFilled
                       className={cn(
