@@ -73,23 +73,32 @@ export function Pricing() {
                     onClick={() => setShowTooltip(!showTooltip)}
                     className={cn(
                       tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-400",
-                      "hover:opacity-80 transition-opacity"
+                      "hover:opacity-80 transition-opacity flex items-center gap-1"
                     )}
                     aria-label="Pricing information"
                   >
                     <IconInfoCircle className="h-4 w-4" />
+                    <span className="text-red-500 font-bold text-xs">CLICK ME</span>
                   </button>
                   {showTooltip && (
-                    <div className="absolute left-0 top-6 w-80 sm:w-96 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-50 text-xs leading-relaxed">
+                    <div className="absolute left-0 top-6 w-80 sm:w-96 p-4 bg-white dark:bg-neutral-800 border-4 border-red-500 rounded-lg shadow-xl z-50 text-xs leading-relaxed">
+                      <p className="text-red-600 dark:text-red-400 font-bold mb-3 text-base">
+                        🔴 DEBUG: TOOLTIP IS VISIBLE
+                      </p>
                       <p className="text-neutral-700 dark:text-neutral-300 font-semibold mb-2">
                         ACAI Voice Agent Pricing Notice:
                       </p>
                       <p className="text-neutral-600 dark:text-neutral-400 mb-2">
                         Pricing is based on ACAI's standard agent model and an initial assessment of scope, usage, integrations, and automation complexity.
                       </p>
-                      <p className="text-neutral-600 dark:text-neutral-400 mb-2">
-                        <strong>Commitment Terms:</strong> Monthly plans require a 3-month minimum commitment. Yearly plans (12-month commitment) include a fee reevaluation at the 6-month mark to ensure pricing reflects actual usage and value delivered.
-                      </p>
+                      <div className="bg-red-100 dark:bg-red-900 p-2 border-2 border-red-500 rounded mb-2">
+                        <p className="text-red-900 dark:text-red-100 font-bold mb-1">
+                          🔴 COMMITMENT TERMS:
+                        </p>
+                        <p className="text-red-900 dark:text-red-100 font-semibold">
+                          Monthly plans require a 3-month minimum commitment. Yearly plans (12-month commitment) include a fee reevaluation at the 6-month mark to ensure pricing reflects actual usage and value delivered.
+                        </p>
+                      </div>
                       <p className="text-neutral-600 dark:text-neutral-400 mb-2">
                         All pricing, setup fees, and timelines are estimates and subject to change based on technical requirements, platform constraints, API access, data volume, customization depth, and third-party dependencies. Some implementations may be completed within hours, while others may require extended timelines depending on system architecture and platform requirements.
                       </p>
@@ -163,6 +172,24 @@ export function Pricing() {
                   </li>
                 ))}
               </ul>
+              {/* DEBUG: HARDCODED COMMITMENT TERMS - ALWAYS VISIBLE */}
+              {tier.id === "tier-monthly" && (
+                <div className="mt-4 p-3 bg-red-100 dark:bg-red-900 border-2 border-red-500 rounded">
+                  <p className="text-red-900 dark:text-red-100 font-bold text-sm">
+                    🔴 DEBUG MODE - COMMITMENT TERM:
+                  </p>
+                  {active === "monthly" && (
+                    <p className="text-red-900 dark:text-red-100 font-semibold text-base mt-2">
+                      ✓ 3-month minimum commitment
+                    </p>
+                  )}
+                  {active === "yearly" && (
+                    <p className="text-red-900 dark:text-red-100 font-semibold text-base mt-2">
+                      ✓ Fee reevaluation at 6-month mark
+                    </p>
+                  )}
+                </div>
+              )}
               {active === "yearly" && tier.yearlyNote && (
                 <p className={cn(
                   tier.featured ? "text-neutral-300" : "text-neutral-600 dark:text-neutral-400",
