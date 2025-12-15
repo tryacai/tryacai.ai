@@ -15,28 +15,33 @@ export function Pricing() {
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-center bg-neutral-100 dark:bg-neutral-800  w-fit mx-auto mb-12 rounded-md overflow-hidden">
-        {tabs.map((tab) => (
-          <button
-            key={tab.value}
-            className={cn(
-              "text-sm font-medium text-gray-500 dark:text-muted-dark p-4  rounded-md relative",
-              active === tab.value ? " text-white dark:text-black" : ""
-            )}
-            onClick={() => setActive(tab.value)}
-          >
-            {active === tab.value && (
-              <motion.span
-                layoutId="moving-div"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                className="absolute inset-0 bg-black dark:bg-white"
-              />
-            )}
-            <span className="relative z-10">{tab.name}</span>
-          </button>
-        ))}
+      <div className="flex flex-col items-center justify-center mb-12">
+        <div className="flex items-center justify-center bg-neutral-100 dark:bg-neutral-800 w-fit rounded-md overflow-hidden">
+          {tabs.map((tab) => (
+            <button
+              key={tab.value}
+              className={cn(
+                "text-sm font-medium text-gray-500 dark:text-muted-dark p-4  rounded-md relative",
+                active === tab.value ? " text-white dark:text-black" : ""
+              )}
+              onClick={() => setActive(tab.value)}
+            >
+              {active === tab.value && (
+                <motion.span
+                  layoutId="moving-div"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  className="absolute inset-0 bg-black dark:bg-white"
+                />
+              )}
+              <span className="relative z-10">{tab.name}</span>
+            </button>
+          ))}
+        </div>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-3">
+          Save up to 20% with a yearly commitment
+        </p>
       </div>
-      <div className="mx-auto mt-4 md:mt-20   grid relative z-20 grid-cols-1 gap-4 items-center  md:grid-cols-2 xl:grid-cols-4">
+      <div className="mx-auto mt-4 md:mt-20 grid relative z-20 grid-cols-1 gap-6 items-stretch md:grid-cols-2 max-w-5xl">
         {tiers.map((tier, tierIdx) => (
           <div
             key={tier.id}
@@ -109,6 +114,22 @@ export function Pricing() {
                   </li>
                 ))}
               </ul>
+              {active === "yearly" && tier.yearlyNote && (
+                <p className={cn(
+                  tier.featured ? "text-neutral-300" : "text-neutral-600 dark:text-neutral-400",
+                  "mt-4 text-xs leading-5"
+                )}>
+                  {tier.yearlyNote}
+                </p>
+              )}
+              {tier.footnote && (
+                <p className={cn(
+                  tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
+                  "mt-4 text-xs italic leading-5"
+                )}>
+                  {tier.footnote}
+                </p>
+              )}
             </div>
             <div>
               <Button
