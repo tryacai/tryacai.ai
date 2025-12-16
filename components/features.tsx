@@ -33,9 +33,9 @@ export const Features = () => {
       className: "col-span-1 lg:col-span-3 border-r dark:border-neutral-800",
     },
     {
-      title: "We support every single LLM",
+      title: "Built for Home Service Businesses",
       description:
-        "Whether it's OpenAI, GroQ or Your Mom's Basement LLM, we support everything.",
+        "Powered by advanced LLM technology, the smart brain that handles scheduling, pricing, and emergencies automatically.",
       skeleton: <SkeletonThree />,
       className: "col-span-1 lg:col-span-3",
     },
