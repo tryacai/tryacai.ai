@@ -6,11 +6,28 @@ import { ViewTransitions } from "next-view-transitions";
 import { ThemeProvider } from "@/context/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Never Miss a Call Again",
-  description: `Never Miss a Call Again
-Reliable AI-powered solutions for plumbing and HVAC businesses.`,
+  metadataBase: new URL("https://tryacai.ai"),
+  title: "ACAI AI | AI Receptionist for Plumbers & HVAC",
+  description: "Never miss a call again. ACAI AI is an AI receptionist built for plumbers and HVAC to answer calls and book jobs 24/7.",
   openGraph: {
-    images: ["https://ai-saas-template-aceternity.vercel.app/banner.png"],
+    title: "ACAI AI | AI Receptionist for Plumbers & HVAC",
+    description: "An AI receptionist that answers calls, books jobs, and never misses an opportunity for home service businesses.",
+    type: "website",
+    url: "https://tryacai.ai",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "ACAI AI - AI Receptionist for Plumbers & HVAC",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ACAI AI | AI Receptionist for Plumbers & HVAC",
+    description: "Never miss a call again. AI receptionist for home service businesses.",
+    images: ["/og-image.png"],
   },
 };
 
