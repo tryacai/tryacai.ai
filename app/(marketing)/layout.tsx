@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Never miss a call again. ACAI AI is an AI receptionist built for plumbers and HVAC to answer calls and book jobs 24/7.",
   openGraph: {
-    images: ["/og-image.png"],
+    images: ["/websitepreviewimage.png"],
   },
 };
 

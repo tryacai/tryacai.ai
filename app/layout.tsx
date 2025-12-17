@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     url: "https://tryacai.ai",
     images: [
       {
-        url: "/og-image.png",
+        url: "/websitepreviewimage.png",
         width: 1200,
         height: 630,
         alt: "ACAI AI - AI Receptionist for Plumbers & HVAC",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ACAI AI | AI Receptionist for Plumbers & HVAC",
     description: "Never miss a call again. AI receptionist for home service businesses.",
-    images: ["/og-image.png"],
+    images: ["/websitepreviewimage.png"],
   },
 };
 

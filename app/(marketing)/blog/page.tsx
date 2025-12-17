@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Discover insights and expert advice about AI receptionists for home service businesses. Learn how ACAI AI helps plumbers and HVAC companies never miss a call.",
   openGraph: {
-    images: ["/og-image.png"],
+    images: ["/websitepreviewimage.png"],
   },
 };
 
