@@ -2,11 +2,11 @@ import { SignupForm } from "@/components/signup";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Signup - Everything AI",
+  title: "Sign Up - ACAI AI",
   description:
-    "Everything AI is a platform that provides a wide range of AI tools and services to help you stay on top of your business. Generate images, text and everything else that you need to get your business off the ground.",
+    "Sign up for ACAI AI and get an AI receptionist that answers calls and books jobs for your plumbing or HVAC business 24/7.",
   openGraph: {
-    images: ["https://ai-saas-template-aceternity.vercel.app/banner.png"],
+    images: ["/og-image.png"],
   },
 };
 

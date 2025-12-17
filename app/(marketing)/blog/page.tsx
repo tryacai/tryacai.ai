@@ -7,11 +7,11 @@ import { Subheading } from "@/components/subheading";
 import { BlogCard } from "@/components/blog-card";
 
 export const metadata: Metadata = {
-  title: "Blogs - Every AI",
+  title: "Blog - ACAI AI",
   description:
-    "Everything AI is a platform that provides a wide range of AI tools and services to help you stay on top of your business. Generate images, text and everything else that you need to get your business off the ground.",
+    "Discover insights and expert advice about AI receptionists for home service businesses. Learn how ACAI AI helps plumbers and HVAC companies never miss a call.",
   openGraph: {
-    images: ["https://ai-saas-template-aceternity.vercel.app/banner.png"],
+    images: ["/og-image.png"],
   },
 };
 

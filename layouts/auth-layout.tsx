@@ -18,15 +18,14 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                 "font-semibold text-xl text-center text-muted dark:text-muted-dark"
               )}
             >
-              Every AI is used by thousands of users
+              ACAI AI is trusted by service businesses
             </p>
             <p
               className={cn(
                 "font-normal text-base text-center text-neutral-500 dark:text-neutral-400 mt-8"
               )}
             >
-              With lots of AI applications around, Everything AI stands out with
-              its state of the art Shitposting capabilities.
+              Never miss a call again. ACAI AI answers calls, books jobs, and helps home service businesses capture more opportunities 24/7.
             </p>
           </div>
           <HorizontalGradient className="top-20" />
