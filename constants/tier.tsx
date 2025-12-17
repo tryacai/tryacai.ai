@@ -21,8 +21,8 @@ export const tiers: Tier[] = [
     name: "Setup & Onboarding",
     id: "tier-setup",
     href: "/contact",
-    priceMonthly: "$2,000 – $4,000 one-time",
-    priceYearly: "$2,000 – $4,000 one-time",
+    priceMonthly: "Starting at $2,000 (one-time)",
+    priceYearly: "Starting at $2,000 (one-time)",
     description: "One-time investment",
     features: [
       "System design and automation architecture",
@@ -45,8 +45,8 @@ export const tiers: Tier[] = [
     name: "Ongoing Management",
     id: "tier-monthly",
     href: "/contact",
-    priceMonthly: "$400 – $600 / month",
-    priceYearly: "$320 – $480 / month",
+    priceMonthly: "Starting at $400 / month",
+    priceYearly: "Starting at $320 / month",
     description: "12-month commitment required.",
     features: [
       "Monitoring and maintenance",
