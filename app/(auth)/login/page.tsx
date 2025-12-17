@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Log in to ACAI AI to manage your AI receptionist for your plumbing or HVAC business.",
   openGraph: {
-    images: ["/websitepreviewimage.png"],
+    images: ["/finalwebsitepreviewimage.png"],
   },
 };
 
