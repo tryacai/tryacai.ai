@@ -3,7 +3,7 @@ import React from "react";
 import { Logo } from "./Logo";
 
 export const Footer = () => {
-  const links = [
+  const primaryLinks = [
     {
       name: "Pricing",
       href: "/pricing",
@@ -20,9 +20,12 @@ export const Footer = () => {
       name: "Contact",
       href: "/contact",
     },
+  ];
+  
+  const legalLinks = [
     {
       name: "Privacy Policy",
-      href: "#",
+      href: "/privacy-policy",
     },
     {
       name: "Terms of Service",
@@ -33,11 +36,8 @@ export const Footer = () => {
       href: "#",
     },
   ];
+  
   const socials = [
-    {
-      name: "Twitter",
-      href: "https://twitter.com/mannupaaji",
-    },
     {
       name: "LinkedIn",
       href: "https://www.linkedin.com/company/acai-ai",
@@ -45,10 +45,6 @@ export const Footer = () => {
     {
       name: "Instagram",
       href: "https://www.instagram.com/tryacai.ai/?next=%2F&hl=en",
-    },
-    {
-      name: "TikTok",
-      href: "#",
     },
   ];
   return (
@@ -62,9 +58,12 @@ export const Footer = () => {
             <div>© {new Date().getFullYear()} ACAI AI</div>
             <div className="mt-2">All rights reserved</div>
           </div>
-          <div className="grid grid-cols-2 gap-10 items-start mt-10 md:mt-0">
-            <div className="flex justify-center space-y-4 flex-col mt-4">
-              {links.map((link) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start mt-10 md:mt-0">
+            <div className="flex justify-start space-y-4 flex-col">
+              <h3 className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 mb-2">
+                Navigation
+              </h3>
+              {primaryLinks.map((link) => (
                 <Link
                   key={link.name}
                   className="transition-colors hover:text-black text-muted dark:text-muted-dark dark:hover:text-neutral-400 text-xs sm:text-sm"
@@ -74,7 +73,24 @@ export const Footer = () => {
                 </Link>
               ))}
             </div>
-            <div className="flex justify-center space-y-4 flex-col mt-4">
+            <div className="flex justify-start space-y-4 flex-col">
+              <h3 className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 mb-2">
+                Legal
+              </h3>
+              {legalLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  className="transition-colors hover:text-black text-muted dark:text-muted-dark dark:hover:text-neutral-400 text-xs sm:text-sm"
+                  href={link.href}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+            <div className="flex justify-start space-y-4 flex-col">
+              <h3 className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 mb-2">
+                Connect
+              </h3>
               {socials.map((link) => (
                 <Link
                   key={link.name}
