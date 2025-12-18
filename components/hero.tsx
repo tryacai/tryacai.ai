@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
 import { DashboardDemo } from "./dashboard-demo";
 import { useState, useEffect } from "react";
+import { useRetellVoiceDemo } from "@/components/RetellVoiceDemo";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -114,6 +115,7 @@ const TypewriterText = () => {
 
 export const Hero = () => {
   const router = useRouter();
+  const { toggleConversation } = useRetellVoiceDemo();
   return (
     <div className="flex flex-col min-h-screen pt-20 md:pt-40 relative overflow-hidden">
       <motion.div
@@ -192,6 +194,7 @@ export const Hero = () => {
         className="flex justify-center mt-8 relative z-10"
       >
         <button
+          onClick={toggleConversation}
           className="w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95"
           aria-label="Voice demo"
         >
