@@ -40,11 +40,11 @@ export const Footer = () => {
     },
     {
       name: "LinkedIn",
-      href: "https://linkedin.com/in/manuarora28",
+      href: "https://www.linkedin.com/company/acai-ai",
     },
     {
       name: "Instagram",
-      href: "#",
+      href: "https://www.instagram.com/tryacai.ai/?next=%2F&hl=en",
     },
     {
       name: "TikTok",
