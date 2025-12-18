@@ -34,7 +34,9 @@ export const CTA = () => {
               </p>
 
               <div className="relative z-10 mx-auto flex justify-center mt-6">
-                <Button>Join Waitlist</Button>
+                <Link href="/schedule-demo">
+                  <Button>Schedule Demo</Button>
+                </Link>
               </div>
             </div>
           </div>

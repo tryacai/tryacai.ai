@@ -9,6 +9,10 @@ export const Footer = () => {
       href: "/pricing",
     },
     {
+      name: "Schedule Demo",
+      href: "/schedule-demo",
+    },
+    {
       name: "Blog",
       href: "/blog",
     },
@@ -16,8 +20,6 @@ export const Footer = () => {
       name: "Contact",
       href: "/contact",
     },
-  ];
-  const legal = [
     {
       name: "Privacy Policy",
       href: "#",
@@ -41,8 +43,12 @@ export const Footer = () => {
       href: "https://linkedin.com/in/manuarora28",
     },
     {
-      name: "GitHub",
-      href: "https://github.com/manuarora700",
+      name: "Instagram",
+      href: "#",
+    },
+    {
+      name: "TikTok",
+      href: "#",
     },
   ];
   return (
@@ -56,20 +62,9 @@ export const Footer = () => {
             <div>© {new Date().getFullYear()} ACAI AI</div>
             <div className="mt-2">All rights reserved</div>
           </div>
-          <div className="grid grid-cols-3 gap-10 items-start mt-10 md:mt-0">
+          <div className="grid grid-cols-2 gap-10 items-start mt-10 md:mt-0">
             <div className="flex justify-center space-y-4 flex-col mt-4">
               {links.map((link) => (
-                <Link
-                  key={link.name}
-                  className="transition-colors hover:text-black text-muted dark:text-muted-dark dark:hover:text-neutral-400 text-xs sm:text-sm"
-                  href={link.href}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
-            <div className="flex justify-center space-y-4 flex-col mt-4">
-              {legal.map((link) => (
                 <Link
                   key={link.name}
                   className="transition-colors hover:text-black text-muted dark:text-muted-dark dark:hover:text-neutral-400 text-xs sm:text-sm"
