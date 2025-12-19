@@ -6,7 +6,10 @@ export async function POST() {
     const RETELL_AGENT_ID = process.env.RETELL_AGENT_ID;
 
     if (!RETELL_API_KEY || !RETELL_AGENT_ID) {
-      return NextResponse.json({ error: "Missing credentials" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Missing credentials" },
+        { status: 500 }
+      );
     }
 
     const response = await fetch("https://api.retellai.com/v2/create-web-call", {
@@ -24,7 +27,11 @@ export async function POST() {
 
     const { access_token } = await response.json();
     return NextResponse.json({ access_token });
+
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const message =
+      error instanceof Error ? error.message : "Unknown server error";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
