@@ -115,7 +115,7 @@ const TypewriterText = () => {
 
 export const Hero = () => {
   const router = useRouter();
-  const { toggleConversation } = useRetellVoiceDemo();
+  const { toggleConversation, isConversationActive } = useRetellVoiceDemo();
   return (
     <div className="flex flex-col min-h-screen pt-20 md:pt-40 relative overflow-hidden">
       <motion.div
@@ -177,6 +177,24 @@ export const Hero = () => {
           Reliable AI-powered solutions for plumbing and HVAC businesses.
         </Balancer>
       </motion.p>
+      <motion.p
+        initial={{
+          y: 40,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          ease: "easeOut",
+          duration: 0.5,
+          delay: 0.25,
+        }}
+        className="text-center mt-4 text-sm md:text-base text-muted dark:text-muted-dark max-w-2xl mx-auto relative z-10"
+      >
+        Test one of our active clients&apos; AI receptionists in real time.
+      </motion.p>
       <motion.div
         initial={{
           y: 60,
@@ -191,15 +209,29 @@ export const Hero = () => {
           duration: 0.5,
           delay: 0.3,
         }}
-        className="flex justify-center mt-8 relative z-10"
+        className="flex flex-col items-center justify-center mt-6 relative z-10 gap-3"
       >
         <button
           onClick={toggleConversation}
-          className="w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95"
+          className={`w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 ${
+            isConversationActive ? 'animate-pulse' : ''
+          }`}
           aria-label="Voice demo"
         >
           <Mic className="w-8 h-8 text-white" />
         </button>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.3 }}
+          className={`px-4 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 ${
+            isConversationActive
+              ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-600 dark:text-green-400 border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.3)]'
+              : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700'
+          }`}
+        >
+          {isConversationActive ? 'Tap again to end demo' : 'Tap to start live demo'}
+        </motion.div>
       </motion.div>
       <motion.div
         initial={{
