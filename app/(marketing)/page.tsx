@@ -6,6 +6,7 @@ import { Companies } from "@/components/companies";
 import { GridFeatures } from "@/components/grid-features";
 import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
+import { ContactInfo } from "@/components/contact-info";
 
 export default function Home() {
   return (
@@ -25,6 +26,9 @@ export default function Home() {
           <Background />
         </div>
         <CTA />
+      </div>
+      <div className="relative">
+        <ContactInfo />
       </div>
     </div>
   );
