@@ -1,6 +1,6 @@
 import glob from "fast-glob";
 
-interface Blog {
+export interface Blog {
   title: string;
   description: string;
   author: {
@@ -16,23 +16,33 @@ export interface BlogWithSlug extends Blog {
 }
 
 async function importBlog(blogFilename: string): Promise<BlogWithSlug> {
-  let { blog } = (await import(`../app/(marketing)/blog/${blogFilename}`)) as {
+  const imported = (await import(
+    `../app/(marketing)/blog/${blogFilename}`
+  )) as {
     default: React.ComponentType;
     blog: Blog;
   };
 
+  const { blog } = imported;
+
   return {
     slug: blogFilename.replace(/(\/page)?\.mdx$/, ""),
-    ...blog,
+    title: blog.title,
+    description: blog.description,
+    author: blog.author,
+    date: blog.date,
+    image: blog.image, // THIS is what the blog card reads
   };
 }
 
-export async function getAllBlogs() {
-  let blogFilenames = await glob("*/page.mdx", {
+export async function getAllBlogs(): Promise<BlogWithSlug[]> {
+  const blogFilenames = await glob("*/page.mdx", {
     cwd: "./app/(marketing)/blog",
   });
 
-  let blogs = await Promise.all(blogFilenames.map(importBlog));
+  const blogs = await Promise.all(blogFilenames.map(importBlog));
 
-  return blogs.sort((a, z) => +new Date(z.date) - +new Date(a.date));
+  return blogs.sort(
+    (a, z) => +new Date(z.date) - +new Date(a.date)
+  );
 }
