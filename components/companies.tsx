@@ -42,7 +42,7 @@ export const Companies = () => {
     logoSets.push(allLogos.slice(i, i + logosPerSet));
   }
 
-  let [logos, setLogos] = useState(logoSets);
+  const [logos, setLogos] = useState(logoSets);
   const [activeLogoSet, setActiveLogoSet] = useState(logos[0]);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 

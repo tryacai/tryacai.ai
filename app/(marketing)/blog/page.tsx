@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ArticlesIndex() {
-  let blogs = await getAllBlogs();
+  const blogs = await getAllBlogs();
 
   return (
     <div className="relative overflow-hidden py-20 md:py-0">

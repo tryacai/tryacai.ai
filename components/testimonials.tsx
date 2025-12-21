@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Heading } from "./heading";
 import { Subheading } from "./subheading";
 import { cn } from "@/lib/utils";
@@ -192,8 +191,8 @@ function Testimonial({
   ...props
 }: Omit<React.ComponentPropsWithoutRef<"figure">, keyof Testimonial> &
   Testimonial) {
-  let animationDelay = useMemo(() => {
-    let possibleAnimationDelays = [
+  const animationDelay = useMemo(() => {
+    const possibleAnimationDelays = [
       "0s",
       "0.1s",
       "0.2s",
@@ -206,7 +205,6 @@ function Testimonial({
     ];
   }, []);
 
-  const boxStyle = {};
   return (
     <figure
       className={cn(
@@ -276,9 +274,9 @@ function TestimonialColumn({
 }
 
 function splitArray<T>(array: Array<T>, numParts: number) {
-  let result: Array<Array<T>> = [];
+  const result: Array<Array<T>> = [];
   for (let i = 0; i < array.length; i++) {
-    let index = i % numParts;
+    const index = i % numParts;
     if (!result[index]) {
       result[index] = [];
     }
@@ -288,10 +286,10 @@ function splitArray<T>(array: Array<T>, numParts: number) {
 }
 
 function TestimonialGrid() {
-  let columns = splitArray(testimonials, 3);
-  let column1 = columns[0];
-  let column2 = columns[1];
-  let column3 = splitArray(columns[2], 2);
+  const columns = splitArray(testimonials, 3);
+  const column1 = columns[0];
+  const column2 = columns[1];
+  const column3 = splitArray(columns[2], 2);
   return (
     <InViewDiv className="relative -mx-4 mt-16 grid h-[49rem] max-h-[150vh] grid-cols-1 items-start gap-8 overflow-hidden px-4 sm:mt-20 md:grid-cols-2 lg:grid-cols-3">
       <TestimonialColumn
