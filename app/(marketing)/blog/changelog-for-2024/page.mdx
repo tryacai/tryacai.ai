@@ -1,13 +1,11 @@
 import { BlogLayout } from "@/components/blog-layout";
 
 export const blog = {
-  author: { name: "Manu Arora", src: "/avatar.jpeg" },
-  date: "2024-07-14",
-  title: "Changelog for 2024",
+  author: { name: "Chris Moreno" },
+  date: "2025-12-15",
+  title: "Built on XUNA AI",
   description:
-    "Explore the latest updates and enhancements in our 2024 changelog. Discover new features and improvements that enhance user experience.",
-  image:
-    "https://images.unsplash.com/photo-1696429175928-793a1cdef1d3?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "Learn about our partnership with XUNA AI and how we're working together to revolutionize AI-powered solutions for service businesses.",
 };
 export const metadata = {
   title: blog.title,
@@ -19,68 +17,39 @@ export const metadata = {
 
 export default (props) => <BlogLayout blog={blog} {...props} />;
 
-## Lorem ipsum heading
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+{/* Team Photo Placeholder - TODO: Replace with actual team photo */}
+<div className="w-full h-64 md:h-96 bg-gradient-to-br from-red-100 via-purple-100 to-blue-100 dark:from-red-900/30 dark:via-purple-900/30 dark:to-blue-900/30 rounded-lg mb-12 md:mb-16 flex items-center justify-center">
+  <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base">Team Photo Coming Soon</p>
+</div>
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+## Our Partnership with XUNA AI
 
-```jsx
-"use client";
+At ACAI AI, we believe in building on strong foundations. That's why we've partnered with XUNA AI, a leader in artificial intelligence infrastructure and innovative AI solutions. This partnership enables us to deliver cutting-edge AI receptionist technology specifically tailored for plumbing and HVAC professionals.
 
-import { useRouter } from "next/navigation";
-import { BlogWithSlug } from "@/lib/blog";
+XUNA AI provides the robust technical backbone that powers our intelligent call handling, scheduling automation, and customer interaction systems. Their expertise in natural language processing and conversational AI allows us to create experiences that feel natural, helpful, and genuinely supportive for both service businesses and their customers.
 
-export function BlogLayout({
-  blog,
-  children,
-}: {
-  blog: BlogWithSlug,
-  children: React.ReactNode,
-}) {
-  let router = useRouter();
-  return (
-    <div className="mt-16 lg:mt-32">
-      <div className="xl:relative">
-        <div className="mx-auto max-w-2xl">
-          <article>
-            <header className="flex flex-col">
-              <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-                {blog.title}
-              </h1>
-              <time
-                dateTime={blog.date}
-                className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
-              >
-                <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
-                <span className="ml-3">{blog.date.toString()}</span>
-              </time>
-            </header>
-            <div className="mt-8 prose prose-sm" data-mdx-content>
-              {children}
-            </div>
-          </article>
-        </div>
-      </div>
-    </div>
-  );
-}
-```
+## Shared Vision, Shared Goals
 
-## Lorem ipsum heading
+Our collaboration with XUNA AI goes beyond technology—it's about a shared commitment to making AI accessible and practical for small and medium-sized businesses. Both teams are driven by the belief that AI should empower people, not replace them. We're working together to ensure that service professionals can leverage advanced technology without needing technical expertise or large IT departments.
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+As interns and partners in this mission, we've seen firsthand how the right tools can transform a business. XUNA AI's platform gives us the flexibility to customize solutions for the unique needs of plumbers and HVAC technicians, while their ongoing support helps us continuously improve and adapt to real-world challenges.
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+## What This Means for Our Clients
 
-## Lorem ipsum heading
+For ACAI AI customers, this partnership means:
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+- **Reliable Technology**: Built on enterprise-grade infrastructure that scales with your business
+- **Continuous Innovation**: Access to the latest advancements in AI and natural language understanding
+- **Proven Expertise**: Backed by a team with deep experience in AI research and deployment
+- **Future-Ready Solutions**: Technology that evolves with your needs and the changing landscape of service business operations
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+## Looking Ahead
 
-## Lorem ipsum heading
+We're excited about what's possible when great teams come together with a shared purpose. Our partnership with XUNA AI is foundational to everything we build at ACAI, and it's just the beginning. As we continue to grow and expand our capabilities, we remain committed to one core principle: helping plumbing and HVAC professionals capture every opportunity and build stronger, more successful businesses.
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+Together with XUNA AI, we're not just building software—we're building the future of service business automation.
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+---
+
+*Interested in learning more about how ACAI AI can help your business? [Get in touch](/contact) or [schedule a demo](/schedule-demo).*
