@@ -51,13 +51,13 @@ export const Roadmap = () => {
             Our Journey
           </h2>
           <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-            Follow our roadmap as we build the future of AI receptionists for service businesses
+            Follow our roadmap as we build the future of AI solutions for businesses
           </p>
         </div>
         
         <div className="relative">
           <div className="overflow-hidden py-12">
-            <div className="flex gap-12 animate-scroll hover:[animation-play-state:paused] items-center">
+            <div className="flex gap-12 animate-scroll group items-center">
               {/* Render milestones twice for seamless loop */}
               {[...milestones, ...milestones].map((milestone, index) => (
                 <div
@@ -67,25 +67,29 @@ export const Roadmap = () => {
                   }`}
                 >
                   <div className="relative group">
-                    {/* Glow effect container */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-red-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:duration-200"></div>
+                    {/* Glow effect container with more red */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 via-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:duration-200"></div>
                     
-                    {/* Particle effect */}
+                    {/* Particle effects - more particles with red */}
                     <div className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <div className="absolute top-0 left-1/4 w-1 h-1 bg-blue-400 rounded-full animate-float"></div>
-                      <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-purple-400 rounded-full animate-float-delayed"></div>
-                      <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-red-400 rounded-full animate-float"></div>
+                      <div className="absolute top-0 left-1/4 w-1.5 h-1.5 bg-red-400 rounded-full animate-float"></div>
+                      <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-blue-400 rounded-full animate-float-delayed"></div>
+                      <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-purple-400 rounded-full animate-float"></div>
+                      <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-red-400 rounded-full animate-float-delayed-2"></div>
+                      <div className="absolute bottom-1/3 left-1/4 w-1 h-1 bg-blue-400 rounded-full animate-float"></div>
+                      <div className="absolute top-1/2 right-1/2 w-1 h-1 bg-purple-400 rounded-full animate-float-delayed"></div>
+                      <div className="absolute bottom-1/2 left-1/2 w-1.5 h-1.5 bg-red-400 rounded-full animate-float-delayed-2"></div>
                     </div>
                     
                     {/* Card content */}
                     <div className="relative p-6 rounded-xl border border-neutral-800 bg-neutral-900/90 backdrop-blur-md group-hover:border-neutral-700 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-2xl">
-                      {/* Date badge */}
-                      <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 text-blue-300 mb-3">
+                      {/* Date badge with more red */}
+                      <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-red-500/20 via-blue-500/20 to-purple-500/20 border border-red-500/30 text-red-300 mb-3">
                         {milestone.date}
                       </div>
                       
-                      {/* Title with gradient */}
-                      <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 bg-clip-text text-transparent group-hover:from-blue-300 group-hover:via-purple-300 group-hover:to-red-300 transition-all duration-300">
+                      {/* Title with gradient featuring more red */}
+                      <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-red-400 via-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-red-300 group-hover:via-blue-300 group-hover:to-purple-300 transition-all duration-300">
                         {milestone.title}
                       </h3>
                       
@@ -140,8 +144,23 @@ export const Roadmap = () => {
           }
         }
 
+        @keyframes float-delayed-2 {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+            opacity: 0;
+          }
+          50% {
+            transform: translateY(-18px) translateX(8px);
+            opacity: 1;
+          }
+        }
+
         .animate-scroll {
           animation: scroll 40s linear infinite;
+        }
+
+        .animate-scroll:hover {
+          animation-play-state: paused;
         }
 
         .animate-float {
@@ -150,6 +169,10 @@ export const Roadmap = () => {
 
         .animate-float-delayed {
           animation: float-delayed 2.5s ease-in-out infinite 0.5s;
+        }
+
+        .animate-float-delayed-2 {
+          animation: float-delayed-2 2.2s ease-in-out infinite 1s;
         }
       `}</style>
     </section>
