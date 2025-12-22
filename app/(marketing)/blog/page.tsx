@@ -5,6 +5,7 @@ import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { Subheading } from "@/components/subheading";
 import { BlogCard } from "@/components/blog-card";
+import { Roadmap } from "@/components/roadmap";
 
 export const metadata: Metadata = {
   title: "Blog - ACAI AI",
@@ -16,7 +17,16 @@ export const metadata: Metadata = {
 };
 
 export default async function ArticlesIndex() {
-  let blogs = await getAllBlogs();
+  let allBlogs = await getAllBlogs();
+  
+  // Filter out specific blogs
+  const blogsToExclude = [
+    "cool-things-to-do-with-ai",
+    "how-companies-are-working-without-ai",
+    "what-is-ai-anyway"
+  ];
+  
+  let blogs = allBlogs.filter(blog => !blogsToExclude.includes(blog.slug));
 
   return (
     <div className="relative overflow-hidden py-20 md:py-0">
@@ -36,11 +46,14 @@ export default async function ArticlesIndex() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full relative z-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full relative z-20 mb-16">
           {blogs.slice(2).map((blog, index) => (
             <BlogCard blog={blog} key={blog.title + index} />
           ))}
         </div>
+
+        {/* Roadmap Section */}
+        <Roadmap />
       </Container>
     </div>
   );
