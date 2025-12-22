@@ -5,7 +5,6 @@ import { Features } from "@/components/features";
 import { Companies } from "@/components/companies";
 import { GridFeatures } from "@/components/grid-features";
 import { Testimonials } from "@/components/testimonials";
-import { Roadmap } from "@/components/roadmap";
 import { CTA } from "@/components/cta";
 
 export default function Home() {
@@ -22,9 +21,6 @@ export default function Home() {
         <Features />
         <GridFeatures />
         <Testimonials />
-
-        {/* Roadmap */}
-        <Roadmap />
       </Container>
 
       {/* Bottom section */}
