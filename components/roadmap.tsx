@@ -7,83 +7,88 @@ const milestones = [
     date: "Early Nov 2025",
     title: "Start of ACAI",
     description:
-      "Experimenting, learning, and building early workflows around Retell AI and automation systems.",
+      "Early experimentation with Retell AI, workflows, and voice automation systems.",
+    highlight: false,
   },
   {
     date: "Mid Nov 2025",
-    title: "Legal Formation",
+    title: "Forming the Company",
     description:
-      "Filing as an LLC and officially establishing ACAI as a legal business entity.",
+      "Filed ACAI as an LLC and established the business as a legal entity.",
+    highlight: false,
   },
   {
     date: "Early Dec 2025",
     title: "XUNA AI Partnership",
     description:
-      "Partnering with XUNA AI and building on top of their production-grade infrastructure.",
+      "Partnered with XUNA AI and began building on top of their production-grade infrastructure.",
+    highlight: true,
   },
   {
     date: "Mid Dec 2025",
     title: "Website Launch",
     description:
-      "Launching the ACAI website so businesses can explore our systems, pricing, and vision.",
+      "Launched the ACAI website to showcase systems, pricing, and live demos.",
+    highlight: false,
   },
   {
     date: "Late Dec 2025",
     title: "First Live Client",
     description:
-      "Onboarding our first active customer using ACAI in a real production environment.",
+      "Onboarded and supported our first active customer using ACAI in production.",
+    highlight: false,
   },
 ];
 
 export function Roadmap() {
   return (
     <section className="relative py-24 overflow-hidden">
-      <div className="mx-auto max-w-6xl text-center mb-12">
-        <h2 className="text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
-          Our Journey
+      <div className="max-w-6xl mx-auto px-6">
+        <h2 className="text-3xl md:text-4xl font-semibold text-center text-white">
+          Our Roadmap
         </h2>
-        <p className="mt-3 text-neutral-600 dark:text-neutral-400">
-          A look at how ACAI is coming to life.
+        <p className="mt-3 text-center text-neutral-400 max-w-2xl mx-auto">
+          A look at how ACAI came together and where we’re heading.
         </p>
       </div>
 
-      <div className="relative overflow-hidden">
+      <div className="mt-16 overflow-hidden">
         <div className="flex gap-12 animate-scroll hover:[animation-play-state:paused] px-12">
-          {[...milestones, ...milestones].map((milestone, index) => (
+          {[...milestones, ...milestones].map((m, i) => (
             <div
-              key={index}
-              className="relative min-w-[320px] max-w-[320px]"
+              key={i}
+              className={`relative min-w-[280px] rounded-xl border backdrop-blur-md p-6 transition-all duration-300 ${
+                m.highlight
+                  ? "border-red-500/50 bg-neutral-900 scale-105 shadow-2xl"
+                  : "border-neutral-800 bg-neutral-900/80"
+              }`}
             >
-              {/* glow */}
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-red-600/20 to-blue-600/20 blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500" />
-
-              <div className="relative rounded-xl border border-neutral-800 bg-neutral-900 p-6 transition-transform duration-300 hover:scale-105">
-                <span className="inline-block mb-3 text-xs font-semibold text-red-400">
-                  {milestone.date}
-                </span>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {milestone.title}
-                </h3>
-                <p className="text-sm text-neutral-400">
-                  {milestone.description}
-                </p>
-              </div>
+              <span className="text-xs text-red-400 font-medium">
+                {m.date}
+              </span>
+              <h3 className="mt-2 text-lg font-semibold text-white">
+                {m.title}
+              </h3>
+              <p className="mt-2 text-sm text-neutral-400">
+                {m.description}
+              </p>
             </div>
           ))}
         </div>
       </div>
 
       <style jsx>{`
+        .animate-scroll {
+          animation: scroll 40s linear infinite;
+        }
+
         @keyframes scroll {
-          0% {
+          from {
             transform: translateX(0);
           }
-          100% {
+          to {
             transform: translateX(-50%);
           }
-        }
-        .animate-scroll {
-          animation: scroll 45s linear infinite;
         }
       `}</style>
     </section>
