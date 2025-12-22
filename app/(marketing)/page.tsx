@@ -1,3 +1,4 @@
+import { Roadmap } from "@/components/roadmap";
 import { Container } from "@/components/container";
 import { Hero } from "@/components/hero";
 import { Background } from "@/components/background";
