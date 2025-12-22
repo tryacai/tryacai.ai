@@ -4,84 +4,69 @@ import React from "react";
 
 const milestones = [
   {
-    date: "Early Nov 2025",
+    date: "Early November 2025",
     title: "Start of ACAI",
     description:
-      "Early experimentation with Retell AI, workflows, and voice automation systems.",
-    highlight: false,
+      "Experimenting, learning Retell AI, workflows, and internal tooling.",
   },
   {
-    date: "Mid Nov 2025",
+    date: "Mid November 2025",
     title: "Forming the Company",
     description:
-      "Filed ACAI as an LLC and established the business as a legal entity.",
-    highlight: false,
+      "Filing ACAI as an LLC and formalizing operations.",
   },
   {
-    date: "Early Dec 2025",
-    title: "XUNA AI Partnership",
+    date: "Early December 2025",
+    title: "Partnering with XUNA AI",
     description:
-      "Partnered with XUNA AI and began building on top of their production-grade infrastructure.",
-    highlight: true,
+      "Building on XUNA AI’s infrastructure and learning from their systems.",
   },
   {
-    date: "Mid Dec 2025",
+    date: "Mid December 2025",
     title: "Website Launch",
     description:
-      "Launched the ACAI website to showcase systems, pricing, and live demos.",
-    highlight: false,
+      "Launching the ACAI website with platform overview and pricing.",
   },
   {
-    date: "Late Dec 2025",
+    date: "Late December 2025",
     title: "First Live Client",
     description:
-      "Onboarded and supported our first active customer using ACAI in production.",
-    highlight: false,
+      "Onboarding our first active customer into production.",
   },
 ];
 
 export function Roadmap() {
   return (
     <section className="relative py-24 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl md:text-4xl font-semibold text-center text-white">
+      <div className="mx-auto max-w-7xl px-6">
+        <h2 className="text-center text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
           Our Roadmap
         </h2>
-        <p className="mt-3 text-center text-neutral-400 max-w-2xl mx-auto">
-          A look at how ACAI came together and where we’re heading.
+        <p className="mt-4 text-center text-neutral-600 dark:text-neutral-400">
+          A look at how ACAI is coming to life.
         </p>
-      </div>
 
-      <div className="mt-16 overflow-hidden">
-        <div className="flex gap-12 animate-scroll hover:[animation-play-state:paused] px-12">
-          {[...milestones, ...milestones].map((m, i) => (
-            <div
-              key={i}
-              className={`relative min-w-[280px] rounded-xl border backdrop-blur-md p-6 transition-all duration-300 ${
-                m.highlight
-                  ? "border-red-500/50 bg-neutral-900 scale-105 shadow-2xl"
-                  : "border-neutral-800 bg-neutral-900/80"
-              }`}
-            >
-              <span className="text-xs text-red-400 font-medium">
-                {m.date}
-              </span>
-              <h3 className="mt-2 text-lg font-semibold text-white">
-                {m.title}
-              </h3>
-              <p className="mt-2 text-sm text-neutral-400">
-                {m.description}
-              </p>
-            </div>
-          ))}
+        <div className="mt-16 overflow-hidden">
+          <div className="flex gap-12 animate-scroll hover:[animation-play-state:paused]">
+            {[...milestones, ...milestones].map((milestone, idx) => (
+              <div
+                key={idx}
+                className="relative min-w-[280px] rounded-xl border border-neutral-800 bg-neutral-900/90 p-6 text-neutral-100 transition-all hover:scale-[1.03]"
+              >
+                <span className="inline-block mb-3 rounded-full bg-red-500/20 px-3 py-1 text-xs text-red-300">
+                  {milestone.date}
+                </span>
+                <h3 className="text-lg font-semibold">{milestone.title}</h3>
+                <p className="mt-2 text-sm text-neutral-400">
+                  {milestone.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       <style jsx>{`
-        .animate-scroll {
-          animation: scroll 40s linear infinite;
-        }
-
         @keyframes scroll {
           from {
             transform: translateX(0);
@@ -89,6 +74,9 @@ export function Roadmap() {
           to {
             transform: translateX(-50%);
           }
+        }
+        .animate-scroll {
+          animation: scroll 40s linear infinite;
         }
       `}</style>
     </section>
