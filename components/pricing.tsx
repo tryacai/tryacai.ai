@@ -49,6 +49,9 @@ export function Pricing() {
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-3">
           Save up to 20% with a yearly commitment
         </p>
+        <p className="text-sm font-bold text-neutral-700 dark:text-neutral-300 mt-4 text-center">
+          Starting at $2,000, plus call volume and complexity of integrations.
+        </p>
       </div>
       <div className="mx-auto mt-4 md:mt-20 grid relative z-20 grid-cols-1 gap-6 items-stretch md:grid-cols-2 max-w-5xl">
         {tiers.map((tier, tierIdx) => (
