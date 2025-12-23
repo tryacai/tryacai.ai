@@ -5,45 +5,45 @@ import { Subheading } from "./subheading";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
+// Helper function to get all logos from /public/logos/
+function getLogosFromPublic() {
+  // This is a client component, so we maintain a list of logo files
+  // that exist in /public/logos/ directory
+  const logoFiles = [
+    "amazon.png",
+    "digital-ocean.svg",
+    "google.webp",
+    "logo-figma.svg",
+    "logo-google.svg",
+    "logo-zoom.svg",
+    "meta.png",
+    "netflix.png",
+    "onlyfans.png",
+    "uber.png",
+    "vercel.png",
+  ];
+
+  return logoFiles.map((file) => {
+    const name = file.replace(/\.(png|svg|webp)$/, "").replace(/^logo-/, "");
+    return {
+      title: name.charAt(0).toUpperCase() + name.slice(1),
+      src: `/logos/${file}`,
+      alt: `${name.charAt(0).toUpperCase() + name.slice(1)} logo`,
+    };
+  });
+}
+
 export const Companies = () => {
-  let [logos, setLogos] = useState([
-    [
-      {
-        title: "netflix",
-        src: "/logos/netflix.png",
-      },
-      {
-        title: "google",
-        src: "/logos/google.webp",
-      },
-      {
-        title: "meta",
-        src: "/logos/meta.png",
-      },
-      {
-        title: "onlyfans",
-        src: "/logos/onlyfans.png",
-      },
-    ],
-    [
-      {
-        title: "netflix second",
-        src: "/logos/netflix.png",
-      },
-      {
-        title: "google second",
-        src: "/logos/google.webp",
-      },
-      {
-        title: "meta second",
-        src: "/logos/meta.png",
-      },
-      {
-        title: "onlyfans second",
-        src: "/logos/onlyfans.png",
-      },
-    ],
-  ]);
+  const allLogos = getLogosFromPublic();
+  
+  // Split logos into sets of 4 for animation
+  const logosPerSet = 4;
+  const logoSets = [];
+  for (let i = 0; i < allLogos.length; i += logosPerSet) {
+    logoSets.push(allLogos.slice(i, i + logosPerSet));
+  }
+
+  let [logos, setLogos] = useState(logoSets);
   const [activeLogoSet, setActiveLogoSet] = useState(logos[0]);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
@@ -61,15 +61,20 @@ export const Companies = () => {
       const timer = setTimeout(() => {
         flipLogos();
       }, 3000);
-      return () => clearTimeout(timer); // Clear timeout if component unmounts or isAnimating changes
+      return () => clearTimeout(timer);
     }
   }, [isAnimating]);
 
+  // Only render if we have logos
+  if (allLogos.length === 0) {
+    return null;
+  }
+
   return (
     <div className="relative z-20 py-10 md:py-40">
-      <Heading as="h2">Trusted by the best companies</Heading>
+      <Heading as="h2">100+ Seamless Integrations</Heading>
       <Subheading className="text-center ">
-        Every AI is the choice of all the fortune 500 companies.
+        Works instantly with the platforms that power your business from calendar tools to full automation systems.
       </Subheading>
 
       <div className="flex gap-10 flex-wrap justify-center md:gap-40 relative h-full w-full mt-20">
@@ -106,7 +111,7 @@ export const Companies = () => {
             >
               <Image
                 src={logo.src}
-                alt={logo.title}
+                alt={logo.alt}
                 width="100"
                 height="100"
                 className="md:h-20 md:w-40 h-10 w-20 object-contain filter"
