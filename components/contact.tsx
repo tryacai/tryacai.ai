@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
 
 import {
   Form,
@@ -16,9 +17,9 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import {
-  IconBrandGithub,
   IconBrandLinkedin,
   IconBrandX,
+  IconBrandInstagram,
 } from "@tabler/icons-react";
 import Password from "./password";
 import { Button } from "./button";
@@ -36,11 +37,23 @@ const formSchema = z.object({
     })
     .email("Please enter valid email")
     .min(1, "Please enter email"),
+  phone: z
+    .string({
+      required_error: "Please enter your phone number",
+    })
+    .min(1, "Please enter your phone number"),
   company: z
     .string({
       required_error: "Please enter your company's name",
     })
     .min(1, "Please enter your company's name"),
+  referred: z
+    .enum(["yes", "no"], {
+      required_error: "Please select if you were referred",
+    }),
+  referralSource: z
+    .string()
+    .optional(),
   message: z
     .string({
       required_error: "Please enter your message",
@@ -56,10 +69,15 @@ export function ContactForm() {
     defaultValues: {
       name: "",
       email: "",
+      phone: "",
       company: "",
+      referred: "no",
+      referralSource: "",
       message: "",
     },
   });
+
+  const [referred, setReferred] = useState<"yes" | "no">("no");
 
   async function onSubmit(values: LoginUser) {
     try {
@@ -76,17 +94,17 @@ export function ContactForm() {
       ),
     },
     {
-      title: "github",
-      href: "https://github.com/manuarora700",
+      title: "linkedin",
+      href: "https://www.linkedin.com/company/acai-ai",
       icon: (
-        <IconBrandGithub className="h-5 w-5 text-muted dark:text-muted-dark hover:text-black" />
+        <IconBrandLinkedin className="h-5 w-5 text-muted dark:text-muted-dark hover:text-black" />
       ),
     },
     {
-      title: "linkedin",
-      href: "https://linkedin.com/manuarora28",
+      title: "instagram",
+      href: "https://www.instagram.com/tryacai.ai/?next=%2F&hl=en",
       icon: (
-        <IconBrandLinkedin className="h-5 w-5 text-muted dark:text-muted-dark hover:text-black" />
+        <IconBrandInstagram className="h-5 w-5 text-muted dark:text-muted-dark hover:text-black" />
       ),
     },
   ];
@@ -167,8 +185,31 @@ export function ContactForm() {
                 />
                 <FormField
                   control={form.control}
-                  name="company"
+                  name="phone"
                   render={({ field }) => (
+                    <FormItem>
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
+                      >
+                        Phone Number
+                      </label>
+                      <FormControl>
+                        <div className="mt-2">
+                          <input
+                            id="phone"
+                            type="tel"
+                            placeholder=""
+                            className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                     <FormItem>
                       <label
                         htmlFor="company"
@@ -191,6 +232,85 @@ export function ContactForm() {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="referred"
+                  render={({ field }) => (
+                    <FormItem>
+                      <label className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark mb-3">
+                        Did someone refer you to us?
+                      </label>
+                      <FormControl>
+                        <div className="flex items-center space-x-6">
+                          <div className="flex items-center">
+                            <input
+                              id="referred-yes"
+                              type="radio"
+                              value="yes"
+                              checked={field.value === "yes"}
+                              onChange={(e) => {
+                                field.onChange(e.target.value as "yes" | "no");
+                                setReferred("yes");
+                              }}
+                              className="w-4 h-4 text-blue-600 bg-white dark:bg-neutral-900 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-600 cursor-pointer"
+                            />
+                            <label htmlFor="referred-yes" className="ml-2 text-sm text-neutral-700 dark:text-muted-dark cursor-pointer">
+                              Yes
+                            </label>
+                          </div>
+                          <div className="flex items-center">
+                            <input
+                              id="referred-no"
+                              type="radio"
+                              value="no"
+                              checked={field.value === "no"}
+                              onChange={(e) => {
+                                field.onChange(e.target.value as "yes" | "no");
+                                setReferred("no");
+                              }}
+                              className="w-4 h-4 text-blue-600 bg-white dark:bg-neutral-900 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-600 cursor-pointer"
+                            />
+                            <label htmlFor="referred-no" className="ml-2 text-sm text-neutral-700 dark:text-muted-dark cursor-pointer">
+                              No
+                            </label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {referred === "no" && (
+                  <FormField
+                    control={form.control}
+                    name="referralSource"
+                    render={({ field }) => (
+                      <FormItem>
+                        <label
+                          htmlFor="referralSource"
+                          className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
+                        >
+                          Where did you find us?
+                        </label>
+                        <FormControl>
+                          <div className="mt-2">
+                            <input
+                              id="referralSource"
+                              type="text"
+                              placeholder="Ex: Google, LinkedIn, word of mouth, etc."
+                              className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
+                              {...field}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
                   name="message"
