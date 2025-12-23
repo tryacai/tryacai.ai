@@ -29,7 +29,7 @@ export const Footer = () => {
     },
     {
       name: "Terms of Service",
-      href: "#",
+      href: "/terms",
     },
     {
       name: "Refund Policy",
