@@ -210,6 +210,10 @@ export function ContactForm() {
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="company"
+                  render={({ field }) => (
                     <FormItem>
                       <label
                         htmlFor="company"

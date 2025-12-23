@@ -1,7 +1,7 @@
 import { Background } from "@/components/background";
 import { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/button";
 
 export const metadata: Metadata = {
   title: "Terms of Service - ACAI AI",
@@ -33,7 +33,7 @@ export default function TermsOfServicePage() {
         {/* Privacy Policy Button */}
         <div className="flex justify-center mb-12">
           <Link href="/privacy-policy">
-            <Button variant="outline" className="rounded-lg">
+            <Button variant="outline">
               View Privacy Policy
             </Button>
           </Link>
@@ -270,7 +270,7 @@ export default function TermsOfServicePage() {
         {/* Privacy Policy Button - Bottom */}
         <div className="flex justify-center mt-16">
           <Link href="/privacy-policy">
-            <Button variant="outline" className="rounded-lg">
+            <Button variant="outline">
               View Privacy Policy
             </Button>
           </Link>
