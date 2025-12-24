@@ -6,6 +6,7 @@ import { RetellWebClient } from "retell-client-js-sdk";
 export function useRetellVoiceDemo() {
   const clientRef = useRef<RetellWebClient | null>(null);
   const [isConversationActive, setIsConversationActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Create the client once. Do NOT start audio here.
@@ -23,6 +24,7 @@ export function useRetellVoiceDemo() {
     const client = clientRef.current;
     if (!client) return;
 
+    setIsLoading(true);
     const response = await fetch("/api/retell/create-web-call", {
       method: "POST",
     });
@@ -38,8 +40,12 @@ export function useRetellVoiceDemo() {
       throw new Error("Missing access_token");
     }
 
-    await client.startCall({ accessToken });
-    setIsConversationActive(true);
+    try {
+      await client.startCall({ accessToken });
+      setIsConversationActive(true);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const stopConversation = useCallback(() => {
@@ -50,6 +56,7 @@ export function useRetellVoiceDemo() {
       client.stopCall();
     } finally {
       setIsConversationActive(false);
+      setIsLoading(false);
     }
   }, []);
 
@@ -63,6 +70,7 @@ export function useRetellVoiceDemo() {
 
   return {
     isConversationActive,
+    isLoading,
     toggleConversation,
   };
 }

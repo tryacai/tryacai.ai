@@ -3,7 +3,7 @@ import "./globals.css";
 import { GeistSans } from "geist/font/sans";
 import { cn } from "@/lib/utils";
 import { ViewTransitions } from "next-view-transitions";
-import { ThemeProvider } from "@/context/theme-provider";
+ 
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tryacai.ai"),
@@ -39,21 +39,14 @@ export default function RootLayout({
 }>) {
   return (
     <ViewTransitions>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className="dark">
         <body
           className={cn(
             GeistSans.className,
             "bg-black text-white antialiased h-full w-full"
           )}
         >
-          <ThemeProvider
-            attribute="class"
-            enableSystem
-            disableTransitionOnChange
-            defaultTheme="dark"
-          >
-            {children}
-          </ThemeProvider>
+          {children}
         </body>
       </html>
     </ViewTransitions>
