@@ -191,7 +191,7 @@ export const Hero = () => {
           duration: 0.5,
           delay: 0.25,
         }}
-        className="text-center mt-4 text-sm md:text-base text-muted dark:text-muted-dark max-w-2xl mx-auto relative z-10"
+        className="text-center mt-4 text-sm md:text-base max-w-2xl mx-auto relative z-10 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-medium"
       >
         Test one of our active clients&apos; AI receptionists in real time.
       </motion.p>
@@ -211,27 +211,42 @@ export const Hero = () => {
         }}
         className="flex flex-col items-center justify-center mt-6 relative z-10 gap-3"
       >
-        <button
-          onClick={toggleConversation}
-          className={`w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 ${
-            isConversationActive ? 'animate-pulse' : ''
-          }`}
-          aria-label="Voice demo"
-        >
-          <Mic className="w-8 h-8 text-white" />
-        </button>
+        <div className="relative">
+          <button
+            onClick={toggleConversation}
+            className={`w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 relative z-10 ${
+              isConversationActive ? 'animate-pulse' : ''
+            }`}
+            aria-label="Voice demo"
+          >
+            <Mic className="w-8 h-8 text-white" />
+          </button>
+          {isConversationActive && (
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] opacity-30 animate-pulse scale-125" />
+          )}
+        </div>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4, duration: 0.3 }}
           className={`px-4 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 ${
             isConversationActive
-              ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-600 dark:text-green-400 border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.3)]'
-              : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700'
+              ? 'text-green-600 dark:text-green-400 italic'
+              : 'text-neutral-400 dark:text-neutral-400'
           }`}
         >
-          {isConversationActive ? 'Tap again to end demo' : 'Tap to start live demo'}
+          {isConversationActive ? '(call is NOW live)' : 'Try out live call'}
         </motion.div>
+        {isConversationActive && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.3 }}
+            className="text-xs text-neutral-500 dark:text-neutral-400"
+          >
+            (press again to turn off call)
+          </motion.div>
+        )}
       </motion.div>
       <motion.div
         initial={{
