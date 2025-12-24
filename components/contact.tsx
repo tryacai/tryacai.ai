@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   Form,
@@ -78,6 +78,15 @@ export function ContactForm() {
   });
 
   const [referred, setReferred] = useState<"yes" | "no">("no");
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("success") === "true") {
+      setSubmitted(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   async function onSubmit(values: LoginUser) {
     try {
@@ -113,24 +122,46 @@ export function ContactForm() {
     <Form {...form}>
       <div className="flex relative z-20 items-center w-full justify-center px-4 py-4 lg:py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-md">
-          <div>
-            <h1 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-black dark:text-white">
-              Contact Us
-            </h1>
-            <p className="mt-4 text-muted dark:text-muted-dark  text-sm max-w-sm">
-              Get started with ACAI. We're here to help.
-            </p>
-            <p className="mt-2 text-muted dark:text-muted-dark  text-sm max-w-sm">
-              Have questions or need assistance? Our team is ready to help you with any inquiries you may have. Fill out the form below, and we'll get back to you as soon as possible.
-            </p>
-          </div>
-
-          <div className="py-10">
-            <div>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+          {submitted ? (
+            <div className="flex flex-col items-center justify-center text-center py-12">
+              <div className="mb-4 text-4xl">✓</div>
+              <h1 className="text-2xl font-bold leading-9 tracking-tight text-black dark:text-white mb-4">
+                Message Sent!
+              </h1>
+              <p className="text-muted dark:text-muted-dark text-base max-w-sm">
+                We'll get back to you at <strong>team@tryacai.ai</strong> soon.
+              </p>
+              <button
+                onClick={() => {
+                  setSubmitted(false);
+                  form.reset();
+                }}
+                className="mt-6 px-6 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
               >
+                Send another message
+              </button>
+            </div>
+          ) : (
+            <>
+              <div>
+                <h1 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-black dark:text-white">
+                  Contact Us
+                </h1>
+                <p className="mt-4 text-muted dark:text-muted-dark  text-sm max-w-sm">
+                  Get started with ACAI. We're here to help.
+                </p>
+                <p className="mt-2 text-muted dark:text-muted-dark  text-sm max-w-sm">
+                  Have questions or need assistance? Our team is ready to help you with any inquiries you may have. Fill out the form below, and we'll get back to you as soon as possible.
+                </p>
+              </div>
+
+              <div className="py-10">
+                <div>
+                  <form
+                    action="https://formspree.io/f/xoqykpww"
+                    method="POST"
+                    className="space-y-6"
+                  >
                 <FormField
                   control={form.control}
                   name="name"
@@ -146,7 +177,8 @@ export function ContactForm() {
                         <div className="mt-2">
                           <input
                             id="name"
-                            type="name"
+                            type="text"
+                            name="name"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -173,6 +205,7 @@ export function ContactForm() {
                           <input
                             id="email"
                             type="email"
+                            name="email"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -199,6 +232,7 @@ export function ContactForm() {
                           <input
                             id="phone"
                             type="tel"
+                            name="phone"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -225,7 +259,8 @@ export function ContactForm() {
                         <div className="mt-2">
                           <input
                             id="company"
-                            type="company"
+                            type="text"
+                            name="company"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -251,6 +286,7 @@ export function ContactForm() {
                             <input
                               id="referred-yes"
                               type="radio"
+                              name="referred"
                               value="yes"
                               checked={field.value === "yes"}
                               onChange={(e) => {
@@ -267,6 +303,7 @@ export function ContactForm() {
                             <input
                               id="referred-no"
                               type="radio"
+                              name="referred"
                               value="no"
                               checked={field.value === "no"}
                               onChange={(e) => {
@@ -303,6 +340,7 @@ export function ContactForm() {
                             <input
                               id="referralSource"
                               type="text"
+                              name="referralSource"
                               placeholder="Ex: Google, LinkedIn, word of mouth, etc."
                               className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                               {...field}
@@ -331,6 +369,7 @@ export function ContactForm() {
                           <textarea
                             rows={5}
                             id="message"
+                            name="message"
                             placeholder="Ex: interested in yearly plan, want to discuss more"
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -343,7 +382,12 @@ export function ContactForm() {
                 />
 
                 <div>
-                  <Button className="w-full">Submit</Button>
+                  <button
+                    type="submit"
+                    className="w-full px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02]"
+                  >
+                    Submit
+                  </button>
                 </div>
               </form>
               
@@ -359,6 +403,8 @@ export function ContactForm() {
               </div>
             </div>
           </div>
+            </>
+          )}
           <div className="flex items-center justify-center space-x-4 py-4">
             {socials.map((social) => (
               <Link href={social.href} key={social.title}>
