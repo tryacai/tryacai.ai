@@ -22,14 +22,6 @@ export default function PricingPage() {
         <ContactForm />
         <div className="relative w-full z-20 hidden md:flex border-l border-neutral-100 dark:border-neutral-900 overflow-hidden bg-gray-50 dark:bg-black items-center justify-center">
           <div className="max-w-sm mx-auto">
-            <FeaturedTestimonials />
-            <p
-              className={cn(
-                "font-semibold text-xl text-center dark:text-muted-dark text-muted"
-              )}
-            >
-              ACAI AI is trusted by service businesses
-            </p>
             <p
               className={cn(
                 "font-normal text-base text-center text-neutral-500 dark:text-neutral-200 mt-8"

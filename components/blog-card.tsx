@@ -36,7 +36,7 @@ export const BlogCard = ({ blog }: { blog: BlogWithSlug }) => {
               alt={blog.author.name}
               width={20}
               height={20}
-              className="h-full w-full aspect-square object-cover object-top scale-150 -translate-y-[15%]"
+              className="h-full w-full aspect-square object-cover object-[center_40%] scale-110"
             />
           </div>
           <p className="text-sm font-normal text-muted">{blog.author.name}</p>
