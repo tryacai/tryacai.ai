@@ -30,13 +30,15 @@ export const BlogCard = ({ blog }: { blog: BlogWithSlug }) => {
       )}
       <div className="p-4 md:p-8 bg-white dark:bg-neutral-900">
         <div className="flex space-x-2 items-center  mb-2">
-          <Image
-            src={blog.author.src}
-            alt={blog.author.name}
-            width={20}
-            height={20}
-            className="rounded-full h-5 w-5"
-          />
+          <div className="rounded-full overflow-hidden h-5 w-5 aspect-square">
+            <Image
+              src={blog.author.src}
+              alt={blog.author.name}
+              width={20}
+              height={20}
+              className="h-full w-full aspect-square object-cover object-[center_45%] scale-125"
+            />
+          </div>
           <p className="text-sm font-normal text-muted">{blog.author.name}</p>
         </div>
         <p className="text-lg font-bold mb-4">
