@@ -3,10 +3,14 @@ import React from "react";
 import { Logo } from "./Logo";
 
 export const Footer = () => {
-  const links = [
+  const primaryLinks = [
     {
       name: "Pricing",
       href: "/pricing",
+    },
+    {
+      name: "Schedule Demo",
+      href: "/schedule-demo",
     },
     {
       name: "Blog",
@@ -17,32 +21,26 @@ export const Footer = () => {
       href: "/contact",
     },
   ];
-  const legal = [
+  
+  const legalLinks = [
     {
       name: "Privacy Policy",
-      href: "#",
+      href: "/privacy-policy",
     },
     {
       name: "Terms of Service",
-      href: "#",
-    },
-    {
-      name: "Refund Policy",
-      href: "#",
+      href: "/terms",
     },
   ];
+  
   const socials = [
     {
-      name: "Twitter",
-      href: "https://twitter.com/mannupaaji",
-    },
-    {
       name: "LinkedIn",
-      href: "https://linkedin.com/in/manuarora28",
+      href: "https://www.linkedin.com/company/acai-ai",
     },
     {
-      name: "GitHub",
-      href: "https://github.com/manuarora700",
+      name: "Instagram",
+      href: "https://www.instagram.com/tryacai.ai/?next=%2F&hl=en",
     },
   ];
   return (
@@ -53,12 +51,15 @@ export const Footer = () => {
             <div className="mr-4  md:flex mb-4">
               <Logo />
             </div>
-            <div>Copyright &copy; 2024 Every Labs</div>
+            <div>© {new Date().getFullYear()} ACAI AI</div>
             <div className="mt-2">All rights reserved</div>
           </div>
-          <div className="grid grid-cols-3 gap-10 items-start mt-10 md:mt-0">
-            <div className="flex justify-center space-y-4 flex-col mt-4">
-              {links.map((link) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start mt-10 md:mt-0">
+            <div className="flex justify-start space-y-4 flex-col">
+              <h3 className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 mb-2">
+                Navigation
+              </h3>
+              {primaryLinks.map((link) => (
                 <Link
                   key={link.name}
                   className="transition-colors hover:text-black text-muted dark:text-muted-dark dark:hover:text-neutral-400 text-xs sm:text-sm"
@@ -68,8 +69,11 @@ export const Footer = () => {
                 </Link>
               ))}
             </div>
-            <div className="flex justify-center space-y-4 flex-col mt-4">
-              {legal.map((link) => (
+            <div className="flex justify-start space-y-4 flex-col">
+              <h3 className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 mb-2">
+                Legal
+              </h3>
+              {legalLinks.map((link) => (
                 <Link
                   key={link.name}
                   className="transition-colors hover:text-black text-muted dark:text-muted-dark dark:hover:text-neutral-400 text-xs sm:text-sm"
@@ -79,7 +83,10 @@ export const Footer = () => {
                 </Link>
               ))}
             </div>
-            <div className="flex justify-center space-y-4 flex-col mt-4">
+            <div className="flex justify-start space-y-4 flex-col">
+              <h3 className="font-semibold text-sm text-neutral-800 dark:text-neutral-200 mb-2">
+                Connect
+              </h3>
               {socials.map((link) => (
                 <Link
                   key={link.name}
@@ -94,7 +101,7 @@ export const Footer = () => {
         </div>
       </div>
       <p className="text-center text-5xl md:text-9xl lg:text-[18rem] font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 dark:from-neutral-950 to-neutral-200 dark:to-neutral-800 inset-x-0">
-        EVERY AI
+        ACAI AI
       </p>
     </div>
   );

@@ -11,41 +11,40 @@ import { SkeletonThree } from "./skeletons/third";
 export const Features = () => {
   const features = [
     {
-      title: "Generate images with text",
+      title: "Our services",
       description:
-        "Generate images from a text prompt, a video, or a video segment in bulk at the speed of light.",
+        "Elevate your business and save time with our smart automation tools.",
       skeleton: <SkeletonOne />,
       className:
         "col-span-1 lg:col-span-4 border-b border-r dark:border-neutral-800",
     },
     {
-      title: "Create stupid simple chatbots",
+      title: "Automated Follow-Ups That Keep Clients Coming Back",
       description:
-        "Create Chatbots with a single button click. Customize as per your requirements and the AI will take care of the rest.",
+        "Alongside your 24/7 AI receptionist, ACAI automates reminders and follow-ups to keep customers engaged and uncover new opportunities.",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
-      title: "We support every single LLM",
+      title: "Built on Reliable, Proven Technology",
       description:
-        "Whether it's OpenAI, GroQ or Your Mom's Basement LLM, we support everything.",
-      skeleton: <SkeletonThree />,
+        "Behind the scenes, ACAI runs on the same infrastructure trusted by global platforms. That means reliability, security, and performance, without you ever needing to think about it.",
+      skeleton: <SkeletonFour />,
       className: "col-span-1 lg:col-span-3 border-r dark:border-neutral-800",
     },
     {
-      title: "Deploy in seconds",
+      title: "Built for Home Service Businesses",
       description:
-        "With our blazing fast, state of the art, cutting edge, we are so back cloud servies (read AWS) - you can deploy your model in seconds.",
-      skeleton: <SkeletonFour />,
+        "Powered by advanced LLM technology, the smart brain that handles scheduling, pricing, and emergencies automatically.",
+      skeleton: <SkeletonThree />,
       className: "col-span-1 lg:col-span-3",
     },
   ];
   return (
     <div className="relative z-20 py-10 lg:py-40 overflow-hidden">
-      <Heading as="h2">Packed with thousands of features</Heading>
+      <Heading as="h2">Custom Integration?</Heading>
       <Subheading className="text-center ">
-        From Image generation to video generation, Everything AI has APIs for
-        literally everything. It can even create this website copy for you.
+        No worries! We customize AI tools designed to help your plumbing and HVAC businesses capture more jobs book faster and 𝑵𝒆𝒗𝒆𝒓 miss a call again.
       </Subheading>
 
       <div className="relative">

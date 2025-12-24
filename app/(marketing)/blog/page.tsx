@@ -5,13 +5,14 @@ import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { Subheading } from "@/components/subheading";
 import { BlogCard } from "@/components/blog-card";
+import { Roadmap } from "@/components/roadmap";
 
 export const metadata: Metadata = {
-  title: "Blogs - Every AI",
+  title: "Blog - ACAI AI",
   description:
-    "Everything AI is a platform that provides a wide range of AI tools and services to help you stay on top of your business. Generate images, text and everything else that you need to get your business off the ground.",
+    "Discover insights and expert advice about AI receptionists for home service businesses. Learn how ACAI AI helps plumbers and HVAC companies never miss a call.",
   openGraph: {
-    images: ["https://ai-saas-template-aceternity.vercel.app/banner.png"],
+    images: ["/finalwebsitepreviewimage.png"],
   },
 };
 
@@ -30,17 +31,15 @@ export default async function ArticlesIndex() {
           </Subheading>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-20 w-full mb-10">
+        {/* Featured / real blog posts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-20 w-full mb-20">
           {blogs.slice(0, 2).map((blog, index) => (
             <BlogCard blog={blog} key={blog.title + index} />
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full relative z-20">
-          {blogs.slice(2).map((blog, index) => (
-            <BlogCard blog={blog} key={blog.title + index} />
-          ))}
-        </div>
+        {/* Roadmap */}
+        <Roadmap />
       </Container>
     </div>
   );

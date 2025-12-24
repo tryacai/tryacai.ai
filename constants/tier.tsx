@@ -6,94 +6,80 @@ export type Tier = {
   priceYearly: string;
   description: string;
   features: string[];
+  featuresMonthly?: string[];
+  featuresYearly?: string[];
   featured: boolean;
   cta: string;
   onClick: () => void;
+  footnote?: string;
+  yearlyNote?: string;
+  yearlyBenefits?: string;
 };
 
 export const tiers: Tier[] = [
   {
-    name: "Hobby",
-    id: "tier-hobby",
-    href: "#",
-    priceMonthly: "$4/mo",
-    priceYearly: "$30/yr",
-    description: "Best for developers trying to use the platform.",
+    name: "Setup & Onboarding",
+    id: "tier-setup",
+    href: "/contact",
+    priceMonthly: "Starting at $2,000 (one-time)",
+    priceYearly: "Starting at $2,000 (one-time)",
+    description: "One-time investment",
     features: [
-      "5 API requests per day",
-      "Access to basic API endpoints",
-      "Email support within 48 hours",
-      "Community forum access",
-      "Monthly newsletter",
+      "System design and automation architecture",
+      "Custom workflow development",
+      "CRM, phone, and platform integrations",
+      "Call logic, routing, and failover handling",
+      "Testing, optimization, and deployment",
+      "Done-for-you implementation",
     ],
     featured: false,
-    cta: "Browse Components",
-    onClick: () => {},
+    cta: "Get Started",
+    onClick: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/contact';
+      }
+    },
+    footnote: "Final setup cost depends on scope and complexity.",
   },
   {
-    name: "Starter",
-    id: "tier-starter",
-    href: "#",
-    priceMonthly: "$8/mo",
-    priceYearly: "$60/yr",
-    description: "Perfect for small businesses",
+    name: "Ongoing Management",
+    id: "tier-monthly",
+    href: "/contact",
+    priceMonthly: "Starting at $400 / month",
+    priceYearly: "Starting at $320 / month",
+    description: "12-month commitment required.",
     features: [
-      "Everything in Hobby, plus",
-      "50 API requests per day",
-      "Access to advanced API endpoints",
-      "Email support within 24 hours",
-      "Community forum access",
-      "Monthly newsletter",
-      "Self hosting options",
+      "Monitoring and maintenance",
+      "Ongoing system optimizations",
+      "Workflow adjustments",
+      "Performance tracking",
+      "Support and troubleshooting",
     ],
-    featured: false,
-    cta: "Buy Now",
-    onClick: () => {},
-  },
-  {
-    name: "Professional",
-    id: "tier-professional",
-    href: "#",
-    priceMonthly: "$12/mo",
-    priceYearly: "$100/yr",
-    description: "Ideal for small to mid range startups",
-    features: [
-      "Everything in Starter, plus",
-      "500 API requests per day",
-      "Access to super advanced API endpoints",
-      "Email support within 12 hours",
-      "Private Community access",
-      "Monthly retreats",
-      "Self hosting options",
-      "Private infrastructure",
-      "On-Prem deployments",
+    featuresMonthly: [
+      "Monitoring and maintenance",
+      "Ongoing system optimizations",
+      "Workflow adjustments",
+      "Performance tracking",
+      "Support and troubleshooting",
+      "3-month minimum commitment",
+    ],
+    featuresYearly: [
+      "Monitoring and maintenance",
+      "Ongoing system optimizations",
+      "Workflow adjustments",
+      "Performance tracking",
+      "Support and troubleshooting",
+      "Fee reevaluation at 6-month mark",
     ],
     featured: true,
-    cta: "Buy Now",
-    onClick: () => {},
-  },
-
-  {
-    name: "Enterprise",
-    id: "tier-enterprise",
-    href: "#",
-    priceMonthly: "Contact Us",
-    priceYearly: "Contact Us",
-    description: "Best for big fortune 500 companies.",
-    features: [
-      "Everything in professional, plus",
-      "500K API requests per day",
-      "Access to super advanced API endpoints",
-      "Email support within 12 hours",
-      "Private Community access",
-      "Monthly retreats",
-      "Self hosting options",
-      "Private infrastructure",
-      "On-Prem deployments",
-      "I retweet your tweets personally",
-    ],
-    featured: false,
-    cta: "Contact Us",
-    onClick: () => {},
+    cta: "Get Started",
+    onClick: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/contact';
+      }
+    },
+    footnote: "Pricing adjusts based on usage and services.",
+    yearlyNote: "12-month commitment required. Priority support, expanded access, and preferred optimization cadence included.",
+    yearlyBenefits: "Priority support, expanded access, and preferred optimization cadence included.",
   },
 ];

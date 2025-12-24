@@ -12,8 +12,9 @@ export const CTA = () => {
             <div
               className="absolute inset-0 w-full h-full opacity-10 bg-noise fade-vignette [mask-image:radial-gradient(#fff,transparent,75%)]"
               style={{
-                backgroundImage: "url(/noise.webp)",
-                backgroundSize: "30%",
+                backgroundImage: "url(/images/demo-gradient.svg), url(/noise.webp)",
+                backgroundSize: "cover, 30%",
+                backgroundBlendMode: "overlay",
               }}
             ></div>
             <div
@@ -25,17 +26,18 @@ export const CTA = () => {
 
             <div className="relative px-6 pb-14 pt-20 sm:px-10 sm:pb-20 lg:px-[4.5rem]">
               <h2 className="  text-center text-balance mx-auto text-3xl md:text-5xl font-semibold tracking-[-0.015em] text-white">
-                Ready to signup and join the waitlist?
+                Ready to transform your business?
               </h2>
               <p className="mt-4 max-w-[26rem] text-center mx-auto  text-base/6 text-neutral-200">
                 <Balancer>
-                  Get instant access to our state of the art project and join
-                  the waitlist.
+                  Sign up for a demo to access our live experience and see how ACAI helps service businesses capture more opportunities.
                 </Balancer>
               </p>
 
               <div className="relative z-10 mx-auto flex justify-center mt-6">
-                <Button>Join Waitlist</Button>
+                <Link href="/schedule-demo">
+                  <Button>Schedule Demo</Button>
+                </Link>
               </div>
             </div>
           </div>
