@@ -178,7 +178,6 @@ export function ContactForm() {
                           <input
                             id="name"
                             type="text"
-                            name="name"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -205,7 +204,6 @@ export function ContactForm() {
                           <input
                             id="email"
                             type="email"
-                            name="email"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -232,7 +230,6 @@ export function ContactForm() {
                           <input
                             id="phone"
                             type="tel"
-                            name="phone"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -260,7 +257,6 @@ export function ContactForm() {
                           <input
                             id="company"
                             type="text"
-                            name="company"
                             placeholder=""
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
@@ -340,7 +336,6 @@ export function ContactForm() {
                             <input
                               id="referralSource"
                               type="text"
-                              name="referralSource"
                               placeholder="Ex: Google, LinkedIn, word of mouth, etc."
                               className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                               {...field}
@@ -369,7 +364,6 @@ export function ContactForm() {
                           <textarea
                             rows={5}
                             id="message"
-                            name="message"
                             placeholder="Ex: interested in yearly plan, want to discuss more"
                             className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
                             {...field}
