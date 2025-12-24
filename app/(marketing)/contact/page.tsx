@@ -1,6 +1,5 @@
 import { Background } from "@/components/background";
 import { Metadata } from "next";
-import { FeaturedTestimonials } from "@/components/featured-testimonials";
 import { cn } from "@/lib/utils";
 import { HorizontalGradient } from "@/components/horizontal-gradient";
 import { ContactForm } from "@/components/contact";
