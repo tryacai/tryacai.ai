@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    const RETELL_API_KEY = process.env.RETELL_API_KEY;
-    const RETELL_AGENT_ID = process.env.RETELL_AGENT_ID;
+    const RETELL_API_KEY = process.env.RETELL_API_KEY_CRM;
+    const RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_CRM;
 
     if (!RETELL_API_KEY || !RETELL_AGENT_ID) {
+      console.error("Missing Retell credentials");
       return NextResponse.json(
         { error: "Missing credentials" },
         { status: 500 }
