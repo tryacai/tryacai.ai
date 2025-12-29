@@ -95,12 +95,16 @@ export function ContactForm() {
     setSubmitError(null);
 
     try {
+      const formData = new FormData();
+      
+      // Append all form fields to FormData
+      Object.entries(values).forEach(([key, value]) => {
+        formData.append(key, String(value || ""));
+      });
+
       const response = await fetch("https://formspree.io/f/xoqykpww", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
+        body: formData,
       });
 
       if (!response.ok) {
