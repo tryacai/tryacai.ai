@@ -102,18 +102,26 @@ export function ContactForm() {
         formData.append(key, String(value || ""));
       });
 
-      const response = await fetch("https://formspree.io/f/xoqykpww", {
+      const response = await fetch("https://formspree.io/f/maqyarlv", {
         method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit form. Please try again.");
+      if (response.ok) {
+        // Success: show message and reset form
+        setSubmitted(true);
+        form.reset();
+      } else {
+        // Log detailed error information for debugging
+        console.error("Form submission failed with status:", response.status);
+        const errorData = await response.json();
+        console.error("Error response body:", errorData);
+        
+        setSubmitError("Failed to submit form. Please try again.");
       }
-
-      // Success: show message and reset form
-      setSubmitted(true);
-      form.reset();
     } catch (error) {
       const errorMessage =
         error instanceof Error
