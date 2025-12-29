@@ -79,6 +79,8 @@ export function ContactForm() {
 
   const [referred, setReferred] = useState<"yes" | "no">("no");
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -89,9 +91,35 @@ export function ContactForm() {
   }, []);
 
   async function onSubmit(values: LoginUser) {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
     try {
-      console.log("submitted form", values);
-    } catch (e) {}
+      const response = await fetch("https://formspree.io/f/xoqykpww", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form. Please try again.");
+      }
+
+      // Success: show message and reset form
+      setSubmitted(true);
+      form.reset();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred. Please try again.";
+      setSubmitError(errorMessage);
+      console.error("Form submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const socials = [
@@ -158,8 +186,7 @@ export function ContactForm() {
               <div className="py-10">
                 <div>
                   <form
-                    action="https://formspree.io/f/xoqykpww"
-                    method="POST"
+                    onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
                   >
                 <FormField
@@ -378,11 +405,20 @@ export function ContactForm() {
                 <div>
                   <button
                     type="submit"
-                    className="w-full px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02]"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100"
                   >
-                    Submit
+                    {isSubmitting ? "Submitting..." : "Submit"}
                   </button>
                 </div>
+
+                {submitError && (
+                  <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-4">
+                    <p className="text-sm font-medium text-red-800 dark:text-red-300">
+                      {submitError}
+                    </p>
+                  </div>
+                )}
               </form>
               
               <div className="mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-800">
