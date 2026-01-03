@@ -28,13 +28,8 @@ export const CTA = () => {
               <h2 className="  text-center text-balance mx-auto text-3xl md:text-5xl font-semibold tracking-[-0.015em] text-white">
                 Ready to transform your business?
               </h2>
-              <p className="mt-4 max-w-[26rem] text-center mx-auto  text-base/6 text-neutral-200">
-                <Balancer>
-                  Schedule a demo
-                </Balancer>
-              </p>
 
-              <div className="relative z-10 mx-auto flex justify-center mt-8">
+              <div className="relative z-10 mx-auto flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
                 <Link href="/schedule-demo">
                   <button className="group relative px-8 py-4 text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50">
                     {/* Gradient background */}
@@ -52,12 +47,20 @@ export const CTA = () => {
                     </span>
                   </button>
                 </Link>
-              </div>
 
-              {/* Optional "Get Connected" supporting text */}
-              <p className="mt-6 text-center text-sm text-neutral-300">
-                Get Connected
-              </p>
+                <Link href="/contact">
+                  <button className="group relative px-8 py-4 text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50">
+                    {/* Gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-red-600 transition-all duration-300 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-red-500"></div>
+                    
+                    {/* Animated gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                    
+                    {/* Button text */}
+                    <span className="relative z-10">Get Connected</span>
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -112,7 +112,7 @@ const testimonials = [
     designation: "Performance Manager",
   },
   {
-    name: "Kathy Adams",
+    name: "Mark Adams",
     quote:
       "It helps us achieve what was once thought impossible. The AI's capabilities are groundbreaking and have opened new avenues for us.",
     src: "https://i.pravatar.cc/150?img=13",
@@ -189,9 +189,14 @@ function Testimonial({
   src,
   designation,
   className,
+  onMouseEnter,
+  onMouseLeave,
   ...props
 }: Omit<React.ComponentPropsWithoutRef<"figure">, keyof Testimonial> &
-  Testimonial) {
+  Testimonial & {
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
+  }) {
   let animationDelay = useMemo(() => {
     let possibleAnimationDelays = [
       "0s",
@@ -210,12 +215,14 @@ function Testimonial({
   return (
     <figure
       className={cn(
-        "animate-fade-in rounded-3xl bg-transparent p-8 opacity-0 shadow-derek dark:bg-neutral-900",
+        "animate-fade-in rounded-3xl bg-transparent p-8 opacity-0 shadow-derek dark:bg-neutral-900 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.3),0_0_30px_rgba(147,51,234,0.3),0_0_30px_rgba(239,68,68,0.3)]",
         className
       )}
       style={{
         animationDelay,
       }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       {...props}
     >
       <div className="flex flex-col items-start">
@@ -255,8 +262,10 @@ function TestimonialColumn({
   containerClassName?: (reviewIndex: number) => string;
   shift?: number;
 }) {
+  const [isPaused, setIsPaused] = useState(false);
+
   return (
-    <TestimonialColumnContainer className={cn(className)} shift={shift}>
+    <TestimonialColumnContainer className={cn(className)} shift={shift} isPaused={isPaused}>
       {testimonials
         .concat(testimonials)
         .map((testimonial, testimonialIndex) => (
@@ -269,6 +278,8 @@ function TestimonialColumn({
             className={containerClassName?.(
               testimonialIndex % testimonials.length
             )}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
           />
         ))}
     </TestimonialColumnContainer>
