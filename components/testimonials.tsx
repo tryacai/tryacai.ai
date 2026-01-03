@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Heading } from "./heading";
 import { Subheading } from "./subheading";
