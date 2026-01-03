@@ -30,15 +30,34 @@ export const CTA = () => {
               </h2>
               <p className="mt-4 max-w-[26rem] text-center mx-auto  text-base/6 text-neutral-200">
                 <Balancer>
-                  Sign up for a demo to access our live experience and see how ACAI helps service businesses capture more opportunities.
+                  Schedule a demo
                 </Balancer>
               </p>
 
-              <div className="relative z-10 mx-auto flex justify-center mt-6">
+              <div className="relative z-10 mx-auto flex justify-center mt-8">
                 <Link href="/schedule-demo">
-                  <Button>Schedule Demo</Button>
+                  <button className="group relative px-8 py-4 text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50">
+                    {/* Gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-red-600 transition-all duration-300 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-red-500"></div>
+                    
+                    {/* Animated gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                    
+                    {/* Button text */}
+                    <span className="relative z-10 flex items-center gap-2">
+                      Schedule Demo
+                      <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </button>
                 </Link>
               </div>
+
+              {/* Optional "Get Connected" supporting text */}
+              <p className="mt-6 text-center text-sm text-neutral-300">
+                Get Connected
+              </p>
             </div>
           </div>
         </div>
