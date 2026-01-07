@@ -193,36 +193,26 @@ const TypewriterHeadline = () => {
       }}
       className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10 whitespace-nowrap"
     >
-      {/* Render typed characters with white prefix and gradient suffix, single line, no hover effects */}
+      {/* Render prefix in solid white and suffix with one continuous gradient span */}
       {(() => {
         const base = "Never Miss a ";
         const baseLen = base.length;
+        const prefix = text.slice(0, Math.min(text.length, baseLen)).replace(/ /g, "\u00A0");
+        const suffix = text.length > baseLen ? text.slice(baseLen).replace(/ /g, "\u00A0") : "";
         return (
           <span>
-            {text.split("").map((char, index) => {
-              const content = char === " " ? "\u00A0" : char;
-              const isSuffix = index >= baseLen;
-              return (
-                <span
-                  key={`${phase}-${index}`}
-                  className={
-                    isSuffix
-                      ? "bg-gradient-to-r from-red-500 via-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent inline-block"
-                      : "text-white inline-block"
-                  }
-                  style={
-                    isSuffix
-                      ? {
-                          filter:
-                            "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
-                        }
-                      : undefined
-                  }
-                >
-                  {content}
-                </span>
-              );
-            })}
+            <span className="text-white inline-block">{prefix}</span>
+            {suffix && (
+              <span
+                className="inline-block bg-gradient-to-r from-red-500 via-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+                style={{
+                  filter:
+                    "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+                }}
+              >
+                {suffix}
+              </span>
+            )}
             <motion.span
               className="inline-block ml-1 align-baseline"
               animate={{ opacity: [1, 0, 1] }}

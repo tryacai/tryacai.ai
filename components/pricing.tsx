@@ -82,7 +82,7 @@ export function Pricing() {
             key={tier.id}
             className={cn(
               tier.featured
-                ? "relative bg-[radial-gradient(164.75%_100%_at_50%_0%,#334155_0%,#0F172A_48.73%)] shadow-2xl shadow-[0_0_32px_6px_rgba(168,85,247,0.18),_0_0_22px_4px_rgba(236,72,153,0.16),_0_0_18px_3px_rgba(59,130,246,0.14)] ring-1 ring-white/5"
+                ? "relative bg-[radial-gradient(164.75%_100%_at_50%_0%,#4c1d95_0%,#0b0a0f_48.73%)] shadow-2xl shadow-[0_0_32px_6px_rgba(168,85,247,0.18),_0_0_22px_4px_rgba(236,72,153,0.16),_0_0_18px_3px_rgba(147,51,234,0.14)] ring-1 ring-white/5"
                 : " bg-white dark:bg-black",
               "rounded-lg px-6 py-8 sm:mx-8 lg:mx-0  h-full flex flex-col justify-between"
             )}
