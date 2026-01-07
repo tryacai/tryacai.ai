@@ -7,10 +7,10 @@ export default function ScheduleDemoPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold text-black dark:text-white mb-4">
-              Schedule a Demo
+              Schedule a Demo — free, no commitment
             </h1>
             <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-2">
-              See how ACAI fits your business.
+              See how ACAI fits your business with zero cost or obligation.
             </p>
             <p className="text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
               Book a live walkthrough with our team to explore how ACAI can help you capture more opportunities, streamline operations, and scale with confidence.
