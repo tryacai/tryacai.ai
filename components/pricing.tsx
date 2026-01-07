@@ -171,18 +171,18 @@ export function Pricing() {
                   </li>
                 ))}
               </ul>
-              {active === \"yearly\" && tier.yearlyNote && (
+              {active === "yearly" && tier.yearlyNote && (
                 <p className={cn(
-                  tier.featured ? \"text-neutral-300\" : \"text-neutral-600 dark:text-neutral-400\",
-                  \"mt-4 text-sm leading-6\"
+                  tier.featured ? "text-neutral-300" : "text-neutral-600 dark:text-neutral-400",
+                  "mt-4 text-sm leading-6"
                 )}>
                   {tier.yearlyNote}
                 </p>
               )}
               {tier.footnote && (
                 <p className={cn(
-                  tier.featured ? \"text-neutral-400\" : \"text-neutral-500 dark:text-neutral-500\",
-                  \"mt-4 text-xs italic leading-5\"
+                  tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
+                  "mt-4 text-xs italic leading-5"
                 )}>
                   {tier.footnote}
                 </p>
