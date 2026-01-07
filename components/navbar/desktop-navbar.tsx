@@ -2,6 +2,7 @@
 import { Logo } from "../Logo";
 import { Button } from "../button";
 import { NavBarItem } from "./navbar-item";
+import { Phone } from "lucide-react";
 import {
   useMotionValueEvent,
   useScroll,
@@ -64,11 +65,13 @@ export const DesktopNavbar = ({ navItems }: Props) => {
         </div>
       </div>
       <div className="flex space-x-2 items-center">
-        <Button variant="simple" as={Link} href="/login">
-          Login
-        </Button>
-        <Button as={Link} href="/signup">
-          Sign Up
+        <Button 
+          as={Link} 
+          href="/contact"
+          className="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 hover:from-blue-600 hover:via-purple-600 hover:to-red-600 text-white flex items-center gap-2"
+        >
+          <Phone className="h-4 w-4" />
+          Get Started
         </Button>
       </div>
     </div>
