@@ -67,7 +67,17 @@ export function Pricing() {
         </div>
       </div>
       <div className="mx-auto mt-4 md:mt-20 grid relative z-20 grid-cols-1 gap-6 items-stretch md:grid-cols-2 max-w-5xl">
-        {tiers.map((tier, tierIdx) => (
+        {tiers
+          .filter((tier) => {
+            // Show startup fee (first tier) on both tabs
+            if (tier.id === "tier-setup") return true;
+            // Show 3-month retainer only on monthly tab
+            if (tier.id === "tier-3month-retainer") return active === "monthly";
+            // Show 6-month retainer only on yearly tab
+            if (tier.id === "tier-6month-retainer") return active === "yearly";
+            return false;
+          })
+          .map((tier, tierIdx) => (
           <div
             key={tier.id}
             className={cn(
@@ -135,18 +145,20 @@ export function Pricing() {
                   {active === "monthly" ? tier.priceMonthly : tier.priceYearly}
                 </motion.span>
               </p>
-              <p className={cn(
-                tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
-                "mt-1 text-xs"
-              )}>
-                Includes full system setup and AI training
-              </p>
+              {tier.id === "tier-setup" && (
+                <p className={cn(
+                  tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
+                  "mt-1 text-xs"
+                )}>
+                  Includes full system setup and AI training
+                </p>
+              )}
               <p
                 className={cn(
                   tier.featured
                     ? "text-neutral-300"
                     : "text-neutral-600 dark:text-neutral-300",
-                  "mt-4 text-sm leading-7  h-12 md:h-12 xl:h-12"
+                  tier.id === "tier-setup" ? "mt-4 text-sm leading-7 h-12 md:h-12 xl:h-12" : "mt-6 text-sm leading-7 h-12 md:h-12 xl:h-12"
                 )}
               >
                 {tier.description}

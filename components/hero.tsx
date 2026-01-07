@@ -113,6 +113,122 @@ const TypewriterText = () => {
   );
 };
 
+const TypewriterHeadline = () => {
+  const [text, setText] = useState("");
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [phase, setPhase] = useState<"typing-call" | "pause-call" | "deleting" | "typing-job" | "pause-job">("typing-call");
+
+  useEffect(() => {
+    const typingSpeed = 250; // Match existing typewriter speed
+    const deletingSpeed = 100; // Match existing deletion speed
+    const pauseAfterTyping = 2000; // Pause for 2 seconds after typing completes
+    const pauseBeforeDeleting = 500; // Brief pause before starting to delete
+
+    const fullPhraseCall = "Never Miss a Call Again";
+    const fullPhraseJob = "Never Miss a Job Again";
+    const basePhrase = "Never Miss a ";
+
+    const animate = () => {
+      switch (phase) {
+        case "typing-call":
+          if (text.length < fullPhraseCall.length) {
+            setText(fullPhraseCall.slice(0, text.length + 1));
+          } else {
+            setTimeout(() => setPhase("pause-call"), pauseAfterTyping);
+            return;
+          }
+          break;
+
+        case "pause-call":
+          setTimeout(() => setPhase("deleting"), pauseBeforeDeleting);
+          return;
+
+        case "deleting":
+          if (text.length > basePhrase.length) {
+            setText(text.slice(0, -1));
+          } else {
+            setPhase("typing-job");
+            return;
+          }
+          break;
+
+        case "typing-job":
+          if (text.length < fullPhraseJob.length) {
+            setText(fullPhraseJob.slice(0, text.length + 1));
+          } else {
+            setTimeout(() => setPhase("pause-job"), pauseAfterTyping);
+            return;
+          }
+          break;
+
+        case "pause-job":
+          setTimeout(() => {
+            setText(basePhrase);
+            setPhase("typing-call");
+          }, pauseAfterTyping);
+          return;
+      }
+    };
+
+    const timer = setTimeout(
+      animate,
+      phase === "deleting" ? deletingSpeed : typingSpeed
+    );
+
+    return () => clearTimeout(timer);
+  }, [text, phase]);
+
+  return (
+    <motion.h1
+      initial={{
+        y: 40,
+        opacity: 0,
+      }}
+      animate={{
+        y: 0,
+        opacity: 1,
+      }}
+      transition={{
+        ease: "easeOut",
+        duration: 0.5,
+      }}
+      className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10"
+    >
+      <span className="bg-gradient-to-r from-red-500 via-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+        style={{
+          filter: "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+        }}
+      >
+        {text.split("").map((char, index) => (
+          <motion.span
+            key={`${phase}-${index}`}
+            className="inline-block"
+            style={{
+              marginLeft: char === " " ? "0.2em" : undefined,
+            }}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+            whileHover={{
+              y: -4,
+              scale: 1.1,
+              transition: { duration: 0.2 },
+            }}
+          >
+            {char === " " ? "\u00A0" : char}
+          </motion.span>
+        ))}
+        <motion.span
+          className="inline-block ml-1"
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+        >
+          |
+        </motion.span>
+      </span>
+    </motion.h1>
+  );
+};
+
 export const Hero = () => {
   const router = useRouter();
   const { toggleConversation, isConversationActive } = useRetellVoiceDemo();
@@ -139,23 +255,7 @@ export const Hero = () => {
           </span>
         </Badge>
       </motion.div>
-      <motion.h1
-        initial={{
-          y: 40,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-        }}
-        className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10"
-      >
-        <Balancer>Never Miss a Call Again</Balancer>
-      </motion.h1>
+      <TypewriterHeadline />
       <TypewriterText />
       <motion.p
         initial={{
