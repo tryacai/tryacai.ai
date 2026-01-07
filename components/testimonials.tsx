@@ -36,21 +36,21 @@ const testimonials = [
     designation: "Tech Innovator & Entrepreneur",
   },
   {
-    name: "Tyler Durden",
+    name: "Tyler Andrews",
     quote:
       "I made a soap with the help of AI, it was so easy to use. I'm so glad this happened because it revolutionized my entire business model and production process.",
     src: "https://i.pravatar.cc/150?img=2",
     designation: "Creative Director & Business Owner",
   },
   {
-    name: "Alice Johnson",
+    name: "Alex Johnson",
     quote:
       "This AI has transformed the way I work! It's like having a brilliant assistant who knows exactly what I need before I even ask.",
     src: "https://i.pravatar.cc/150?img=3",
     designation: "Senior Software Engineer",
   },
   {
-    name: "Bob Smith",
+    name: "Kyle Smith",
     quote:
       "Absolutely revolutionary, a game-changer for our industry. It has streamlined our processes and enhanced our productivity dramatically.",
     src: "https://i.pravatar.cc/150?img=4",
@@ -92,14 +92,14 @@ const testimonials = [
     designation: "Marketing Specialist",
   },
   {
-    name: "Henry Ford",
+    name: "Isabella Ford",
     quote:
       "It has saved us countless hours. Highly recommended for anyone looking to enhance their efficiency and productivity.",
     src: "https://i.pravatar.cc/150?img=10",
     designation: "Operations Analyst",
   },
   {
-    name: "Ivy Wilson",
+    name: "Max Wilson",
     quote:
       "A must-have tool for any professional. It's revolutionized the way we approach problem-solving and decision-making.",
     src: "https://i.pravatar.cc/150?img=11",
@@ -134,14 +134,14 @@ const testimonials = [
     designation: "Systems Integrator",
   },
   {
-    name: "Nathan Hill",
+    name: "Leandra Hill",
     quote:
       "The best investment we've made in years. It's not just a tool; it's a game-changer that has propelled our business forward.",
     src: "https://i.pravatar.cc/150?img=16",
     designation: "Investment Analyst",
   },
   {
-    name: "Olivia Scott",
+    name: "Marcus Scott",
     quote:
       "It consistently exceeds our expectations. Its adaptability and precision make it indispensable for our daily operations.",
     src: "https://i.pravatar.cc/150?img=17",
