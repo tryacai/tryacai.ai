@@ -47,7 +47,7 @@ export const tiers: Tier[] = [
     href: "/contact",
     priceMonthly: "Starting at $400 / month",
     priceYearly: "Starting at $320 / month",
-    description: "12-month commitment required.",
+    description: "6-month commitment recommended.",
     features: [
       "Monitoring and maintenance",
       "Ongoing system optimizations",
@@ -69,7 +69,7 @@ export const tiers: Tier[] = [
       "Workflow adjustments",
       "Performance tracking",
       "Support and troubleshooting",
-      "Fee reevaluation at 6-month mark",
+      "Fee reevaluation at 3-month mark",
     ],
     featured: true,
     cta: "Get Started",
@@ -79,7 +79,7 @@ export const tiers: Tier[] = [
       }
     },
     footnote: "Pricing adjusts based on usage and services.",
-    yearlyNote: "12-month commitment required. Priority support, expanded access, and preferred optimization cadence included.",
+    yearlyNote: "6-month commitment recommended. Priority support, expanded access, and preferred optimization cadence included.",
     yearlyBenefits: "Priority support, expanded access, and preferred optimization cadence included.",
   },
 ];

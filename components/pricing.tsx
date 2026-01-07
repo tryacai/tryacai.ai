@@ -10,7 +10,7 @@ export function Pricing() {
   const [active, setActive] = useState("yearly");
   const [showTooltip, setShowTooltip] = useState(false);
   const tabs = [
-    { name: "Yearly", value: "yearly", badge: "Most Popular" },
+    { name: "Six Month", value: "yearly", badge: "Most Popular" },
     { name: "Monthly", value: "monthly" },
   ];
 
@@ -47,11 +47,13 @@ export function Pricing() {
           ))}
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-3">
-          Save up to 20% with a yearly commitment
+          Save up to 20% with a six-month commitment
         </p>
-        <p className="text-sm font-bold text-neutral-700 dark:text-neutral-300 mt-4 text-center">
-          Starting at $2,000, plus call volume and complexity of integrations.
-        </p>
+        <div className="max-w-3xl mx-auto mt-4 px-4">
+          <p className="text-sm text-neutral-700 dark:text-neutral-300 text-center leading-relaxed">
+            We offer flexible pricing plans based on your call volume. Most plumbing businesses see ROI within the first week—just one or two saved jobs that would have gone to voicemail can cover the monthly cost. Contact us for a custom quote based on your call volume, and we'll make sure you're putting more money back into your pockets—that's our goal!
+          </p>
+        </div>
       </div>
       <div className="mx-auto mt-4 md:mt-20 grid relative z-20 grid-cols-1 gap-6 items-stretch md:grid-cols-2 max-w-5xl">
         {tiers.map((tier, tierIdx) => (
@@ -104,7 +106,7 @@ export function Pricing() {
                           Commitment Terms:
                         </p>
                         <p className="text-neutral-600 dark:text-neutral-400">
-                          Monthly plans require a 3-month minimum commitment. Yearly plans (12-month commitment) include a fee reevaluation at the 6-month mark to ensure pricing reflects actual usage and value delivered.
+                          Monthly plans require a 3-month minimum commitment. Six-month plans include a fee reevaluation at the 3-month mark to ensure pricing reflects actual usage and value delivered.
                         </p>
                       </div>
                       <p className="text-neutral-600 dark:text-neutral-400 mb-2">

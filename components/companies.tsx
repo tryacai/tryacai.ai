@@ -71,9 +71,14 @@ export const Companies = () => {
 
   return (
     <div className="relative z-20 py-10 md:py-40">
-      <Heading as="h2">100+ Seamless Integrations</Heading>
+      <div className="text-center mb-4">
+        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+          Seamless Integrations
+        </p>
+      </div>
+      <Heading as="h2">Works with your existing tools</Heading>
       <Subheading className="text-center ">
-        Works instantly with the platforms that power your business from calendar tools to full automation systems.
+        ACAI integrates directly with the calendars and CRM systems you already use.
       </Subheading>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-20 max-w-5xl mx-auto mt-20 min-h-[80px] md:min-h-[120px]">
