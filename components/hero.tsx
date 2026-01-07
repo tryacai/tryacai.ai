@@ -115,7 +115,6 @@ const TypewriterText = () => {
 
 const TypewriterHeadline = () => {
   const [text, setText] = useState("");
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [phase, setPhase] = useState<"typing-call" | "pause-call" | "deleting" | "typing-job" | "pause-job">("typing-call");
 
   useEffect(() => {
@@ -192,39 +191,48 @@ const TypewriterHeadline = () => {
         ease: "easeOut",
         duration: 0.5,
       }}
-      className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10"
+      className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10 whitespace-nowrap"
     >
-      <span className="bg-gradient-to-r from-red-500 via-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
-        style={{
-          filter: "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
-        }}
-      >
-        {text.split("").map((char, index) => (
-          <motion.span
-            key={`${phase}-${index}`}
-            className="inline-block"
-            style={{
-              marginLeft: char === " " ? "0.2em" : undefined,
-            }}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            whileHover={{
-              y: -4,
-              scale: 1.1,
-              transition: { duration: 0.2 },
-            }}
-          >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
-        ))}
-        <motion.span
-          className="inline-block ml-1"
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
-        >
-          |
-        </motion.span>
-      </span>
+      {/* Render typed characters with white prefix and gradient suffix, single line, no hover effects */}
+      {(() => {
+        const base = "Never Miss a ";
+        const baseLen = base.length;
+        return (
+          <span>
+            {text.split("").map((char, index) => {
+              const content = char === " " ? "\u00A0" : char;
+              const isSuffix = index >= baseLen;
+              return (
+                <span
+                  key={`${phase}-${index}`}
+                  className={
+                    isSuffix
+                      ? "bg-gradient-to-r from-red-500 via-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent inline-block"
+                      : "text-white inline-block"
+                  }
+                  style={
+                    isSuffix
+                      ? {
+                          filter:
+                            "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+                        }
+                      : undefined
+                  }
+                >
+                  {content}
+                </span>
+              );
+            })}
+            <motion.span
+              className="inline-block ml-1 align-baseline"
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+            >
+              |
+            </motion.span>
+          </span>
+        );
+      })()}
     </motion.h1>
   );
 };
