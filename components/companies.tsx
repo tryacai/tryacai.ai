@@ -71,13 +71,13 @@ export const Companies = () => {
 
   return (
     <div className="relative z-20 py-10 md:py-40">
-      <div className="text-center mb-4">
-        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+      <div className="text-center mb-2">
+        <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest">
           Seamless Integrations
         </p>
       </div>
       <Heading as="h2">Works with your existing tools</Heading>
-      <Subheading className="text-center ">
+      <Subheading className="text-center max-w-2xl mx-auto">
         ACAI integrates directly with the calendars and CRM systems you already use.
       </Subheading>
 
@@ -126,11 +126,10 @@ export const Companies = () => {
       </div>
 
       {/* Bridge Section */}
-      <div className="max-w-4xl mx-auto mt-20 text-center px-4">
-        <Heading as="h3">Built to Fit Your Workflow</Heading>
-        <Subheading className="text-center mt-4">
+      <div className="max-w-3xl mx-auto mt-16 text-center px-4">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
           ACAI connects with the tools you already use, and if you don&apos;t see one listed, we build it. No rigid systems. No forced changes. Just AI that fits your business.
-        </Subheading>
+        </p>
       </div>
     </div>
   );

@@ -10,8 +10,8 @@ export function Pricing() {
   const [active, setActive] = useState("yearly");
   const [showTooltip, setShowTooltip] = useState(false);
   const tabs = [
-    { name: "Six Month", value: "yearly", badge: "Most Popular" },
-    { name: "Monthly", value: "monthly" },
+    { name: "6-Month", value: "yearly", badge: "Most Popular" },
+    { name: "3-Month", value: "monthly" },
   ];
 
   return (
@@ -47,11 +47,11 @@ export function Pricing() {
           ))}
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-3">
-          Save up to 20% with a six-month commitment
+          Save 20% with our 6-month plan
         </p>
-        <div className="max-w-3xl mx-auto mt-4 px-4">
-          <p className="text-sm text-neutral-700 dark:text-neutral-300 text-center leading-relaxed">
-            We offer flexible pricing plans based on your call volume. Most plumbing businesses see ROI within the first week—just one or two saved jobs that would have gone to voicemail can cover the monthly cost. Contact us for a custom quote based on your call volume, and we'll make sure you're putting more money back into your pockets—that's our goal!
+        <div className="max-w-2xl mx-auto mt-3 px-4">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center">
+            Flexible pricing based on call volume. Most businesses see ROI in the first week. Cancel anytime—we're confident you'll stay.
           </p>
         </div>
       </div>
@@ -96,24 +96,13 @@ export function Pricing() {
                   {showTooltip && (
                     <div className="absolute left-0 top-6 w-80 sm:w-96 p-4 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-xl z-50 text-xs leading-relaxed">
                       <p className="text-neutral-700 dark:text-neutral-300 font-semibold mb-2">
-                        ACAI Voice Agent Pricing Notice:
+                        Pricing Details:
                       </p>
                       <p className="text-neutral-600 dark:text-neutral-400 mb-2">
-                        Pricing is based on ACAI's standard agent model and an initial assessment of scope, usage, integrations, and automation complexity.
-                      </p>
-                      <div className="bg-neutral-100 dark:bg-neutral-900 p-3 border border-neutral-200 dark:border-neutral-700 rounded mb-2">
-                        <p className="text-neutral-700 dark:text-neutral-300 font-semibold mb-1 text-sm">
-                          Commitment Terms:
-                        </p>
-                        <p className="text-neutral-600 dark:text-neutral-400">
-                          Monthly plans require a 3-month minimum commitment. Six-month plans include a fee reevaluation at the 3-month mark to ensure pricing reflects actual usage and value delivered.
-                        </p>
-                      </div>
-                      <p className="text-neutral-600 dark:text-neutral-400 mb-2">
-                        All pricing, setup fees, and timelines are estimates and subject to change based on technical requirements, platform constraints, API access, data volume, customization depth, and third-party dependencies. Some implementations may be completed within hours, while others may require extended timelines depending on system architecture and platform requirements.
+                        Custom pricing is based on your call volume and specific needs. We'll provide a detailed quote after understanding your business requirements.
                       </p>
                       <p className="text-neutral-600 dark:text-neutral-400">
-                        Quoted pricing is non-binding and specific to the evaluated use case. A detailed scope and estimate will be provided prior to implementation. Final costs and delivery timelines are confirmed only after technical review. By proceeding with any service or package, you acknowledge that integration complexity, usage growth, or scope expansion may materially impact pricing and delivery schedules.
+                        Both plans can be canceled anytime with no penalties. We're confident in our service and believe you'll see the value immediately.
                       </p>
                     </div>
                   )}
@@ -182,32 +171,18 @@ export function Pricing() {
                   </li>
                 ))}
               </ul>
-              {/* Commitment Terms */}
-              {tier.id === "tier-monthly" && (
-                <div className={cn(
-                  tier.featured ? "text-neutral-300" : "text-neutral-600 dark:text-neutral-400",
-                  "mt-4 text-sm leading-6"
-                )}>
-                  {active === "monthly" && (
-                    <p>3-month minimum commitment</p>
-                  )}
-                  {active === "yearly" && (
-                    <p>Fee reevaluation at 6-month mark</p>
-                  )}
-                </div>
-              )}
-              {active === "yearly" && tier.yearlyNote && (
+              {active === \"yearly\" && tier.yearlyNote && (
                 <p className={cn(
-                  tier.featured ? "text-neutral-300" : "text-neutral-600 dark:text-neutral-400",
-                  "mt-4 text-xs leading-5"
+                  tier.featured ? \"text-neutral-300\" : \"text-neutral-600 dark:text-neutral-400\",
+                  \"mt-4 text-sm leading-6\"
                 )}>
                   {tier.yearlyNote}
                 </p>
               )}
               {tier.footnote && (
                 <p className={cn(
-                  tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
-                  "mt-4 text-xs italic leading-5"
+                  tier.featured ? \"text-neutral-400\" : \"text-neutral-500 dark:text-neutral-500\",
+                  \"mt-4 text-xs italic leading-5\"
                 )}>
                   {tier.footnote}
                 </p>
