@@ -1,5 +1,5 @@
 "use client";
-import { IconCircleCheckFilled, IconInfoCircle } from "@tabler/icons-react";
+import { IconCircleCheckFilled, IconInfoCircle, IconStar } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { tiers } from "@/constants/tier";
 import { useState } from "react";
@@ -22,8 +22,8 @@ export function Pricing() {
             <button
               key={tab.value}
               className={cn(
-                "text-sm font-medium text-gray-500 dark:text-muted-dark p-4  rounded-md relative",
-                active === tab.value ? " text-white dark:text-black" : "",
+                "text-sm font-medium text-gray-500 dark:text-muted-dark p-4 rounded-md relative",
+                active === tab.value ? "text-white dark:text-black" : "",
                 tab.value === "yearly" ? "font-semibold" : ""
               )}
               onClick={() => setActive(tab.value)}
@@ -32,13 +32,19 @@ export function Pricing() {
                 <motion.span
                   layoutId="moving-div"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  className="absolute inset-0 bg-black dark:bg-white"
+                  className={cn(
+                    "absolute inset-0",
+                    tab.value === "yearly" 
+                      ? "bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 shadow-lg shadow-purple-500/50" 
+                      : "bg-black dark:bg-white"
+                  )}
                 />
               )}
               <span className="relative z-10 flex items-center gap-2">
+                {tab.value === "yearly" && <IconStar className="h-4 w-4" />}
                 {tab.name}
                 {tab.badge && (
-                  <span className="text-xs bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full">
                     {tab.badge}
                   </span>
                 )}
@@ -52,6 +58,11 @@ export function Pricing() {
         <div className="max-w-2xl mx-auto mt-3 px-4">
           <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center">
             Flexible pricing based on call volume. Most businesses see ROI in the first week. Cancel anytime—we're confident you'll stay.
+          </p>
+        </div>
+        <div className="max-w-2xl mx-auto mt-4 px-4">
+          <p className="text-xs text-neutral-500 dark:text-neutral-500 text-center italic">
+            Both plans include a custom startup fee based on your needs, plus ongoing monthly management.
           </p>
         </div>
       </div>
@@ -124,12 +135,18 @@ export function Pricing() {
                   {active === "monthly" ? tier.priceMonthly : tier.priceYearly}
                 </motion.span>
               </p>
+              <p className={cn(
+                tier.featured ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
+                "mt-1 text-xs"
+              )}>
+                Includes full system setup and AI training
+              </p>
               <p
                 className={cn(
                   tier.featured
                     ? "text-neutral-300"
                     : "text-neutral-600 dark:text-neutral-300",
-                  "mt-6 text-sm leading-7  h-12 md:h-12 xl:h-12"
+                  "mt-4 text-sm leading-7  h-12 md:h-12 xl:h-12"
                 )}
               >
                 {tier.description}
