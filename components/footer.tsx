@@ -81,7 +81,7 @@ export const Footer = () => {
           <div className="border-t border-neutral-200 dark:border-neutral-700 pt-8">
             <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-neutral-500 dark:text-neutral-400">
               <div className="mb-4 sm:mb-0">
-                © {new Date().getFullYear()} ACAI. All rights reserved.
+                © {new Date().getFullYear()} ACAI Enterprises LLC. All rights reserved.
               </div>
               <div className="flex gap-6">
                 <Link
