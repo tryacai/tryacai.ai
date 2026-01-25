@@ -6,6 +6,7 @@ import { Companies } from "@/components/companies";
 import { GridFeatures } from "@/components/grid-features";
 import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
+import { IndustrySupport } from "@/components/industry-support";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <Hero />
         <Companies />
         <Features />
+        <IndustrySupport />
         <GridFeatures />
         <Testimonials />
       </Container>

@@ -22,13 +22,13 @@ export const DashboardDemo = () => {
       color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
-      label: "After-Hours Pickup",
-      value: "100%",
+      label: "Opportunities Created",
+      value: "34",
       icon: Clock,
       color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
-      label: "Revenue Recovered",
+      label: "Revenue Tracked",
       value: "$8,450",
       icon: DollarSign,
       color: "from-green-500 to-emerald-500",
@@ -53,9 +53,10 @@ export const DashboardDemo = () => {
   ];
 
   const jobTypes = [
-    { name: "Water Heater", value: 40, color: "#EF4444" },
-    { name: "Leak", value: 35, color: "#A855F7" },
-    { name: "Install", value: 25, color: "#3B82F6" },
+    { name: "HVAC/Plumbing", value: 35, color: "#EF4444" },
+    { name: "Auto Detailing", value: 30, color: "#A855F7" },
+    { name: "Salon/Barber", value: 20, color: "#3B82F6" },
+    { name: "Cleaning", value: 15, color: "#10B981" },
   ];
 
   return (
@@ -69,15 +70,14 @@ export const DashboardDemo = () => {
       >
         <div className="flex items-center gap-2 mb-1.5">
           <h2 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-white">
-            Plumbing LLC
+            Service Business LLC
           </h2>
           <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
             Interactive Demo
           </span>
         </div>
         <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400">
-          This is an example. You can create your own custom dashboard with all
-          your analytics viewable at any time.
+          Simplified ACAI preview. Each client receives their own full GoHighLevel CRM with customized reporting.
         </p>
       </motion.div>
 
@@ -309,7 +309,7 @@ export const DashboardDemo = () => {
           className="p-4 rounded-lg bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200 dark:border-neutral-700 lg:col-span-2"
         >
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-3">
-            Job Types
+            Service Types
           </h3>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             <div className="relative w-36 h-36">

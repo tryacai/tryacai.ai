@@ -272,7 +272,27 @@ export const Hero = () => {
         className="text-center mt-6 text-base md:text-xl text-muted dark:text-muted-dark max-w-3xl mx-auto relative z-10"
       >
         <Balancer>
-          Reliable AI-powered solutions for plumbing and HVAC businesses.
+          Reliable AI-powered solutions for service businesses.
+        </Balancer>
+      </motion.p>
+      <motion.p
+        initial={{
+          y: 40,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          ease: "easeOut",
+          duration: 0.5,
+          delay: 0.23,
+        }}
+        className="text-center mt-3 text-sm md:text-base text-muted dark:text-muted-dark max-w-2xl mx-auto relative z-10"
+      >
+        <Balancer>
+          AI receptionists with full CRM access through GoHighLevel—never miss a call, always stay organized.
         </Balancer>
       </motion.p>
       <motion.p
