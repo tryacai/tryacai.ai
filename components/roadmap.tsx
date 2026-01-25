@@ -19,8 +19,8 @@ export const Roadmap = () => {
     },
     {
       date: "Early December 2025",
-      title: "Partnership with XUNA AI",
-      description: "Partnering with XUNA AI and building on top of their reliable, production-grade infrastructure while learning from their systems.",
+      title: "Technology Foundation",
+      description: "Building reliable, production-grade AI infrastructure and systems architecture to support real-world service business operations.",
       position: "top"
     },
     {
