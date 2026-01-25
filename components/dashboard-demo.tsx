@@ -10,25 +10,25 @@ export const DashboardDemo = () => {
 
   const metrics = [
     {
-      label: "Appointments Booked",
-      value: "42",
+      label: "Active Contacts",
+      value: "127",
       icon: TrendingUp,
       color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
-      label: "Missed Calls Saved",
-      value: "18",
+      label: "Open Opportunities",
+      value: "34",
       icon: Phone,
       color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
-      label: "Opportunities Created",
-      value: "34",
+      label: "Appointments Scheduled",
+      value: "42",
       icon: Clock,
       color: "from-red-500 via-purple-500 to-blue-500",
     },
     {
-      label: "Revenue Tracked",
+      label: "Pipeline Revenue",
       value: "$8,450",
       icon: DollarSign,
       color: "from-green-500 to-emerald-500",
@@ -118,7 +118,7 @@ export const DashboardDemo = () => {
           className="p-4 rounded-lg bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200 dark:border-neutral-700"
         >
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-3">
-            Calls vs Bookings
+            Calls vs Conversions
           </h3>
           <div className="relative h-36">
             <svg className="w-full h-full" viewBox="0 0 400 150">
@@ -278,7 +278,7 @@ export const DashboardDemo = () => {
           className="p-4 rounded-lg bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200 dark:border-neutral-700"
         >
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-3">
-            Lead Sources
+            Contact Sources
           </h3>
           <div className="relative h-36 flex items-end justify-around gap-3 px-3">
             {leadSources.map((source, index) => (

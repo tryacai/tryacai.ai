@@ -6,7 +6,8 @@ import { Companies } from "@/components/companies";
 import { GridFeatures } from "@/components/grid-features";
 import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
-import { IndustrySupport } from "@/components/industry-support";
+import { CRMDashboardSection } from "@/components/crm-dashboard-section";
+import { SectionDivider } from "@/components/section-divider";
 
 export default function Home() {
   return (
@@ -18,10 +19,25 @@ export default function Home() {
 
       <Container className="flex min-h-screen flex-col items-center justify-between">
         <Hero />
-        <Companies />
+        
+        <SectionDivider />
+        
         <Features />
-        <IndustrySupport />
+        
+        <SectionDivider />
+        
+        <CRMDashboardSection />
+        
+        <SectionDivider />
+        
+        <Companies />
+        
+        <SectionDivider />
+        
         <GridFeatures />
+        
+        <SectionDivider />
+        
         <Testimonials />
       </Container>
 
