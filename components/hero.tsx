@@ -6,7 +6,6 @@ import { HiArrowRight } from "react-icons/hi2";
 import { Badge } from "./badge";
 import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
-import { DashboardDemo } from "./dashboard-demo";
 import { useState, useEffect } from "react";
 import { useRetellVoiceDemo } from "@/components/RetellVoiceDemo";
 
@@ -373,12 +372,6 @@ export const Hero = () => {
           <HiArrowRight className="text-muted group-hover:translate-x-1 stroke-[1px] h-3 w-3 transition-transform duration-200 dark:text-muted-dark" />
         </Button>
       </motion.div>
-      <div className="p-4 border border-neutral-200 bg-neutral-100 dark:bg-neutral-800 dark:border-neutral-700 rounded-[32px] mt-20 relative">
-        <div className="absolute inset-x-0 bottom-0 h-40 w-full bg-gradient-to-b from-transparent via-white to-white dark:via-black/50 dark:to-black scale-[1.1] pointer-events-none" />
-        <div className="p-2 bg-white dark:bg-black dark:border-neutral-700 border border-neutral-200 rounded-[24px]">
-          <DashboardDemo />
-        </div>
-      </div>
     </div>
   );
 };
