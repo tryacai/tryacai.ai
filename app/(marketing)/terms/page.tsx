@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "ACAI AI's Terms of Service. Learn about our service terms, payment policies, and user obligations when using our AI receptionist platform.",
   openGraph: {
-    images: ["/finalwebsitepreviewimage.png"],
+    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
   },
 };
 

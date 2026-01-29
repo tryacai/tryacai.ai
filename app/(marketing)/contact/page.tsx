@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Get started with ACAI AI. Contact us to learn how our AI receptionist can help your plumbing or HVAC business answer calls and book jobs 24/7.",
   openGraph: {
-    images: ["/finalwebsitepreviewimage.png"],
+    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
   },
 };
 

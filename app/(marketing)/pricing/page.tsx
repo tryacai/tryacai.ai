@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Simple pricing built around results. Every engagement is customized based on setup complexity, ongoing support, and value delivered.",
   openGraph: {
-    images: ["https://ai-saas-template-aceternity.vercel.app/banner.png"],
+    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
   },
 };
 

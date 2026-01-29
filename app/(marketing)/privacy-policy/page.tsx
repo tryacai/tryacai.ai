@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     "ACAI AI's Privacy Policy. Learn how we collect, use, and protect your data when you use our AI receptionist service for plumbing and HVAC businesses.",
   openGraph: {
-    images: ["/finalwebsitepreviewimage.png"],
+    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
   },
 };
 
