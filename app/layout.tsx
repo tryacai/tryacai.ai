@@ -7,7 +7,7 @@ import { ViewTransitions } from "next-view-transitions";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tryacai.ai"),
-  title: "ACAI AI | AI Receptionist for Plumbers & HVAC",
+  title: "ACAI AI | AI Receptionists for Service Businesses",
   description: "Never miss a call again. ACAI AI is an AI receptionist built for service businesses to answer calls and book jobs 24/7.",
   openGraph: {
     title: "ACAI AI | AI Receptionist for Service Businesses",
