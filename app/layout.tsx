@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: "ACAI AI",
     images: [
       {
-        url: "https://tryacai.ai/finalwebsitepreviewimage.png",
+        url: "https://tryacai.ai/V2websitepreviewimage.png",
         width: 1200,
         height: 630,
         alt: "ACAI AI – AI Receptionist for Service Businesses",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ACAI AI | AI Receptionist for Service Businesses",
     description: "Never miss a call again. ACAI AI is an AI receptionist built for service businesses to answer calls and book jobs 24/7.",
-    images: ["https://tryacai.ai/finalwebsitepreviewimage.png"],
+    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
   },
 };
 
