@@ -21,7 +21,7 @@ export const BlogCard = ({ blog }: { blog: BlogWithSlug }) => {
           alt={blog.title}
           height="800"
           width="800"
-          className="h-52 w-full object-cover object-[center_35%]"
+          className="h-52 w-full object-cover object-center"
         />
       ) : (
         <div className="h-52 flex items-center justify-center bg-white dark:bg-neutral-900">
