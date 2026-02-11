@@ -45,7 +45,7 @@ export const IndustryDashboard = () => {
         className="text-center mb-8"
       >
         <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-3">
-          Built for Service Businesses
+          Our Specialty: Service Businesses
         </h2>
         <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
           ACAI's AI automation is customized to fit the unique needs of service industries
