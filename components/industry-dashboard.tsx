@@ -63,11 +63,11 @@ export const IndustryDashboard = () => {
             whileHover={{ scale: 1.05 }}
             className="group"
           >
-            <div className="flex items-center gap-2 px-4 py-3 rounded-full bg-white dark:bg-neutral-800 border-2 border-neutral-200 dark:border-neutral-700 hover:border-transparent transition-all duration-300 shadow-sm hover:shadow-lg">
+            <div className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-white dark:bg-neutral-800 border-2 border-neutral-200 dark:border-neutral-700 hover:border-transparent transition-all duration-300 shadow-sm hover:shadow-lg">
               <div
-                className={`w-8 h-8 rounded-full bg-gradient-to-br ${industry.color} flex items-center justify-center transition-transform duration-300 group-hover:rotate-12`}
+                className={`w-9 h-9 rounded-full bg-gradient-to-br ${industry.color} flex items-center justify-center transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110`}
               >
-                <industry.icon className="w-4 h-4 text-white" />
+                <industry.icon className="w-5 h-5 text-white" />
               </div>
               <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 {industry.name}

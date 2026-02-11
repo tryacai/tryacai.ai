@@ -74,13 +74,22 @@ export default function TermsOfServicePage() {
               SMS Messaging Terms
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              The Services may include service-related SMS communications such as appointment confirmations, scheduling updates, and two-way customer messaging.
+              The Services may include service-related SMS communications such as appointment confirmations, scheduling updates, reminders, and two-way customer messaging.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              Customers may opt out by replying STOP. Message frequency varies. Message and data rates may apply.
+              Customers must provide explicit consent before receiving recurring SMS messages. For phone-booked services, customers are informed they will receive a consent text message and must reply YES before appointment confirmations or reminders are sent.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              Message frequency may vary. Message and data rates may apply.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              Customers may opt out at any time by replying STOP. Customers may reply HELP for assistance.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              If promotional or marketing-related messaging is offered in the future, separate and explicit consent will be required prior to sending such messages.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              You may not use ACAI to send unsolicited messages, spam, or deceptive communications.
+              You agree to use ACAI only for lawful, consent-based communications and to comply with all applicable messaging regulations and carrier requirements.
             </p>
           </section>
 

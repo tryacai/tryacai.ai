@@ -81,19 +81,28 @@ export default function PrivacyPolicyPage() {
               SMS Communications & Consent
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              Our platform enables service-related SMS communications, including appointment confirmations, scheduling updates, missed-call follow-ups, and two-way customer conversations.
+              Our platform enables service-related SMS communications including appointment confirmations, scheduling updates, reminders, missed-call follow-ups, and limited post-service communications such as customer satisfaction or review requests.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              Customers opt in to receive SMS messages by calling the business, booking an appointment, requesting service, or otherwise providing consent during a service interaction.
+              When a customer books service by phone, they are informed they will receive a text message requesting consent to receive appointment confirmations and reminders.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              Customers may opt out at any time by replying STOP. Reply HELP for assistance.
+              The first SMS message requires the customer to reply YES before receiving any recurring messages.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              Message frequency varies. Message and data rates may apply.
+              No recurring SMS messages are sent unless the customer replies YES to the opt-in request.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
+              Message frequency may vary. Message and data rates may apply.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
+              Customers may opt out at any time by replying STOP. Customers may reply HELP for assistance.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
               We do not sell, rent, or share phone numbers for third-party marketing purposes.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
+              If promotional or re-engagement messaging is introduced in the future (such as service reminders, seasonal offers, or lead revival campaigns), customers will be required to provide separate, explicit opt-in consent before receiving those messages.
             </p>
           </section>
 
