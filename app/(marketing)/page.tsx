@@ -8,6 +8,8 @@ import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
 import { IndustryDashboard } from "@/components/industry-dashboard";
 import { SectionDivider } from "@/components/section-divider";
+import { LiveIndustryExamples } from "@/components/live-industry-examples";
+import { SupportedIndustries } from "@/components/supported-industries";
 
 export default function Home() {
   return (
@@ -19,6 +21,16 @@ export default function Home() {
 
       <Container className="flex min-h-screen flex-col items-center justify-between">
         <Hero />
+        
+        <SectionDivider />
+        
+        <LiveIndustryExamples />
+        
+        <SectionDivider />
+        
+        <SupportedIndustries />
+        
+        <SectionDivider />
         
         <IndustryDashboard />
         

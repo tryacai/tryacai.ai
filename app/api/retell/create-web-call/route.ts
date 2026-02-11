@@ -1,15 +1,50 @@
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    const RETELL_API_KEY = process.env.RETELL_API_KEY_CRM;
-    const RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_CRM;
+    const body = await request.json();
+    const { scenario = 'acai' } = body;
 
-    if (!RETELL_API_KEY || !RETELL_AGENT_ID) {
-      console.error("Missing Retell credentials");
+    // Validate scenario
+    const validScenarios = ['acai', 'plumbing', 'barber'];
+    if (!validScenarios.includes(scenario)) {
       return NextResponse.json(
-        { error: "Missing credentials" },
+        { error: "Invalid scenario" },
+        { status: 400 }
+      );
+    }
+
+    const RETELL_API_KEY = process.env.RETELL_API_KEY_CRM;
+    
+    // Select the correct agent ID based on scenario
+    let RETELL_AGENT_ID: string | undefined;
+    switch (scenario) {
+      case 'acai':
+        RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_ACAI;
+        break;
+      case 'plumbing':
+        RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_PLUMBING;
+        break;
+      case 'barber':
+        RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_BARBER;
+        break;
+      default:
+        RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_ACAI;
+    }
+
+    if (!RETELL_API_KEY) {
+      console.error("Missing Retell API key");
+      return NextResponse.json(
+        { error: "Missing API credentials" },
         { status: 500 }
+      );
+    }
+
+    if (!RETELL_AGENT_ID) {
+      console.error(`Missing Retell Agent ID for scenario: ${scenario}`);
+      return NextResponse.json(
+        { error: `Missing Agent ID for scenario: ${scenario}` },
+        { status: 400 }
       );
     }
 
