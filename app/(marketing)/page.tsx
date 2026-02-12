@@ -6,7 +6,6 @@ import { Companies } from "@/components/companies";
 import { GridFeatures } from "@/components/grid-features";
 import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
-import { IndustryDashboard } from "@/components/industry-dashboard";
 import { SectionDivider } from "@/components/section-divider";
 import { LiveIndustryExamples } from "@/components/live-industry-examples";
 import { SupportedIndustries } from "@/components/supported-industries";
@@ -29,10 +28,6 @@ export default function Home() {
         <SectionDivider />
         
         <SupportedIndustries />
-        
-        <SectionDivider />
-        
-        <IndustryDashboard />
         
         <SectionDivider />
         
