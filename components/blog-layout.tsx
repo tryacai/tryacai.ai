@@ -11,9 +11,11 @@ import { format } from "date-fns";
 export function BlogLayout({
   blog,
   children,
+  hero,
 }: {
   blog: BlogWithSlug;
   children: React.ReactNode;
+  hero?: React.ReactNode;
 }) {
   return (
     <Container className="mt-16 lg:mt-32">
@@ -43,8 +45,10 @@ export function BlogLayout({
           </time>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto">
-        {blog.image ? (
+      <div className="max-w-full mx-auto">
+        {hero ? (
+          hero
+        ) : blog.image ? (
           <Image
             src={blog.image}
             height="800"

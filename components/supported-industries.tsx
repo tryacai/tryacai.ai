@@ -16,6 +16,8 @@ import {
   Activity,
   Droplets,
   ChevronDown,
+  Wind,
+  Scissors,
 } from "lucide-react";
 
 interface Industry {
@@ -46,13 +48,14 @@ const IndustryAccordion: React.FC<IndustryAccordionProps> = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.03 }}
+      whileHover={{ y: -4 }}
       className={`relative rounded-xl overflow-hidden transition-all duration-300 ${
         isOpen ? 'bg-neutral-900/90' : 'bg-neutral-900/60'
       }`}
     >
       {/* Gradient border effect when active */}
       {isOpen && (
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] opacity-100 animate-gradient-flow"></div>
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] opacity-100"></div>
       )}
       
       {/* Card content */}
@@ -67,10 +70,10 @@ const IndustryAccordion: React.FC<IndustryAccordionProps> = ({
               {industry.icon}
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-white">
+              <h3 className="text-lg font-semibold bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] bg-clip-text text-transparent">
                 {industry.title}
               </h3>
-              <p className="text-sm text-orange-400 font-medium mt-0.5">
+              <p className="text-sm text-white italic font-normal mt-0.5">
                 {industry.microcopy}
               </p>
             </div>
@@ -93,14 +96,14 @@ const IndustryAccordion: React.FC<IndustryAccordionProps> = ({
               className="overflow-hidden"
             >
               <div className="px-6 pb-6 pt-2 border-t border-neutral-800">
-                <p className="text-sm text-neutral-300 mb-4 leading-relaxed">
+                <p className="text-sm text-white mb-4 leading-relaxed">
                   {industry.intro}
                 </p>
                 
                 <ul className="space-y-2 mb-6">
                   {industry.bullets.map((bullet, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-neutral-400">
-                      <span className="text-purple-400 mt-1 flex-shrink-0">•</span>
+                    <li key={i} className="flex items-start gap-2 text-sm text-white">
+                      <span className="text-white mt-1 flex-shrink-0">•</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
@@ -108,10 +111,10 @@ const IndustryAccordion: React.FC<IndustryAccordionProps> = ({
 
                 <div className="flex flex-wrap gap-3">
                   <Link
-                    href={`/blog/changelog-for-2024#${industry.slug}`}
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] text-white text-sm font-medium hover:shadow-lg hover:scale-105 transition-all duration-200"
+                    href={`/blog/powering-service-businesses#${industry.slug}`}
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] text-white text-sm font-medium hover:shadow-lg hover:scale-105 transition-all duration-200"
                   >
-                    See How It Works for {industry.title}
+                    See How It Works
                   </Link>
                   <Link
                     href="/contact"
@@ -143,6 +146,30 @@ export const SupportedIndustries = () => {
         "Emergency call prioritization and routing",
         "Insurance claim call handling and documentation",
         "Estimate scheduling with real-time availability"
+      ]
+    },
+    {
+      title: "HVAC",
+      icon: <Wind className="w-6 h-6 text-neutral-300 stroke-[1.5]" />,
+      slug: "hvac",
+      microcopy: "Book more installs.",
+      intro: "ACAI qualifies system replacement leads, schedules maintenance appointments, and handles emergency repair requests to keep your technicians busy year-round.",
+      bullets: [
+        "Emergency repair call prioritization",
+        "System replacement lead qualification",
+        "Seasonal maintenance scheduling automation"
+      ]
+    },
+    {
+      title: "Barbershops & Salons",
+      icon: <Scissors className="w-6 h-6 text-neutral-300 stroke-[1.5]" />,
+      slug: "barbers-salons",
+      microcopy: "Keep chairs filled.",
+      intro: "ACAI manages appointment bookings, sends reminders, and handles last-minute cancellations so you can focus on delivering exceptional service to every client.",
+      bullets: [
+        "Appointment booking and rescheduling",
+        "No-show reduction with automated reminders",
+        "New client intake and service preferences"
       ]
     },
     {
@@ -198,7 +225,7 @@ export const SupportedIndustries = () => {
       icon: <Zap className="w-6 h-6 text-neutral-300 stroke-[1.5]" />,
       slug: "electricians",
       microcopy: "Never miss an emergency call.",
-      intro: "ACAI prioritizes emergency requests, manages panel upgrade bookings, and coordinates permit scheduling so you can deliver safe, timely service. ",
+      intro: "ACAI prioritizes emergency requests, manages panel upgrade bookings, and coordinates permit scheduling so you can deliver safe, timely service.",
       bullets: [
         "Emergency call prioritization",
         "Panel upgrade booking and qualification",
@@ -265,8 +292,8 @@ export const SupportedIndustries = () => {
         {" "}adapts to your industry's unique workflow.
       </p>
 
-      {/* Accordion list */}
-      <div className="max-w-4xl mx-auto px-4 mt-12 space-y-3">
+      {/* Grid layout with accordion */}
+      <div className="max-w-7xl mx-auto px-4 mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {industries.map((industry, index) => (
           <IndustryAccordion
             key={industry.slug}

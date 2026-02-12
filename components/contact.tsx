@@ -193,6 +193,25 @@ export function ContactForm() {
                 <p className="mt-2 text-muted dark:text-muted-dark  text-sm max-w-sm">
                   Have questions or need assistance? Our team is ready to help you with any inquiries you may have. Fill out the form below, and we'll get back to you as soon as possible.
                 </p>
+                <div className="mt-6 flex flex-col gap-2">
+                  <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    Or call us directly:
+                  </p>
+                  <div className="flex flex-col gap-1.5">
+                    <a 
+                      href="tel:7328957895" 
+                      className="text-sm font-semibold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+                    >
+                      Call (732) 895-7895
+                    </a>
+                    <a 
+                      href="tel:8482539552" 
+                      className="text-sm font-semibold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+                    >
+                      Call (848) 253-9552
+                    </a>
+                  </div>
+                </div>
               </div>
 
               <div className="py-10">
