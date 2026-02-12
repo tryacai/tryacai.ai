@@ -292,69 +292,90 @@ export const Hero = () => {
         }}
         className="flex flex-col items-center justify-center mt-8 relative z-10 max-w-xl mx-auto w-full px-4"
       >
-        <div className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 md:p-8 shadow-lg">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl md:text-2xl font-semibold text-black dark:text-white">
-              Experience the ACAI AI Receptionist
-            </h3>
-            {isConversationActive && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full flex items-center gap-1"
-              >
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                LIVE
-              </motion.span>
-            )}
-          </div>
-          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 mb-6">
-            This is our live AI receptionist handling real-time conversations. No scripts. Books directly into our calendar.
-          </p>
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <button
-                onClick={toggleConversation}
-                disabled={isLoading}
-                className={`w-20 h-20 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 relative z-10 ${
-                  isConversationActive ? 'animate-pulse' : ''
-                } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                aria-label="Start ACAI voice demo"
-              >
-                <Mic className="w-10 h-10 text-white" />
-              </button>
+        {/* Animated gradient border wrapper */}
+        <div className="relative w-full p-[2px] rounded-2xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] animate-gradient-flow">
+          {/* Inner card with dark background */}
+          <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 transition-all duration-300 ${
+            isConversationActive ? 'shadow-[0_0_40px_rgba(123,0,255,0.4)]' : 'shadow-lg'
+          }`}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl md:text-2xl font-semibold text-white">
+                Experience the ACAI AI Receptionist
+              </h3>
               {isConversationActive && (
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] opacity-30 animate-pulse scale-125" />
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full flex items-center gap-1"
+                >
+                  <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                  LIVE
+                </motion.span>
               )}
             </div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.3 }}
-              className={`text-center text-sm font-medium transition-all duration-300 ${
-                isConversationActive
-                  ? 'text-green-600 dark:text-green-400'
-                  : isLoading
-                  ? 'text-orange-600 dark:text-orange-400'
-                  : 'text-neutral-600 dark:text-neutral-400'
-              }`}
-            >
-              {isLoading ? 'Connecting...' : isConversationActive ? 'Call is NOW live' : 'Click to start call'}
-            </motion.div>
-            {isConversationActive && (
+            <p className="text-sm md:text-base text-neutral-300 dark:text-neutral-400 mb-6">
+              This is our live AI receptionist handling real-time conversations. No scripts. Books directly into our calendar.
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                <button
+                  onClick={toggleConversation}
+                  disabled={isLoading}
+                  className={`w-20 h-20 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 relative z-10 ${
+                    isConversationActive ? 'animate-pulse' : ''
+                  } ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                  aria-label="Start ACAI voice demo"
+                >
+                  <Mic className="w-10 h-10 text-white" />
+                </button>
+                {isConversationActive && (
+                  <>
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] opacity-30 animate-pulse scale-125" />
+                    <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-xl scale-150 animate-pulse" />
+                  </>
+                )}
+              </div>
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.3 }}
-                className="text-xs text-neutral-500 dark:text-neutral-400 text-center"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.3 }}
+                className={`text-center text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+                  isConversationActive
+                    ? 'text-green-400'
+                    : isLoading
+                    ? 'text-orange-400'
+                    : 'text-neutral-400'
+                }`}
               >
-                Click again to end call
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Connecting<span className="animate-pulse">...</span></span>
+                  </>
+                ) : isConversationActive ? (
+                  'Call is NOW live'
+                ) : (
+                  'Click to start call'
+                )}
               </motion.div>
-            )}
+              {isConversationActive && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.3 }}
+                  className="text-xs text-neutral-400 text-center"
+                >
+                  Click again to end call
+                </motion.div>
+              )}
+            </div>
+            <p className="text-xs text-neutral-500 mt-4 text-center italic">
+              Initial connection may take 3–5 seconds.
+            </p>
           </div>
-          <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-4 text-center italic">
-            Initial connection may take 3–5 seconds.
-          </p>
         </div>
       </motion.div>
 

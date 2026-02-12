@@ -30,15 +30,15 @@ const IndustryCard: React.FC<IndustryCardProps> = ({ title, icon, index }) => {
       transition={{ duration: 0.4, delay: index * 0.03 }}
       className="group relative"
     >
+      {/* Gradient border effect on hover - ACAI brand colors */}
+      <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+      
       {/* Card container with enhanced glass effect and ACAI gradient */}
-      <div className="relative flex flex-col items-center justify-center gap-4 p-6 rounded-xl bg-neutral-900/60 backdrop-blur-md border border-neutral-800 transition-all duration-300 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_0_35px_rgba(139,92,246,0.35)]">
-        
-        {/* Gradient border effect on hover */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
+      <div className="relative flex flex-col items-center justify-center gap-4 p-6 rounded-xl bg-neutral-900/60 backdrop-blur-md border border-neutral-800 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-[0_0_35px_rgba(123,0,255,0.35)] group-hover:border-transparent">
         
         {/* Icon container with perfect centering and enhanced hover */}
         <div className="relative flex items-center justify-center h-20 w-20 rounded-xl bg-gradient-to-br from-neutral-800/90 to-neutral-900/90 border border-neutral-700 transition-all duration-300 group-hover:border-purple-400/40 group-hover:shadow-lg group-hover:scale-105">
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center transition-all duration-300 group-hover:brightness-125">
             {icon}
           </div>
         </div>
