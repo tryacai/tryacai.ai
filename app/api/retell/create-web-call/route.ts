@@ -5,9 +5,12 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { scenario = 'acai' } = body;
 
+    console.log("[API] Received scenario:", scenario);
+
     // Validate scenario
     const validScenarios = ['acai', 'plumbing', 'barber'];
     if (!validScenarios.includes(scenario)) {
+      console.error("[API] Invalid scenario:", scenario);
       return NextResponse.json(
         { error: "Invalid scenario" },
         { status: 400 }
@@ -32,8 +35,10 @@ export async function POST(request: Request) {
         RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_ACAI;
     }
 
+    console.log("[API] Selected agent ID for scenario:", scenario, "- Agent ID exists:", !!RETELL_AGENT_ID);
+
     if (!RETELL_API_KEY) {
-      console.error("Missing Retell API key");
+      console.error("[API] Missing Retell API key");
       return NextResponse.json(
         { error: "Missing API credentials" },
         { status: 500 }
@@ -41,13 +46,14 @@ export async function POST(request: Request) {
     }
 
     if (!RETELL_AGENT_ID) {
-      console.error(`Missing Retell Agent ID for scenario: ${scenario}`);
+      console.error(`[API] Missing Retell Agent ID for scenario: ${scenario}`);
       return NextResponse.json(
         { error: `Missing Agent ID for scenario: ${scenario}` },
         { status: 400 }
       );
     }
 
+    console.log("[API] Calling Retell API...");
     const response = await fetch("https://api.retellai.com/v2/create-web-call", {
       method: "POST",
       headers: {
@@ -58,16 +64,23 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to create web call");
+      const errorText = await response.text();
+      console.error("[API] Retell API error:", response.status, errorText);
+      return NextResponse.json(
+        { error: errorText || "Retell API failed" },
+        { status: response.status }
+      );
     }
 
     const { access_token } = await response.json();
+    console.log("[API] Successfully created web call");
     return NextResponse.json({ access_token });
 
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unknown server error";
-
+    
+    console.error("[API] Unexpected error:", message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
