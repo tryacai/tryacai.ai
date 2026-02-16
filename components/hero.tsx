@@ -226,17 +226,36 @@ const TypewriterHeadline = () => {
   );
 };
 
-// Demo Card Component
-interface DemoCardProps {
-  title: string;
-  description: string;
-  scenario: 'acai' | 'plumbing' | 'barber';
+// Primary Demo Card Component
+interface PrimaryDemoCardProps {
   delay: number;
 }
 
-const DemoCard = ({ title, description, scenario, delay }: DemoCardProps) => {
-  const { toggleConversation, isConversationActive, isLoading } = useRetellVoiceDemo(scenario);
+const PrimaryDemoCard = ({ delay }: PrimaryDemoCardProps) => {
+  const { toggleConversation, isConversationActive, isLoading, callState } = useRetellVoiceDemo('acai');
   
+  // Mic button state colors
+  const getMicButtonStyle = () => {
+    if (callState === 'active') return 'bg-green-500';
+    if (callState === 'connecting') return 'bg-yellow-500 animate-pulse';
+    if (callState === 'stopping') return 'bg-red-500';
+    return 'bg-neutral-600'; // idle
+  };
+
+  const getStatusText = () => {
+    if (callState === 'active') return 'LIVE';
+    if (callState === 'connecting') return 'Connecting...';
+    if (callState === 'stopping') return 'Ending...';
+    return 'Click to start call';
+  };
+
+  const getStatusColor = () => {
+    if (callState === 'active') return 'text-green-400';
+    if (callState === 'connecting') return 'text-yellow-400';
+    if (callState === 'stopping') return 'text-red-400';
+    return 'text-neutral-400';
+  };
+
   return (
     <motion.div
       initial={{
@@ -252,73 +271,130 @@ const DemoCard = ({ title, description, scenario, delay }: DemoCardProps) => {
         duration: 0.5,
         delay,
       }}
-      className="flex flex-col items-center justify-center"
+      className="flex flex-col items-center justify-center max-w-2xl mx-auto w-full px-4"
     >
       {/* Animated gradient border wrapper */}
       <div className="relative w-full p-[2px] rounded-2xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] animate-gradient-flow">
         {/* Inner card with dark background */}
-        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-2xl p-6 transition-all duration-300 ${
-          isConversationActive ? 'shadow-[0_0_40px_rgba(123,0,255,0.4)]' : 'shadow-lg'
+        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-2xl p-8 md:p-10 transition-all duration-300 ${
+          isConversationActive ? 'shadow-[0_0_60px_rgba(123,0,255,0.6)]' : 'shadow-lg'
         }`}>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-white">
-              {title}
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
+              🎙 Experience the ACAI Concierge™
             </h3>
             {isConversationActive && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full flex items-center gap-1"
+                className="px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-full flex items-center gap-2 shadow-[0_0_20px_rgba(34,197,94,0.6)]"
               >
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                <span className="w-3 h-3 bg-white rounded-full animate-pulse"></span>
                 LIVE
               </motion.span>
             )}
           </div>
-          <p className="text-sm text-neutral-300 dark:text-neutral-400 mb-4">
-            {description}
+          <p className="text-base md:text-lg text-neutral-300 dark:text-neutral-400 mb-8">
+            This is our live AI receptionist handling real-time conversations. No scripts. Books directly into our calendar.
           </p>
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <button
+                onClick={toggleConversation}
+                disabled={isLoading}
+                className={`w-24 h-24 rounded-full ${getMicButtonStyle()} flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-purple-500/50 active:scale-95 relative z-10 ${
+                  isLoading ? 'cursor-not-allowed' : ''
+                }`}
+                aria-label="Start ACAI voice demo"
+              >
+                <Mic className="w-12 h-12 text-white" />
+              </button>
+              {isConversationActive && (
+                <>
+                  <div className="absolute inset-0 rounded-full bg-green-500 opacity-30 animate-pulse scale-125" />
+                  <div className="absolute inset-0 rounded-full bg-green-500/30 blur-2xl scale-150 animate-pulse" />
+                </>
+              )}
+            </div>
+            <div className={`text-center font-semibold transition-all duration-300 ${getStatusColor()}`}>
+              {getStatusText()}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// Secondary Demo Card Component (Triangle Layout)
+interface SecondaryDemoCardProps {
+  title: string;
+  scenario: 'plumbing' | 'barber';
+  delay: number;
+}
+
+const SecondaryDemoCard = ({ title, scenario, delay }: SecondaryDemoCardProps) => {
+  const { toggleConversation, isConversationActive, isLoading, callState } = useRetellVoiceDemo(scenario);
+  
+  const getMicButtonStyle = () => {
+    if (callState === 'active') return 'bg-green-500';
+    if (callState === 'connecting') return 'bg-yellow-500 animate-pulse';
+    if (callState === 'stopping') return 'bg-red-500';
+    return 'bg-neutral-600';
+  };
+
+  const getStatusText = () => {
+    if (callState === 'active') return 'LIVE';
+    if (callState === 'connecting') return 'Connecting...';
+    return 'Click to start';
+  };
+
+  const getStatusColor = () => {
+    if (callState === 'active') return 'text-green-400';
+    if (callState === 'connecting') return 'text-yellow-400';
+    return 'text-neutral-400';
+  };
+
+  return (
+    <motion.div
+      initial={{
+        y: 40,
+        opacity: 0,
+      }}
+      animate={{
+        y: 0,
+        opacity: 1,
+      }}
+      transition={{
+        ease: "easeOut",
+        duration: 0.5,
+        delay,
+      }}
+      className="flex flex-col items-center justify-center"
+    >
+      <div className="relative w-full p-[1.5px] rounded-xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff]">
+        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-xl p-5 transition-all duration-300 ${
+          isConversationActive ? 'shadow-[0_0_30px_rgba(123,0,255,0.4)]' : 'shadow-md'
+        }`}>
+          <h4 className="text-base font-semibold text-white mb-3 text-center">
+            {title}
+          </h4>
           <div className="flex flex-col items-center gap-3">
             <div className="relative">
               <button
                 onClick={toggleConversation}
                 disabled={isLoading}
-                className={`w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 relative z-10 ${
-                  isConversationActive ? 'animate-pulse' : ''
-                } ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`w-14 h-14 rounded-full ${getMicButtonStyle()} flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50 active:scale-95 relative z-10`}
                 aria-label={`Start ${title} demo`}
               >
-                <Mic className="w-8 h-8 text-white" />
+                <Mic className="w-7 h-7 text-white" />
               </button>
               {isConversationActive && (
-                <>
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] opacity-30 animate-pulse scale-125" />
-                  <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-xl scale-150 animate-pulse" />
-                </>
+                <div className="absolute inset-0 rounded-full bg-green-500/30 blur-xl scale-150 animate-pulse" />
               )}
             </div>
-            <div
-              className={`text-center text-xs font-medium transition-all duration-300 flex items-center gap-2 ${
-                isConversationActive
-                  ? 'text-green-400'
-                  : isLoading
-                  ? 'text-orange-400'
-                  : 'text-neutral-400'
-              }`}
-            >
-              {isLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Connecting...</span>
-                </>
-              ) : isConversationActive ? (
-                'Live now'
-              ) : (
-                'Click to start call'
-              )}
+            <div className={`text-xs font-medium transition-all duration-300 ${getStatusColor()}`}>
+              {getStatusText()}
             </div>
           </div>
         </div>
@@ -375,24 +451,21 @@ export const Hero = () => {
         </Balancer>
       </motion.p>
 
-      {/* Three Live Demos */}
-      <div className="mt-12 relative z-10 max-w-7xl mx-auto w-full px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <DemoCard
-            title="General ACAI Demo"
-            description="Experience our core AI receptionist in action"
-            scenario="acai"
-            delay={0.25}
-          />
-          <DemoCard
+      {/* Primary Demo - Centered and Large */}
+      <div className="mt-12 relative z-10 w-full">
+        <PrimaryDemoCard delay={0.25} />
+      </div>
+
+      {/* Secondary Demos - Triangle Layout */}
+      <div className="mt-8 relative z-10 max-w-3xl mx-auto w-full px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SecondaryDemoCard
             title="Plumbing & HVAC Demo"
-            description="Handles emergency calls and instant scheduling"
             scenario="plumbing"
             delay={0.3}
           />
-          <DemoCard
+          <SecondaryDemoCard
             title="Barbershop Demo"
-            description="Books appointments and manages your schedule"
             scenario="barber"
             delay={0.35}
           />
@@ -416,7 +489,7 @@ export const Hero = () => {
           duration: 0.5,
           delay: 0.4,
         }}
-        className="flex items-center gap-4 justify-center mt-8 relative z-10"
+        className="flex items-center gap-4 justify-center mt-10 relative z-10"
       >
         <Button>Get started</Button>
         <Button

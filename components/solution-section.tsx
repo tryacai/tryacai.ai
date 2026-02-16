@@ -15,7 +15,7 @@ const featureBlocks = [
   },
   {
     title: "Service-Specific",
-    description: "Built for all service businesses",
+    description: "Built for service businesses",
   },
 ];
 

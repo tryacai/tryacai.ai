@@ -13,6 +13,39 @@ type CallState = 'idle' | 'connecting' | 'active' | 'stopping';
 let globalRetellClient: RetellWebClient | null = null;
 let currentScenario: RetellScenario | null = null;
 let connectionTimeout: NodeJS.Timeout | null = null;
+let prewarmedToken: { scenario: RetellScenario; token: string; timestamp: number } | null = null;
+
+// Pre-warm function to get token before user clicks
+async function prewarmAgent(scenario: RetellScenario) {
+  // Only prewarm if we don't already have a recent token
+  if (prewarmedToken && prewarmedToken.scenario === scenario && Date.now() - prewarmedToken.timestamp < 30000) {
+    console.log("[Frontend] Using existing prewarmed token for", scenario);
+    return;
+  }
+
+  try {
+    console.log("[Frontend] Pre-warming agent for scenario:", scenario);
+    const response = await fetch("/api/retell/create-web-call", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ scenario }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      prewarmedToken = {
+        scenario,
+        token: data.access_token,
+        timestamp: Date.now(),
+      };
+      console.log("[Frontend] Agent prewarmed successfully for", scenario);
+    }
+  } catch (error) {
+    console.error("[Frontend] Pre-warming failed:", error);
+  }
+}
 
 export function useRetellVoiceDemo(scenario: RetellScenario = 'acai') {
   const [callState, setCallState] = useState<CallState>('idle');
@@ -28,7 +61,7 @@ export function useRetellVoiceDemo(scenario: RetellScenario = 'acai') {
 
       // Set up global event listeners
       client.on("call_started", () => {
-        console.log("[Frontend] Call started event");
+        console.log("[Frontend] Call started event - Audio stream confirmed");
         if (connectionTimeout) {
           clearTimeout(connectionTimeout);
           connectionTimeout = null;
@@ -59,6 +92,9 @@ export function useRetellVoiceDemo(scenario: RetellScenario = 'acai') {
       });
     }
 
+    // Pre-warm the agent for this scenario on mount
+    prewarmAgent(scenario);
+
     return () => {
       // Cleanup on unmount - clear any hanging timeouts
       if (connectionTimeout) {
@@ -66,7 +102,7 @@ export function useRetellVoiceDemo(scenario: RetellScenario = 'acai') {
         connectionTimeout = null;
       }
     };
-  }, []);
+  }, [scenario]);
 
   const stopCurrentCall = useCallback(async () => {
     if (!globalRetellClient || callState === 'idle') return;
@@ -135,7 +171,7 @@ export function useRetellVoiceDemo(scenario: RetellScenario = 'acai') {
       setCallState('connecting');
       console.log(`[Frontend] Starting call with scenario: ${targetScenario}`);
       
-      // Set 5 second safety timeout
+      // Set 8 second safety timeout (increased for better reliability)
       connectionTimeout = setTimeout(() => {
         console.error("[Frontend] Connection timeout - resetting state");
         setCallState('idle');
@@ -143,37 +179,49 @@ export function useRetellVoiceDemo(scenario: RetellScenario = 'acai') {
         setActiveScenario(null);
         isInitializing.current = false;
         alert("Connection timeout. Please try again.");
-      }, 5000);
+      }, 8000);
       
-      const response = await fetch("/api/retell/create-web-call", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ scenario: targetScenario }),
-      });
+      let accessToken: string;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("[Frontend] API error:", errorData);
-        throw new Error(errorData.error || "Failed to fetch access token");
+      // Check if we have a prewarmed token for this scenario
+      if (prewarmedToken && prewarmedToken.scenario === targetScenario && Date.now() - prewarmedToken.timestamp < 45000) {
+        console.log("[Frontend] Using prewarmed token");
+        accessToken = prewarmedToken.token;
+        prewarmedToken = null; // Clear it after use
+        
+        // Start pre-warming the next token in the background
+        setTimeout(() => prewarmAgent(targetScenario), 100);
+      } else {
+        console.log("[Frontend] Fetching fresh token");
+        const response = await fetch("/api/retell/create-web-call", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ scenario: targetScenario }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("[Frontend] API error:", errorData);
+          throw new Error(errorData.error || "Failed to fetch access token");
+        }
+
+        const data = await response.json();
+        accessToken = data?.access_token;
+
+        if (!accessToken) {
+          throw new Error("Missing access_token in response");
+        }
       }
 
-      const data = await response.json();
-      const accessToken = data?.access_token;
-
-      if (!accessToken) {
-        throw new Error("Missing access_token in response");
-      }
-
-      console.log("[Frontend] Received access token");
-      console.log("[Frontend] Initializing Retell call...");
+      console.log("[Frontend] Received access token, initializing call...");
       
       await client.startCall({ accessToken });
       currentScenario = targetScenario;
       setActiveScenario(targetScenario);
-      console.log("[Frontend] Call initialization request sent");
-      // State will be set to 'active' by the event listener
+      console.log("[Frontend] Call initialization request sent, waiting for audio stream confirmation...");
+      // State will be set to 'active' by the call_started event when audio stream is confirmed
     } catch (error) {
       console.error("[Frontend] Frontend call error:", error);
       

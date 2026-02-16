@@ -5,7 +5,7 @@ import { CTA } from "@/components/cta";
 import { SectionDivider } from "@/components/section-divider";
 import { SupportedIndustries } from "@/components/supported-industries";
 import { SolutionSection } from "@/components/solution-section";
-import { CoreProblem } from "@/components/core-problem";
+import { MissedCallStats } from "@/components/missed-call-stats";
 import { ScalingLadder } from "@/components/scaling-ladder";
 import { InfrastructureSection } from "@/components/infrastructure-section";
 
@@ -20,11 +20,11 @@ export default function Home() {
       <Container className="flex min-h-screen flex-col items-center justify-between">
         <Hero />
 
-        <SolutionSection />
+        <MissedCallStats />
         
         <SectionDivider />
-        
-        <CoreProblem />
+
+        <SolutionSection />
         
         <SectionDivider />
         
