@@ -6,6 +6,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./button";
 import { Link } from "next-view-transitions";
 
+// Tier type definition
+type Tier = {
+  name: string;
+  monthlyRange: string;
+  onboardingRange: string;
+  features: string[];
+  note?: string;
+};
+
 const industries = [
   "Plumbing",
   "HVAC",
@@ -22,8 +31,12 @@ const industries = [
 ];
 
 // Industry-based pricing structure
-const getPricingForIndustry = (industry: string) => {
-  const pricingData: Record<string, any> = {
+const getPricingForIndustry = (industry: string): { tier1: Tier; tier2: Tier; tier3: Tier | null } => {
+  const pricingData: Record<string, {
+    tier1: { monthlyRange: string; onboardingRange: string };
+    tier2Multiplier: number;
+    tier3: { monthlyRange: string; onboardingRange: string } | null;
+  }> = {
     Barbers: {
       tier1: {
         monthlyRange: "$79 - $149",
@@ -206,7 +219,7 @@ export function Pricing() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const pricing = getPricingForIndustry(selectedIndustry);
-  const tiers = [pricing.tier1, pricing.tier2, pricing.tier3].filter(Boolean);
+  const tiers: Tier[] = [pricing.tier1, pricing.tier2, pricing.tier3].filter((tier): tier is Tier => tier !== null);
 
   return (
     <div className="relative">
