@@ -6,9 +6,9 @@ import { Heading } from "./heading";
 
 const stats = [
   { label: "1 in 3 service calls go unanswered", value: "33%" },
-  { label: "78% of customers call the next business", value: "78%" },
+  { label: "85% of customers won’t call back if unanswered", value: "85%" },
   { label: "Emergency calls convert 2.5x higher", value: "2.5x" },
-  { label: "After-hours calls = 30% of high-ticket jobs", value: "30%" },
+  { label: "Up to 40% of high-ticket jobs come after hours", value: "40%" },
 ];
 
 export const MissedCallStats = () => {
@@ -39,10 +39,11 @@ export const MissedCallStats = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
-            className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-neutral-900/70 px-6 py-6 text-center"
+            className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-neutral-900/70 px-6 py-6 text-center hover:-translate-y-1 hover:shadow-[0_0_16px_rgba(255,0,150,0.18)] transition-all duration-200 ease-out"
           >
-            <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-2">
+            <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-2 relative overflow-hidden">
               {stat.value}
+              <span className="absolute inset-y-0 -left-1/2 w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:left-full transition-all duration-700" />
             </div>
             <div className="text-sm text-neutral-700 dark:text-neutral-300 font-medium">
               {stat.label}
@@ -62,7 +63,7 @@ export const MissedCallStats = () => {
         <div className="grid grid-cols-2 gap-6 text-center">
           <div>
             <div className="text-sm uppercase tracking-wider text-neutral-400 mb-2">
-              Missed Calls Today
+              Missed This Money
             </div>
             <motion.div
               key={missedCalls}

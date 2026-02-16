@@ -176,16 +176,21 @@ export const SupportedIndustries = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
+              whileHover={{ y: -4 }}
               className={`rounded-2xl border ${
                 isExpanded 
-                  ? 'border-transparent bg-gradient-to-br from-[#ff003c]/20 via-[#7b00ff]/20 to-[#0066ff]/20 shadow-[0_0_24px_rgba(168,85,247,0.3)]' 
-                  : 'border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-neutral-900/70'
-              } transition-all duration-300 overflow-hidden`}
+                  ? 'border-transparent bg-gradient-to-br from-[#ff003c]/20 via-[#7b00ff]/20 to-[#0066ff]/20 shadow-[0_0_20px_rgba(168,85,247,0.24)]' 
+                  : 'border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-neutral-900/70 hover:border-transparent hover:shadow-[0_0_18px_rgba(168,85,247,0.2)] hover:bg-gradient-to-br hover:from-[#ff003c]/10 hover:via-[#7b00ff]/10 hover:to-[#0066ff]/10'
+              } transition-all duration-200 ease-out overflow-hidden relative group`}
             >
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] p-[1px] pointer-events-none">
+                <div className="h-full w-full rounded-2xl bg-white dark:bg-neutral-900" />
+              </div>
+
               {/* Card Header */}
               <button
                 onClick={() => setExpandedIndex(isExpanded ? null : index)}
-                className="w-full px-6 py-6 text-left hover:bg-white/50 dark:hover:bg-neutral-800/50 transition-colors"
+                className="relative z-10 w-full px-6 py-6 text-left hover:bg-white/50 dark:hover:bg-neutral-800/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -193,7 +198,7 @@ export const SupportedIndustries = () => {
                       isExpanded 
                         ? 'bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff]' 
                         : 'bg-neutral-100 dark:bg-neutral-800'
-                    } transition-all duration-300`}>
+                    } transition-all duration-200 ease-out`}>
                       <Icon className={`h-5 w-5 ${
                         isExpanded ? 'text-white' : 'text-neutral-600 dark:text-neutral-300'
                       }`} />
@@ -203,7 +208,7 @@ export const SupportedIndustries = () => {
                     </div>
                   </div>
                   <ChevronDown 
-                    className={`h-5 w-5 text-neutral-500 dark:text-neutral-400 transition-transform duration-300 ${
+                    className={`h-5 w-5 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ease-out ${
                       isExpanded ? 'rotate-180' : ''
                     }`}
                   />
@@ -222,7 +227,7 @@ export const SupportedIndustries = () => {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div className="px-6 pb-6 border-t border-neutral-200 dark:border-neutral-700 pt-4">
+                    <div className="relative z-10 px-6 pb-6 border-t border-neutral-200 dark:border-neutral-700 pt-4">
                       <ul className="space-y-2 mb-4">
                         {industry.features.map((feature, idx) => (
                           <li key={idx} className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-300">
@@ -235,13 +240,13 @@ export const SupportedIndustries = () => {
                       <div className="flex gap-3 mt-4">
                         <Link
                           href={industry.slug}
-                          className="flex-1 inline-flex items-center justify-center rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-neutral-700 dark:text-neutral-300 transition-all duration-200 hover:border-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+                          className="flex-1 inline-flex items-center justify-center rounded-full border border-neutral-300 dark:border-neutral-700 px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-neutral-700 dark:text-neutral-300 transition-all duration-150 ease-out hover:border-neutral-500 hover:text-neutral-900 dark:hover:text-white"
                         >
                           Learn More
                         </Link>
                         <Link
                           href="/contact"
-                          className="flex-1 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-all duration-200 hover:shadow-lg hover:scale-105"
+                          className="flex-1 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-all duration-150 ease-out hover:shadow-lg hover:scale-105"
                         >
                           Get Started
                         </Link>

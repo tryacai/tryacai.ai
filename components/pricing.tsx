@@ -6,13 +6,29 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./button";
 import { Link } from "next-view-transitions";
 
-// Tier type definition
 type Tier = {
   name: string;
   monthlyRange: string;
   onboardingRange: string;
   features: string[];
   note?: string;
+};
+
+type TierRange = {
+  monthlyRange: string;
+  onboardingRange: string;
+};
+
+type IndustryPricing = {
+  tier1: TierRange;
+  tier2Multiplier: number;
+  tier3: TierRange | null;
+};
+
+type IndustryPricingResult = {
+  tier1: Tier;
+  tier2: Tier;
+  tier3: Tier | null;
 };
 
 const industries = [
@@ -31,12 +47,8 @@ const industries = [
 ];
 
 // Industry-based pricing structure
-const getPricingForIndustry = (industry: string): { tier1: Tier; tier2: Tier; tier3: Tier | null } => {
-  const pricingData: Record<string, {
-    tier1: { monthlyRange: string; onboardingRange: string };
-    tier2Multiplier: number;
-    tier3: { monthlyRange: string; onboardingRange: string } | null;
-  }> = {
+const getPricingForIndustry = (industry: string): IndustryPricingResult => {
+  const pricingData: Record<string, IndustryPricing> = {
     Barbers: {
       tier1: {
         monthlyRange: "$79 - $149",
@@ -219,7 +231,9 @@ export function Pricing() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const pricing = getPricingForIndustry(selectedIndustry);
-  const tiers: Tier[] = [pricing.tier1, pricing.tier2, pricing.tier3].filter((tier): tier is Tier => tier !== null);
+  const tiers: Tier[] = [pricing.tier1, pricing.tier2, pricing.tier3].filter(
+    (tier): tier is Tier => Boolean(tier)
+  );
 
   return (
     <div className="relative">
@@ -274,8 +288,6 @@ export function Pricing() {
 
       <div className="mx-auto mt-8 grid relative z-20 grid-cols-1 gap-6 items-stretch md:grid-cols-3 max-w-6xl">
         {tiers.map((tier, tierIdx) => {
-          if (!tier) return null;
-          
           return (
             <motion.div
               key={tier.name}
@@ -356,7 +368,7 @@ export function Pricing() {
                     What's Included
                   </p>
                   <ul className="space-y-3">
-                    {tier.features.map((feature: string) => (
+                    {tier.features.map((feature) => (
                       <li key={feature} className="flex gap-x-3 items-start">
                         <IconCircleCheckFilled
                           className={cn(
