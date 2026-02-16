@@ -2,6 +2,134 @@
 import createGlobe from "cobe";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+type Vec3 = { x: number; y: number; z: number };
+
+const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
+
+const latLonToVec3 = (lat: number, lon: number): Vec3 => {
+  const latRad = degToRad(lat);
+  const lonRad = degToRad(lon);
+  const cosLat = Math.cos(latRad);
+  return {
+    x: cosLat * Math.cos(lonRad),
+    y: Math.sin(latRad),
+    z: cosLat * Math.sin(lonRad),
+  };
+};
+
+const rotateY = (vec: Vec3, phi: number): Vec3 => {
+  const cosPhi = Math.cos(phi);
+  const sinPhi = Math.sin(phi);
+  return {
+    x: vec.x * cosPhi + vec.z * sinPhi,
+    y: vec.y,
+    z: -vec.x * sinPhi + vec.z * cosPhi,
+  };
+};
+
+const project = (vec: Vec3, size: number) => {
+  const center = size / 2;
+  const radius = size * 0.44;
+  const rawX = center + vec.x * radius;
+  const rawY = center + vec.y * radius;
+  const dx = rawX - center;
+  const dy = rawY - center;
+  const dist = Math.hypot(dx, dy);
+  if (dist <= radius * 0.998) {
+    return { x: rawX, y: rawY, radius, center };
+  }
+  const clamp = (radius * 0.998) / dist;
+  return {
+    x: center + dx * clamp,
+    y: center + dy * clamp,
+    radius,
+    center,
+  };
+};
+
+const dot = (a: Vec3, b: Vec3) => a.x * b.x + a.y * b.y + a.z * b.z;
+
+const cross = (a: Vec3, b: Vec3): Vec3 => ({
+  x: a.y * b.z - a.z * b.y,
+  y: a.z * b.x - a.x * b.z,
+  z: a.x * b.y - a.y * b.x,
+});
+
+const length = (vec: Vec3) => Math.hypot(vec.x, vec.y, vec.z);
+
+const normalize = (vec: Vec3): Vec3 => {
+  const len = length(vec) || 1;
+  return { x: vec.x / len, y: vec.y / len, z: vec.z / len };
+};
+
+const scale = (vec: Vec3, scalar: number): Vec3 => ({
+  x: vec.x * scalar,
+  y: vec.y * scalar,
+  z: vec.z * scalar,
+});
+
+const add = (a: Vec3, b: Vec3): Vec3 => ({
+  x: a.x + b.x,
+  y: a.y + b.y,
+  z: a.z + b.z,
+});
+
+const slerp = (from: Vec3, to: Vec3, t: number): Vec3 => {
+  const start = normalize(from);
+  const end = normalize(to);
+  const d = Math.max(-1, Math.min(1, dot(start, end)));
+  const theta = Math.acos(d);
+
+  if (theta < 1e-5) return start;
+
+  const sinTheta = Math.sin(theta);
+  const w1 = Math.sin((1 - t) * theta) / sinTheta;
+  const w2 = Math.sin(t * theta) / sinTheta;
+  return normalize({
+    x: start.x * w1 + end.x * w2,
+    y: start.y * w1 + end.y * w2,
+    z: start.z * w1 + end.z * w2,
+  });
+};
+
+const rotateAroundAxis = (vec: Vec3, axis: Vec3, angle: number): Vec3 => {
+  const nAxis = normalize(axis);
+  const cosA = Math.cos(angle);
+  const sinA = Math.sin(angle);
+  const crossTerm = cross(nAxis, vec);
+  const dotTerm = dot(nAxis, vec);
+
+  return normalize({
+    x: vec.x * cosA + crossTerm.x * sinA + nAxis.x * dotTerm * (1 - cosA),
+    y: vec.y * cosA + crossTerm.y * sinA + nAxis.y * dotTerm * (1 - cosA),
+    z: vec.z * cosA + crossTerm.z * sinA + nAxis.z * dotTerm * (1 - cosA),
+  });
+};
+
+const cubicBezierValue = (t: number, p1: number, p2: number) => {
+  const mt = 1 - t;
+  return 3 * mt * mt * t * p1 + 3 * mt * t * t * p2 + t * t * t;
+};
+
+const cubicBezierDerivative = (t: number, p1: number, p2: number) => {
+  const mt = 1 - t;
+  return 3 * mt * mt * p1 + 6 * mt * t * (p2 - p1) + 3 * t * t * (1 - p2);
+};
+
+const cubicBezierEasing = (x: number, x1: number, y1: number, x2: number, y2: number) => {
+  let t = x;
+  for (let index = 0; index < 5; index += 1) {
+    const xEstimate = cubicBezierValue(t, x1, x2);
+    const derivative = cubicBezierDerivative(t, x1, x2);
+    if (Math.abs(derivative) < 1e-5) break;
+    t -= (xEstimate - x) / derivative;
+    t = Math.min(1, Math.max(0, t));
+  }
+  return cubicBezierValue(t, y1, y2);
+};
+
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t;
+
 // https://github.com/shuding/cobe
 export const Globe = ({ className }: { className?: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,7 +142,7 @@ export const Globe = ({ className }: { className?: string }) => {
   const hoverRef = useRef(false);
 
   const globeRotationRef = useRef(0);
-  const globeSpeedRef = useRef(0.0068);
+  const globeSpeedRef = useRef(0.0065);
   const targetPhiRef = useRef(0);
   const isPausedRef = useRef(false);
 
@@ -32,44 +160,40 @@ export const Globe = ({ className }: { className?: string }) => {
     phase: "flight" | "landing" | "hold" | "rebound";
     phaseStart: number;
     flightDuration: number;
-    arcHeight: number;
-    lateralDrift: number;
-    from: { x: number; y: number };
-    to: { x: number; y: number };
-    waypoint: { x: number; y: number };
-    cp1: { x: number; y: number };
-    cp2: { x: number; y: number };
-    cp3: { x: number; y: number };
-    cp4: { x: number; y: number };
-    points: Array<{ x: number; y: number; t: number }>;
+    altitudeMax: number;
+    fromVec: Vec3;
+    midVec: Vec3;
+    toVec: Vec3;
+    twoLap: boolean;
     logoPos: { x: number; y: number };
+    logoVisible: boolean;
+    depthScale: number;
+    points: Array<{ x: number; y: number; t: number }>;
     targetPhi: number;
   }>({
     segmentIndex: 0,
     phase: "flight",
     phaseStart: 0,
     flightDuration: 9000,
-    arcHeight: 0.2,
-    lateralDrift: 0,
-    from: { x: 0.33, y: 0.39 },
-    to: { x: 0.4, y: 0.62 },
-    waypoint: { x: 0.36, y: 0.47 },
-    cp1: { x: 0.33, y: 0.31 },
-    cp2: { x: 0.35, y: 0.41 },
-    cp3: { x: 0.38, y: 0.55 },
-    cp4: { x: 0.4, y: 0.7 },
+    altitudeMax: 0.24,
+    fromVec: latLonToVec3(40.7128, -74.0060),
+    midVec: latLonToVec3(51.5072, -0.1276),
+    toVec: latLonToVec3(51.5072, -0.1276),
+    twoLap: false,
+    logoPos: { x: 300, y: 300 },
+    logoVisible: true,
+    depthScale: 1,
     points: [],
-    logoPos: { x: 198, y: 234 },
-    targetPhi: 0.25,
+    targetPhi: 0,
   });
 
-  const surfacePositions = useMemo(
+  const locations = useMemo(
     () => [
-      { x: 0.33, y: 0.39, phi: 0.25 },
-      { x: 0.4, y: 0.62, phi: 0.55 },
-      { x: 0.52, y: 0.34, phi: 1.35 },
-      { x: 0.66, y: 0.42, phi: 2.2 },
-      { x: 0.54, y: 0.53, phi: 1.75 },
+      { lat: 40.7128, lon: -74.0060 },
+      { lat: 51.5072, lon: -0.1276 },
+      { lat: -23.5505, lon: -46.6333 },
+      { lat: 35.6764, lon: 139.65 },
+      { lat: -33.8688, lon: 151.2093 },
     ],
     []
   );
@@ -80,7 +204,6 @@ export const Globe = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     const dpr = 2;
-
     const logoElement = logoRef.current;
     const pulseElement = pulseRef.current;
     const trailCanvas = trailCanvasRef.current;
@@ -112,6 +235,54 @@ export const Globe = ({ className }: { className?: string }) => {
 
     if (!canvasRef.current) return;
 
+    const buildSegment = (segmentIndex: number) => {
+      const fromLocation = locations[segmentIndex];
+      const toLocation = locations[(segmentIndex + 1) % locations.length];
+
+      const fromVec = latLonToVec3(fromLocation.lat, fromLocation.lon);
+      const toVec = latLonToVec3(toLocation.lat, toLocation.lon);
+      const baseMid = normalize(add(fromVec, toVec));
+
+      const normalAxis = normalize(cross(fromVec, toVec));
+      const altitudeVariation = 0.9 + Math.random() * 0.2;
+      const driftAngle = ((Math.random() * 2 - 1) * 8 * Math.PI) / 180;
+      const bendAngle = ((20 + Math.random() * 8) * Math.PI) / 180;
+
+      let midVec = rotateAroundAxis(baseMid, normalAxis, bendAngle);
+      midVec = rotateAroundAxis(midVec, fromVec, driftAngle);
+
+      const twoLap = segmentIndex === 2;
+      if (twoLap) {
+        midVec = rotateAroundAxis(midVec, normalAxis, (14 * Math.PI) / 180);
+      }
+
+      const targetPhi = -degToRad(toLocation.lon);
+
+      return {
+        fromVec,
+        midVec,
+        toVec,
+        targetPhi,
+        flightDuration: (8000 + Math.random() * 2000) * (twoLap ? 1.08 : 1),
+        altitudeMax: 0.22 * altitudeVariation * (twoLap ? 1.12 : 1),
+        twoLap,
+      };
+    };
+
+    const segment0 = buildSegment(0);
+    const state = flightStateRef.current;
+    state.segmentIndex = 0;
+    state.phase = "flight";
+    state.phaseStart = performance.now();
+    state.fromVec = segment0.fromVec;
+    state.midVec = segment0.midVec;
+    state.toVec = segment0.toVec;
+    state.flightDuration = segment0.flightDuration;
+    state.altitudeMax = segment0.altitudeMax;
+    state.twoLap = segment0.twoLap;
+    state.targetPhi = segment0.targetPhi;
+    targetPhiRef.current = segment0.targetPhi;
+
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: dpr,
       width: 600 * dpr,
@@ -126,151 +297,26 @@ export const Globe = ({ className }: { className?: string }) => {
       markerColor: [0.66, 0.24, 1],
       glowColor: [0.47, 0.33, 1],
       markers: [
-        // longitude latitude
-        { location: [37.7595, -122.4367], size: 0.03 },
-        { location: [40.7128, -74.006], size: 0.1 },
+        { location: [40.7128, -74.0060], size: 0.07 },
+        { location: [51.5072, -0.1276], size: 0.06 },
+        { location: [-23.5505, -46.6333], size: 0.06 },
+        { location: [35.6764, 139.65], size: 0.07 },
+        { location: [-33.8688, 151.2093], size: 0.06 },
       ],
-      onRender: (state) => {
-        const baseSpeed = 0.0068;
-        const hoverSpeed = baseSpeed * 0.7;
+      onRender: (renderState) => {
+        const baseSpeed = 0.0065;
+        const hoverSpeed = baseSpeed * 0.67;
         const targetSpeed = isPausedRef.current ? 0 : hoverRef.current ? hoverSpeed : baseSpeed;
         globeSpeedRef.current += (targetSpeed - globeSpeedRef.current) * 0.08;
 
         const phiDelta = targetPhiRef.current - globeRotationRef.current;
-        globeRotationRef.current += globeSpeedRef.current + phiDelta * (isPausedRef.current ? 0.06 : 0.02);
-        state.phi = globeRotationRef.current;
+        globeRotationRef.current += globeSpeedRef.current + phiDelta * (isPausedRef.current ? 0.06 : 0.015);
+        renderState.phi = globeRotationRef.current;
       },
     });
 
-    const cubicBezierValue = (t: number, p1: number, p2: number) => {
-      const mt = 1 - t;
-      return 3 * mt * mt * t * p1 + 3 * mt * t * t * p2 + t * t * t;
-    };
-
-    const cubicBezierDerivative = (t: number, p1: number, p2: number) => {
-      const mt = 1 - t;
-      return 3 * mt * mt * p1 + 6 * mt * t * (p2 - p1) + 3 * t * t * (1 - p2);
-    };
-
-    const cubicBezierEasing = (x: number, x1: number, y1: number, x2: number, y2: number) => {
-      let t = x;
-      for (let index = 0; index < 5; index += 1) {
-        const xEstimate = cubicBezierValue(t, x1, x2);
-        const derivative = cubicBezierDerivative(t, x1, x2);
-        if (Math.abs(derivative) < 1e-5) break;
-        t -= (xEstimate - x) / derivative;
-        t = Math.min(1, Math.max(0, t));
-      }
-      return cubicBezierValue(t, y1, y2);
-    };
-
-    const quadraticBezier = (
-      p0: { x: number; y: number },
-      p1: { x: number; y: number },
-      p2: { x: number; y: number },
-      t: number
-    ) => {
-      const mt = 1 - t;
-      return {
-        x: mt * mt * p0.x + 2 * mt * t * p1.x + t * t * p2.x,
-        y: mt * mt * p0.y + 2 * mt * t * p1.y + t * t * p2.y,
-      };
-    };
-
-    const cubicBezierPoint = (
-      p0: { x: number; y: number },
-      p1: { x: number; y: number },
-      p2: { x: number; y: number },
-      p3: { x: number; y: number },
-      t: number
-    ) => {
-      const mt = 1 - t;
-      return {
-        x: mt * mt * mt * p0.x + 3 * mt * mt * t * p1.x + 3 * mt * t * t * p2.x + t * t * t * p3.x,
-        y: mt * mt * mt * p0.y + 3 * mt * mt * t * p1.y + 3 * mt * t * t * p2.y + t * t * t * p3.y,
-      };
-    };
-
-    const lerp = (from: number, to: number, t: number) => from + (to - from) * t;
-
-    const buildFlightControls = (segmentIndex: number) => {
-      const fromSite = surfacePositions[segmentIndex];
-      const toSite = surfacePositions[(segmentIndex + 1) % surfacePositions.length];
-      const arcHeight = 0.22 * (0.9 + Math.random() * 0.2);
-      const lateralDrift = (Math.random() * 2 - 1) * 0.03;
-      const flightDuration = 8000 + Math.random() * 2000;
-
-      const midX = (fromSite.x + toSite.x) / 2;
-      const midY = (fromSite.y + toSite.y) / 2;
-      const radialX = 0.5 - midX;
-      const radialY = 0.5 - midY;
-      const radialLen = Math.hypot(radialX, radialY) || 1;
-      const outwardX = radialX / radialLen;
-      const outwardY = radialY / radialLen;
-
-      const perpX = -outwardY;
-      const perpY = outwardX;
-
-      const waypoint = {
-        x: midX + outwardX * arcHeight + perpX * lateralDrift,
-        y: midY + outwardY * arcHeight + perpY * lateralDrift,
-      };
-
-      const cp1 = {
-        x: fromSite.x + outwardX * (arcHeight * 0.55),
-        y: fromSite.y + outwardY * (arcHeight * 0.55),
-      };
-      const cp2 = {
-        x: waypoint.x - outwardX * (arcHeight * 0.25),
-        y: waypoint.y - outwardY * (arcHeight * 0.25),
-      };
-      const cp3 = {
-        x: waypoint.x + outwardX * (arcHeight * 0.18),
-        y: waypoint.y + outwardY * (arcHeight * 0.18),
-      };
-      const cp4 = {
-        x: toSite.x + outwardX * (arcHeight * 0.5),
-        y: toSite.y + outwardY * (arcHeight * 0.5),
-      };
-
-      return {
-        fromSite,
-        toSite,
-        arcHeight,
-        lateralDrift,
-        flightDuration,
-        waypoint,
-        cp1,
-        cp2,
-        cp3,
-        cp4,
-      };
-    };
-
-    const startTime = performance.now();
-    flightStateRef.current.phaseStart = startTime;
-    flightStateRef.current.logoPos = {
-      x: surfacePositions[0].x * sceneRef.current.size,
-      y: surfacePositions[0].y * sceneRef.current.size,
-    };
-
-    const initialControls = buildFlightControls(0);
-    flightStateRef.current.from = initialControls.fromSite;
-    flightStateRef.current.to = initialControls.toSite;
-    flightStateRef.current.waypoint = initialControls.waypoint;
-    flightStateRef.current.arcHeight = initialControls.arcHeight;
-    flightStateRef.current.lateralDrift = initialControls.lateralDrift;
-    flightStateRef.current.flightDuration = initialControls.flightDuration;
-    flightStateRef.current.cp1 = initialControls.cp1;
-    flightStateRef.current.cp2 = initialControls.cp2;
-    flightStateRef.current.cp3 = initialControls.cp3;
-    flightStateRef.current.cp4 = initialControls.cp4;
-    flightStateRef.current.targetPhi = initialControls.toSite.phi;
-    targetPhiRef.current = initialControls.toSite.phi;
-
-    const drawTrail = () => {
+    const drawTrail = (now: number) => {
       if (!trailCtx) return;
-
       const { size, dpr: localDpr } = sceneRef.current;
 
       trailCtx.save();
@@ -284,33 +330,34 @@ export const Globe = ({ className }: { className?: string }) => {
           const current = points[index];
           const progress = index / (points.length - 1);
 
-          const age = Math.max(0, Math.min(1, 1 - (performance.now() - current.t) / 1200));
-          const brightness = 0.25 + progress * 0.75;
-          const alpha = age * brightness * 0.55;
+          const age = Math.max(0, Math.min(1, 1 - (now - current.t) / 3200));
+          const alpha = age * (0.25 + progress * 0.75) * 0.68;
 
           let red = 255;
           let green = 70;
-          let blue = 80;
+          let blue = 75;
 
           if (progress < 0.5) {
             const p = progress / 0.5;
-            red = Math.round(lerp(255, 165, p));
-            green = Math.round(lerp(70, 65, p));
-            blue = Math.round(lerp(80, 255, p));
+            red = Math.round(lerp(255, 160, p));
+            green = Math.round(lerp(70, 68, p));
+            blue = Math.round(lerp(75, 255, p));
           } else {
             const p = (progress - 0.5) / 0.5;
-            red = Math.round(lerp(165, 70, p));
-            green = Math.round(lerp(65, 115, p));
+            red = Math.round(lerp(160, 60, p));
+            green = Math.round(lerp(68, 125, p));
             blue = Math.round(lerp(255, 255, p));
           }
 
           trailCtx.beginPath();
           trailCtx.moveTo(previous.x, previous.y);
           trailCtx.lineTo(current.x, current.y);
-          trailCtx.lineWidth = 1.8 + progress * 4.2;
+          trailCtx.lineCap = "round";
+          trailCtx.lineJoin = "round";
+          trailCtx.lineWidth = 2.4 + progress * 5.8;
           trailCtx.strokeStyle = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-          trailCtx.shadowBlur = 10;
-          trailCtx.shadowColor = `rgba(${red}, ${green}, ${blue}, ${alpha * 0.75})`;
+          trailCtx.shadowBlur = 14;
+          trailCtx.shadowColor = `rgba(${red}, ${green}, ${blue}, ${alpha * 0.8})`;
           trailCtx.stroke();
         }
       }
@@ -319,158 +366,155 @@ export const Globe = ({ className }: { className?: string }) => {
     };
 
     const animate = (now: number) => {
-      const state = flightStateRef.current;
-      const nextIndex = (state.segmentIndex + 1) % surfacePositions.length;
-      const currentTo = surfacePositions[nextIndex];
-      const sceneSize = sceneRef.current.size;
-
-      const toPx = (point: { x: number; y: number }) => ({
-        x: point.x * sceneSize,
-        y: point.y * sceneSize,
-      });
-
-      const takeoffEase = (t: number) => cubicBezierEasing(t, 0.2, 0.75, 0.25, 1);
-      const cruiseEase = (t: number) => cubicBezierEasing(t, 0.25, 0.15, 0.2, 1);
+      const current = flightStateRef.current;
+      const takeoffEase = (t: number) => cubicBezierEasing(t, 0.22, 0.78, 0.28, 1);
+      const cruiseEase = (t: number) => cubicBezierEasing(t, 0.27, 0.15, 0.2, 1);
       const landingEase = (t: number) => cubicBezierEasing(t, 0.4, 0, 0.2, 1);
 
-      let depthScale = 1;
       let logoOffsetY = 0;
 
-      if (state.phase === "flight") {
+      if (current.phase === "flight") {
         isPausedRef.current = false;
-        targetPhiRef.current = state.targetPhi;
-        const progress = Math.min((now - state.phaseStart) / state.flightDuration, 1);
+        targetPhiRef.current = current.targetPhi;
 
-        const easedPathProgress =
-          progress < 0.25
-            ? takeoffEase(progress / 0.25) * 0.25
-            : progress < 0.75
-            ? 0.25 + cruiseEase((progress - 0.25) / 0.5) * 0.5
-            : 0.75 + landingEase((progress - 0.75) / 0.25) * 0.25;
+        const progress = Math.min((now - current.phaseStart) / current.flightDuration, 1);
 
-        const pointNorm =
-          easedPathProgress < 0.5
-            ? cubicBezierPoint(
-                state.from,
-                state.cp1,
-                state.cp2,
-                state.waypoint,
-                easedPathProgress * 2
-              )
-            : cubicBezierPoint(
-                state.waypoint,
-                state.cp3,
-                state.cp4,
-                state.to,
-                (easedPathProgress - 0.5) * 2
-              );
+        const easedProgress =
+          progress < 0.22
+            ? takeoffEase(progress / 0.22) * 0.22
+            : progress < 0.78
+            ? 0.22 + cruiseEase((progress - 0.22) / 0.56) * 0.56
+            : 0.78 + landingEase((progress - 0.78) / 0.22) * 0.22;
 
-        const point = toPx(pointNorm);
-        state.logoPos = point;
-
-        state.points.push({ ...point, t: now });
-        while (state.points.length && now - state.points[0].t > 1200) {
-          state.points.shift();
+        let surfaceVec: Vec3;
+        if (easedProgress < 0.5) {
+          surfaceVec = slerp(current.fromVec, current.midVec, easedProgress * 2);
+        } else {
+          surfaceVec = slerp(current.midVec, current.toVec, (easedProgress - 0.5) * 2);
         }
 
-        if (progress < 0.25) {
-          depthScale = lerp(1, 1.15, takeoffEase(progress / 0.25));
-        } else if (progress < 0.75) {
-          depthScale = 1.15;
+        if (current.twoLap) {
+          const lapTwist = Math.sin(easedProgress * Math.PI * 2) * 0.1;
+          surfaceVec = rotateAroundAxis(surfaceVec, current.fromVec, lapTwist * (1 - easedProgress));
+        }
+
+        const altitude = Math.sin(Math.PI * easedProgress) * current.altitudeMax;
+        const positionVec = scale(normalize(surfaceVec), 1 + altitude);
+
+        const rotated = rotateY(positionVec, globeRotationRef.current);
+        const projected = project(rotated, sceneRef.current.size);
+        const isFront = rotated.z > 0;
+
+        current.logoVisible = isFront;
+        current.logoPos = { x: projected.x, y: projected.y };
+
+        if (isFront) {
+          current.points.push({ x: projected.x, y: projected.y, t: now });
+        }
+        while (current.points.length && now - current.points[0].t > 3200) {
+          current.points.shift();
+        }
+
+        if (easedProgress < 0.3) {
+          current.depthScale = lerp(1, 1.25, takeoffEase(easedProgress / 0.3));
+        } else if (easedProgress < 0.75) {
+          current.depthScale = 1.25;
         } else {
-          depthScale = lerp(1.15, 1, landingEase((progress - 0.75) / 0.25));
+          current.depthScale = lerp(1.25, 1, landingEase((easedProgress - 0.75) / 0.25));
         }
 
         if (progress >= 1) {
-          state.phase = "landing";
-          state.phaseStart = now;
+          current.phase = "landing";
+          current.phaseStart = now;
           isPausedRef.current = true;
+          current.depthScale = 1;
         }
-      } else if (state.phase === "landing") {
+      } else if (current.phase === "landing") {
         isPausedRef.current = true;
-        targetPhiRef.current = state.targetPhi;
+        targetPhiRef.current = current.targetPhi;
 
-        const landingProgress = Math.min((now - state.phaseStart) / 1200, 1);
+        const landingProgress = Math.min((now - current.phaseStart) / 1200, 1);
         const damp = 1 - landingProgress;
-        const microShake = Math.sin(landingProgress * Math.PI * 5.5) * 1.8 * damp;
-        logoOffsetY = microShake;
+        logoOffsetY = Math.sin(landingProgress * Math.PI * 6) * 1.6 * damp;
 
         if (landingProgress < 0.2) {
-          depthScale = lerp(1, 0.97, landingEase(landingProgress / 0.2));
+          current.depthScale = lerp(1, 0.97, landingEase(landingProgress / 0.2));
         } else {
-          depthScale = lerp(0.97, 1, landingEase((landingProgress - 0.2) / 0.8));
+          current.depthScale = lerp(0.97, 1, landingEase((landingProgress - 0.2) / 0.8));
         }
 
-        while (state.points.length && now - state.points[0].t > 1200) {
-          state.points.shift();
+        while (current.points.length && now - current.points[0].t > 3200) {
+          current.points.shift();
         }
 
         if (landingProgress >= 1) {
-          state.phase = "hold";
-          state.phaseStart = now;
+          current.phase = "hold";
+          current.phaseStart = now;
         }
-      } else if (state.phase === "hold") {
+      } else if (current.phase === "hold") {
         isPausedRef.current = true;
-        targetPhiRef.current = state.targetPhi;
-        depthScale = 1;
+        targetPhiRef.current = current.targetPhi;
+        current.depthScale = 1;
 
-        while (state.points.length && now - state.points[0].t > 1200) {
-          state.points.shift();
+        while (current.points.length && now - current.points[0].t > 3200) {
+          current.points.shift();
         }
 
-        if (now - state.phaseStart >= 1000) {
-          state.phase = "rebound";
-          state.phaseStart = now;
+        if (now - current.phaseStart >= 1000) {
+          current.phase = "rebound";
+          current.phaseStart = now;
         }
       } else {
         isPausedRef.current = true;
-        targetPhiRef.current = state.targetPhi;
-        const reboundProgress = Math.min((now - state.phaseStart) / 700, 1);
+        targetPhiRef.current = current.targetPhi;
+
+        const reboundProgress = Math.min((now - current.phaseStart) / 700, 1);
         const reboundEase = cubicBezierEasing(reboundProgress, 0.2, 0.85, 0.2, 1);
         logoOffsetY = -Math.sin(reboundEase * Math.PI) * 6;
-        depthScale = 1;
+        current.depthScale = 1;
 
         if (reboundProgress >= 1) {
-          state.segmentIndex = nextIndex;
+          const nextIndex = (current.segmentIndex + 1) % locations.length;
+          const nextSegment = buildSegment(nextIndex);
 
-          const controls = buildFlightControls(nextIndex);
-          state.from = controls.fromSite;
-          state.to = controls.toSite;
-          state.waypoint = controls.waypoint;
-          state.cp1 = controls.cp1;
-          state.cp2 = controls.cp2;
-          state.cp3 = controls.cp3;
-          state.cp4 = controls.cp4;
-          state.arcHeight = controls.arcHeight;
-          state.lateralDrift = controls.lateralDrift;
-          state.flightDuration = controls.flightDuration;
-          state.targetPhi = controls.toSite.phi;
-
-          state.phase = "flight";
-          state.phaseStart = now;
-          state.points = [];
+          current.segmentIndex = nextIndex;
+          current.phase = "flight";
+          current.phaseStart = now;
+          current.flightDuration = nextSegment.flightDuration;
+          current.altitudeMax = nextSegment.altitudeMax;
+          current.fromVec = nextSegment.fromVec;
+          current.midVec = nextSegment.midVec;
+          current.toVec = nextSegment.toVec;
+          current.twoLap = nextSegment.twoLap;
+          current.targetPhi = nextSegment.targetPhi;
+          current.points = [];
           isPausedRef.current = false;
         }
       }
 
       if (logoElement) {
-        logoElement.style.transform = `translate(${state.logoPos.x - 20}px, ${state.logoPos.y - 20 + logoOffsetY}px) scale(${0.6 * depthScale})`;
+        if (!current.logoVisible) {
+          logoElement.style.opacity = "0";
+        } else {
+          logoElement.style.opacity = "1";
+          logoElement.style.transform = `translate(${current.logoPos.x - 20}px, ${current.logoPos.y - 20 + logoOffsetY}px) scale(${0.6 * current.depthScale})`;
+        }
       }
 
       if (pulseElement) {
-        if (state.phase === "landing") {
-          const pulseProgress = Math.min((now - state.phaseStart) / 1200, 1);
+        if (current.phase === "landing") {
+          const pulseProgress = Math.min((now - current.phaseStart) / 1200, 1);
           const eased = cubicBezierEasing(pulseProgress, 0.2, 0.7, 0.2, 1);
-          const scale = 0.35 + eased * 2.8;
-          const opacity = 0.4 * (1 - pulseProgress);
+          const pulseScale = 0.4 + eased * 2.8;
+          const opacity = 0.42 * (1 - pulseProgress);
           pulseElement.style.opacity = `${opacity}`;
-          pulseElement.style.transform = `translate(${state.logoPos.x - 16}px, ${state.logoPos.y - 16}px) scale(${scale})`;
+          pulseElement.style.transform = `translate(${current.logoPos.x - 16}px, ${current.logoPos.y - 16}px) scale(${pulseScale})`;
         } else {
           pulseElement.style.opacity = "0";
         }
       }
 
-      drawTrail();
+      drawTrail(now);
       rafRef.current = requestAnimationFrame(animate);
     };
 
@@ -481,12 +525,13 @@ export const Globe = ({ className }: { className?: string }) => {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      if (resizeObserverRef.current && containerRef.current) {
-        resizeObserverRef.current.unobserve(containerRef.current);
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
       }
       globe.destroy();
     };
-  }, []);
+  }, [locations]);
 
   const stars = useMemo(
     () =>
@@ -507,30 +552,25 @@ export const Globe = ({ className }: { className?: string }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="absolute inset-10 rounded-full bg-gradient-to-r from-red-500/18 via-purple-500/20 to-blue-500/18 blur-3xl" />
+      <div className="absolute inset-10 rounded-full bg-gradient-to-r from-red-500/16 via-purple-500/18 to-blue-500/16 blur-3xl" />
 
       <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
-        {stars.map((star) => {
-          return (
-            <span
-              key={star.id}
-              className="absolute rounded-full bg-white/40"
-              style={{
-                top: `${star.top}%`,
-                left: `${star.left}%`,
-                width: `${star.size}px`,
-                height: `${star.size}px`,
-                opacity: star.opacity,
-              }}
-            />
-          );
-        })}
+        {stars.map((star) => (
+          <span
+            key={star.id}
+            className="absolute rounded-full bg-white/40"
+            style={{
+              top: `${star.top}%`,
+              left: `${star.left}%`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              opacity: star.opacity,
+            }}
+          />
+        ))}
       </div>
 
-      <canvas
-        ref={trailCanvasRef}
-        className="absolute inset-0 pointer-events-none"
-      />
+      <canvas ref={trailCanvasRef} className="absolute inset-0 pointer-events-none" />
 
       <div
         ref={pulseRef}
@@ -538,13 +578,10 @@ export const Globe = ({ className }: { className?: string }) => {
         style={{ opacity: 0, transformOrigin: "center" }}
       />
 
-      <div
-        ref={logoRef}
-        className="absolute h-10 w-10 pointer-events-none"
-      >
-        <div className="absolute inset-[-7px] rounded-full bg-gradient-to-r from-red-500/14 via-purple-500/16 to-blue-500/14 blur-md" />
+      <div ref={logoRef} className="absolute h-10 w-10 pointer-events-none">
+        <div className="absolute inset-[-7px] rounded-full bg-gradient-to-r from-red-500/12 via-purple-500/14 to-blue-500/12 blur-md" />
         <div
-          className="relative h-full w-full rounded-full border border-blue-300/60 shadow-[0_0_10px_rgba(59,130,246,0.25),0_0_8px_rgba(168,85,247,0.2)]"
+          className="relative h-full w-full rounded-full border border-blue-300/55 shadow-[0_0_10px_rgba(59,130,246,0.24),0_0_8px_rgba(168,85,247,0.18)]"
           style={{
             backgroundImage: "url('/justlogowithoutwordsACAI.jpeg')",
             backgroundSize: "cover",
