@@ -1,14 +1,13 @@
 import { Container } from "@/components/container";
 import { Hero } from "@/components/hero";
 import { Background } from "@/components/background";
-import { Features } from "@/components/features";
-import { Companies } from "@/components/companies";
-import { GridFeatures } from "@/components/grid-features";
-import { Testimonials } from "@/components/testimonials";
 import { CTA } from "@/components/cta";
 import { SectionDivider } from "@/components/section-divider";
-import { LiveIndustryExamples } from "@/components/live-industry-examples";
 import { SupportedIndustries } from "@/components/supported-industries";
+import { SolutionSection } from "@/components/solution-section";
+import { CoreProblem } from "@/components/core-problem";
+import { ScalingLadder } from "@/components/scaling-ladder";
+import { InfrastructureSection } from "@/components/infrastructure-section";
 
 export default function Home() {
   return (
@@ -20,10 +19,16 @@ export default function Home() {
 
       <Container className="flex min-h-screen flex-col items-center justify-between">
         <Hero />
+
+        <SolutionSection />
         
         <SectionDivider />
         
-        <LiveIndustryExamples />
+        <CoreProblem />
+        
+        <SectionDivider />
+        
+        <ScalingLadder />
         
         <SectionDivider />
         
@@ -31,19 +36,7 @@ export default function Home() {
         
         <SectionDivider />
         
-        <Features />
-        
-        <SectionDivider />
-        
-        <Companies />
-        
-        <SectionDivider />
-        
-        <GridFeatures />
-        
-        <SectionDivider />
-        
-        <Testimonials />
+        <InfrastructureSection />
       </Container>
 
       {/* Bottom section */}
