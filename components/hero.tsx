@@ -226,9 +226,109 @@ const TypewriterHeadline = () => {
   );
 };
 
+// Demo Card Component
+interface DemoCardProps {
+  title: string;
+  description: string;
+  scenario: 'acai' | 'plumbing' | 'barber';
+  delay: number;
+}
+
+const DemoCard = ({ title, description, scenario, delay }: DemoCardProps) => {
+  const { toggleConversation, isConversationActive, isLoading } = useRetellVoiceDemo(scenario);
+  
+  return (
+    <motion.div
+      initial={{
+        y: 60,
+        opacity: 0,
+      }}
+      animate={{
+        y: 0,
+        opacity: 1,
+      }}
+      transition={{
+        ease: "easeOut",
+        duration: 0.5,
+        delay,
+      }}
+      className="flex flex-col items-center justify-center"
+    >
+      {/* Animated gradient border wrapper */}
+      <div className="relative w-full p-[2px] rounded-2xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] animate-gradient-flow">
+        {/* Inner card with dark background */}
+        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-2xl p-6 transition-all duration-300 ${
+          isConversationActive ? 'shadow-[0_0_40px_rgba(123,0,255,0.4)]' : 'shadow-lg'
+        }`}>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-white">
+              {title}
+            </h3>
+            {isConversationActive && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full flex items-center gap-1"
+              >
+                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                LIVE
+              </motion.span>
+            )}
+          </div>
+          <p className="text-sm text-neutral-300 dark:text-neutral-400 mb-4">
+            {description}
+          </p>
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative">
+              <button
+                onClick={toggleConversation}
+                disabled={isLoading}
+                className={`w-16 h-16 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 relative z-10 ${
+                  isConversationActive ? 'animate-pulse' : ''
+                } ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                aria-label={`Start ${title} demo`}
+              >
+                <Mic className="w-8 h-8 text-white" />
+              </button>
+              {isConversationActive && (
+                <>
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] opacity-30 animate-pulse scale-125" />
+                  <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-xl scale-150 animate-pulse" />
+                </>
+              )}
+            </div>
+            <div
+              className={`text-center text-xs font-medium transition-all duration-300 flex items-center gap-2 ${
+                isConversationActive
+                  ? 'text-green-400'
+                  : isLoading
+                  ? 'text-orange-400'
+                  : 'text-neutral-400'
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Connecting...</span>
+                </>
+              ) : isConversationActive ? (
+                'Live now'
+              ) : (
+                'Click to start call'
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export const Hero = () => {
   const router = useRouter();
-  const { toggleConversation, isConversationActive, isLoading } = useRetellVoiceDemo('acai');
   return (
     <div className="flex flex-col min-h-screen pt-20 md:pt-40 relative overflow-hidden">
       <motion.div
@@ -275,109 +375,32 @@ export const Hero = () => {
         </Balancer>
       </motion.p>
 
-      {/* Premium ACAI Receptionist Demo Card */}
-      <motion.div
-        initial={{
-          y: 60,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-          delay: 0.25,
-        }}
-        className="flex flex-col items-center justify-center mt-8 relative z-10 max-w-xl mx-auto w-full px-4"
-      >
-        {/* Animated gradient border wrapper */}
-        <div className="relative w-full p-[2px] rounded-2xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] animate-gradient-flow">
-          {/* Inner card with dark background */}
-          <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 transition-all duration-300 ${
-            isConversationActive ? 'shadow-[0_0_40px_rgba(123,0,255,0.4)]' : 'shadow-lg'
-          }`}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl md:text-2xl font-semibold text-white">
-                Experience the ACAI AI Receptionist
-              </h3>
-              {isConversationActive && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full flex items-center gap-1"
-                >
-                  <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                  LIVE
-                </motion.span>
-              )}
-            </div>
-            <p className="text-sm md:text-base text-neutral-300 dark:text-neutral-400 mb-6">
-              This is our live AI receptionist handling real-time conversations. No scripts. Books directly into our calendar.
-            </p>
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative">
-                <button
-                  onClick={toggleConversation}
-                  disabled={isLoading}
-                  className={`w-20 h-20 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#a100ff] focus:ring-offset-2 active:scale-95 relative z-10 ${
-                    isConversationActive ? 'animate-pulse' : ''
-                  } ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-                  aria-label="Start ACAI voice demo"
-                >
-                  <Mic className="w-10 h-10 text-white" />
-                </button>
-                {isConversationActive && (
-                  <>
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] opacity-30 animate-pulse scale-125" />
-                    <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-xl scale-150 animate-pulse" />
-                  </>
-                )}
-              </div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3, duration: 0.3 }}
-                className={`text-center text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-                  isConversationActive
-                    ? 'text-green-400'
-                    : isLoading
-                    ? 'text-orange-400'
-                    : 'text-neutral-400'
-                }`}
-              >
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Connecting<span className="animate-pulse">...</span></span>
-                  </>
-                ) : isConversationActive ? (
-                  'Call is NOW live'
-                ) : (
-                  'Click to start call'
-                )}
-              </motion.div>
-              {isConversationActive && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.3 }}
-                  className="text-xs text-neutral-400 text-center"
-                >
-                  Click again to end call
-                </motion.div>
-              )}
-            </div>
-            <p className="text-xs text-neutral-500 mt-4 text-center italic">
-              Initial connection may take 3–5 seconds.
-            </p>
-          </div>
+      {/* Three Live Demos */}
+      <div className="mt-12 relative z-10 max-w-7xl mx-auto w-full px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <DemoCard
+            title="General ACAI Demo"
+            description="Experience our core AI receptionist in action"
+            scenario="acai"
+            delay={0.25}
+          />
+          <DemoCard
+            title="Plumbing & HVAC Demo"
+            description="Handles emergency calls and instant scheduling"
+            scenario="plumbing"
+            delay={0.3}
+          />
+          <DemoCard
+            title="Barbershop Demo"
+            description="Books appointments and manages your schedule"
+            scenario="barber"
+            delay={0.35}
+          />
         </div>
-      </motion.div>
+        <p className="text-xs text-neutral-500 mt-4 text-center italic">
+          Initial connection may take 3–5 seconds. Only one demo can be active at a time.
+        </p>
+      </div>
 
       <motion.div
         initial={{
@@ -391,7 +414,7 @@ export const Hero = () => {
         transition={{
           ease: "easeOut",
           duration: 0.5,
-          delay: 0.35,
+          delay: 0.4,
         }}
         className="flex items-center gap-4 justify-center mt-8 relative z-10"
       >

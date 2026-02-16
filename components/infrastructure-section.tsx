@@ -13,7 +13,7 @@ export const InfrastructureSection = () => {
         Built on Reliable, Seamless Infrastructure
       </Heading>
       <Subheading className="text-center max-w-2xl mx-auto">
-        Secure. Scalable. Made to fit your workflow.
+        Secure. Scalable. Designed to fit your workflow.
       </Subheading>
 
       <motion.div
@@ -24,10 +24,8 @@ export const InfrastructureSection = () => {
         className="mt-12 flex flex-col items-center"
       >
         <Globe className="mx-auto" />
-        <div className="mt-6 text-center text-sm md:text-base text-neutral-600 dark:text-neutral-400 max-w-xl">
-          <span className="block">ACAI integrates directly into your existing systems.</span>
-          <span className="block">No rigid platforms. No forced changes.</span>
-          <span className="block">Just AI built around your business.</span>
+        <div className="mt-8 text-center text-sm md:text-base text-neutral-600 dark:text-neutral-400 max-w-lg">
+          <p>ACAI integrates directly into your existing systems. No rigid platforms. No forced changes.</p>
         </div>
       </motion.div>
     </section>
