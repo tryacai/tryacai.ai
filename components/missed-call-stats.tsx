@@ -63,7 +63,7 @@ export const MissedCallStats = () => {
         <div className="grid grid-cols-2 gap-6 text-center">
           <div>
             <div className="text-sm uppercase tracking-wider text-neutral-400 mb-2">
-              Missed This Money
+              Calls Missed This Month
             </div>
             <motion.div
               key={missedCalls}
