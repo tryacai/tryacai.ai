@@ -33,8 +33,8 @@ export const Globe = ({ className }: { className?: string }) => {
   const rafRef = useRef<number | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  // Bigger default
-  const sceneRef = useRef({ size: 960, center: 480, dpr: 2 });
+  // Slightly smaller default
+  const sceneRef = useRef({ size: 720, center: 360, dpr: 2 });
 
   const phiRef = useRef(1.2);
 
@@ -50,8 +50,8 @@ export const Globe = ({ className }: { className?: string }) => {
 
   const trailRef = useRef<Array<{ x: number; y: number; t: number }>>([]);
 
-  // Slightly shorter, cleaner trail
-  const TRAIL_DECAY = 1250;
+  // Slightly longer, cleaner trail
+  const TRAIL_DECAY = 1400;
 
   const surfaceMarkers = useMemo(
     () => [
@@ -87,8 +87,8 @@ export const Globe = ({ className }: { className?: string }) => {
     const syncSize = () => {
       const width = containerRef.current?.clientWidth || 960;
 
-      // Let it grow a lot bigger
-      const size = Math.min(width, 1100);
+      // Reduce max render size to avoid clipping
+      const size = Math.min(width, 820);
 
       sceneRef.current = { size, center: size / 2, dpr };
 
@@ -125,13 +125,13 @@ export const Globe = ({ className }: { className?: string }) => {
       dark: 1,
       diffuse: 1.12,
       mapSamples: 16000,
-      mapBrightness: 5.0,
+      mapBrightness: 5.5,
 
       // Make the planet grayscale and remove the “purple ring” look from COBE
       baseColor: [0.18, 0.18, 0.18],
       glowColor: [0.10, 0.10, 0.10],
 
-      markerColor: [0.75, 0.35, 1.0],
+      markerColor: [0.85, 0.45, 1.0],
       markers: surfaceMarkers.map((m) => ({
         location: [m.lat, m.lon] as [number, number],
         size: m.name.includes("Newark") ? 0.075 : 0.062,
@@ -143,11 +143,13 @@ export const Globe = ({ className }: { className?: string }) => {
       },
     });
 
+    const GLOBE_RADIUS = 0.44;
+
     const drawRim = (ctx: CanvasRenderingContext2D, now: number) => {
       const { size } = sceneRef.current;
 
       // EXACTLY match the visible globe radius
-      const r = size * 0.44;
+      const r = size * GLOBE_RADIUS;
       const c = size / 2;
 
       ctx.save();
@@ -182,11 +184,11 @@ export const Globe = ({ className }: { className?: string }) => {
         }
 
         ctx.beginPath();
-        ctx.arc(0, 0, r + 1.8, a1, a2);
-        ctx.strokeStyle = `rgba(${red},${grn},${blu},0.60)`;
-        ctx.lineWidth = 3.6;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = `rgba(${red},${grn},${blu},0.22)`;
+        ctx.arc(0, 0, r, a1, a2);
+        ctx.strokeStyle = `rgba(${red},${grn},${blu},0.58)`;
+        ctx.lineWidth = 3.1;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `rgba(${red},${grn},${blu},0.20)`;
         ctx.stroke();
       }
 
@@ -195,7 +197,7 @@ export const Globe = ({ className }: { className?: string }) => {
 
     const drawTrail = (ctx: CanvasRenderingContext2D, now: number) => {
       const { size } = sceneRef.current;
-      const r = size * 0.44;
+      const r = size * GLOBE_RADIUS;
       const c = size / 2;
 
       ctx.save();
@@ -218,10 +220,10 @@ export const Globe = ({ className }: { className?: string }) => {
         ctx.moveTo(prev.x, prev.y);
         ctx.lineTo(cur.x, cur.y);
 
-        ctx.lineWidth = 2.0 + prog * 4.8;
+        ctx.lineWidth = 2.4 + prog * 5.2;
         ctx.strokeStyle = `rgba(168,85,247,${alpha})`;
-        ctx.shadowBlur = 22;
-        ctx.shadowColor = `rgba(168,85,247,${alpha * 0.85})`;
+        ctx.shadowBlur = 26;
+        ctx.shadowColor = `rgba(168,85,247,${alpha * 0.95})`;
         ctx.lineCap = "round";
         ctx.stroke();
       }
@@ -235,16 +237,16 @@ export const Globe = ({ className }: { className?: string }) => {
       sy: number,
       intensity: number
     ) => {
-      const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 26);
-      g.addColorStop(0, `rgba(168,85,247,${0.55 * intensity})`);
-      g.addColorStop(0.55, `rgba(59,130,246,${0.28 * intensity})`);
+      const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 30);
+      g.addColorStop(0, `rgba(168,85,247,${0.7 * intensity})`);
+      g.addColorStop(0.55, `rgba(59,130,246,${0.38 * intensity})`);
       g.addColorStop(1, "rgba(0,0,0,0)");
 
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(sx, sy, 26, 0, Math.PI * 2);
+      ctx.arc(sx, sy, 30, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
@@ -258,14 +260,14 @@ export const Globe = ({ className }: { className?: string }) => {
 
       const { size, dpr } = sceneRef.current;
       const c = size / 2;
-      const r = size * 0.44;
+      const r = size * GLOBE_RADIUS;
 
       fxCtx.save();
       fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       fxCtx.clearRect(0, 0, size, size);
 
       // Orbit speed, smoother, slower
-      orbitalAngleRef.current += 0.0125;
+      orbitalAngleRef.current += 0.0145;
       patternTimerRef.current += 1;
 
       // Cycle patterns slower, and crossfade
@@ -330,7 +332,10 @@ export const Globe = ({ className }: { className?: string }) => {
       const sy = c + rotated.y * r;
 
       // Come back faster from behind
-      const visible = rotated.z > -0.06;
+      drawRim(fxCtx, now);
+      drawTrail(fxCtx, now);
+
+      const visible = rotated.z > -0.02;
 
       if (visible) {
         trailRef.current.push({ x: sx, y: sy, t: now });
@@ -339,9 +344,6 @@ export const Globe = ({ className }: { className?: string }) => {
       while (trailRef.current.length && now - trailRef.current[0].t > TRAIL_DECAY) {
         trailRef.current.shift();
       }
-
-      drawRim(fxCtx, now);
-      drawTrail(fxCtx, now);
 
       // Brighten dots when logo passes nearby (cinematic “activations”)
       if (visible) {
@@ -353,7 +355,7 @@ export const Globe = ({ className }: { className?: string }) => {
           const my = c + mv.y * r;
 
           const dist = Math.hypot(mx - sx, my - sy);
-          const influence = clamp01(1 - dist / 110);
+          const influence = clamp01(1 - dist / 100);
 
           if (influence > 0.05) {
             drawMarkerPulse(fxCtx, mx, my, influence);
@@ -366,8 +368,8 @@ export const Globe = ({ className }: { className?: string }) => {
       if (logoEl) {
         logoEl.style.opacity = visible ? "1" : "0.12";
         if (visible) {
-          const depthScale = 0.78 + rotated.z * 0.16;
-          logoEl.style.transform = `translate(${sx - 28}px, ${sy - 28}px) scale(${depthScale})`;
+          const depthScale = 0.8 + rotated.z * 0.2;
+          logoEl.style.transform = `translate(${sx - 32}px, ${sy - 32}px) scale(${depthScale})`;
         }
       }
 
@@ -390,7 +392,7 @@ export const Globe = ({ className }: { className?: string }) => {
       className={`relative ${className || ""}`}
       style={{
         width: "100%",
-        maxWidth: "1100px",
+        maxWidth: "820px",
         margin: "0 auto",
       }}
     >
@@ -409,7 +411,7 @@ export const Globe = ({ className }: { className?: string }) => {
       <div
         ref={logoRef}
         className="absolute pointer-events-none"
-        style={{ width: 56, height: 56, willChange: "transform, opacity" }}
+        style={{ width: 64, height: 64, willChange: "transform, opacity" }}
       >
         <div
           className="absolute rounded-full blur-2xl"
