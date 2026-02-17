@@ -1,73 +1,108 @@
 "use client";
+
 import createGlobe from "cobe";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type Vec3 = { x: number; y: number; z: number };
 
+const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+const degToRad = (deg: number) => (deg * Math.PI) / 180;
+
+const latLonToVec3 = (lat: number, lon: number): Vec3 => {
+  const latRad = degToRad(lat);
+  const lonRad = degToRad(lon);
+  const cosLat = Math.cos(latRad);
+  return {
+    x: cosLat * Math.cos(lonRad),
+    y: Math.sin(latRad),
+    z: cosLat * Math.sin(lonRad),
+  };
+};
+
+const rotateVec = (v: Vec3, phi: number, theta: number): Vec3 => {
+  // yaw around Y (phi)
+  const cosP = Math.cos(phi);
+  const sinP = Math.sin(phi);
+  const x1 = v.x * cosP + v.z * sinP;
+  const y1 = v.y;
+  const z1 = -v.x * sinP + v.z * cosP;
+
+  // pitch around X (theta)
+  const cosT = Math.cos(theta);
+  const sinT = Math.sin(theta);
+  return {
+    x: x1,
+    y: y1 * cosT - z1 * sinT,
+    z: y1 * sinT + z1 * cosT,
+  };
+};
+
 export const Globe = ({ className }: { className?: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const trailCanvasRef = useRef<HTMLCanvasElement>(null);
-  const logoRef = useRef<HTMLDivElement>(null);
-  const spotlightRef = useRef<HTMLDivElement>(null);
+  const globeCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Hover + pointer control
+  // We use ONE overlay canvas for rim + hover glow + trail so alignment is perfect.
+  const fxCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  const logoRef = useRef<HTMLDivElement>(null);
+
   const [isHovered, setIsHovered] = useState(false);
   const hoverRef = useRef(false);
-  const pointerRef = useRef({ xN: 0, yN: 0 }); // normalized -1..1 within globe circle-ish
-  const pointerPxRef = useRef({ x: 0, y: 0, inside: false, hasPointer: false });
-  const [newarkTooltip, setNewarkTooltip] = useState<{ x: number; y: number } | null>(null);
-  const tooltipRef = useRef<{ x: number; y: number } | null>(null);
 
-  // Scene sizing
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
-  const sceneRef = useRef({ size: 720, center: 360, dpr: 2 });
-
-  // Globe rotation state (phi/theta) and velocities
-  const phiRef = useRef(0);
-  const thetaRef = useRef(0);
-  const velPhiRef = useRef(0);
-  const velThetaRef = useRef(0);
-
-  // Orbiting logo state
-  const orbitalAngleRef = useRef(0);
-  const incPhaseRef = useRef(0);
-  const trailPointsRef = useRef<Array<{ x: number; y: number; t: number }>>([]);
-  const logoPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const spotlightPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const lastTrailPointRef = useRef<{ x: number; y: number; t: number } | null>(null);
+  const [zoomOpen, setZoomOpen] = useState(false);
 
   const rafRef = useRef<number | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  // Tunables
-  const TRAIL_DECAY = 1600;
+  // Scene
+  const sceneRef = useRef({ size: 780, center: 390, dpr: 2 });
 
-  // Autopilot
-  const AUTO_PHI_SPEED = 0.0048; // slower default than before
-  const AUTO_LOGO_SPEED = 0.0095;
+  // Pointer inside globe
+  const pointerRef = useRef({
+    xN: 0,
+    yN: 0,
+    sx: 0,
+    sy: 0,
+    inside: false,
+    dist01: 0, // 0 center, 1 edge
+  });
 
-  // Hover control feel
-  const DEADZONE = 0.08; // near center, stop
-  const MAX_PHI_SPEED = 0.012; // fast edge
-  const MAX_THETA_SPEED = 0.008;
-  const FRICTION = 0.88; // hover release smoothing
-  const RESPONSE = 0.14; // how quickly velocity approaches target
+  // Globe orientation + velocity
+  const phiRef = useRef(0);
+  const thetaRef = useRef(0);
+  const vPhiRef = useRef(0);
+  const vThetaRef = useRef(0);
 
-  // Visual sizes
-  const LOGO_SIZE = 52; // larger
+  // Autopilot base
+  const AUTO_PHI = 0.0038;
+  const AUTO_THETA_RETURN = 0.02;
+
+  // Hover feel
+  const DEADZONE = 0.08;
+  const MAX_PHI = 0.028;
+  const MAX_THETA = 0.020;
+  const RESPONSE = 0.22;
+  const FRICTION = 0.88;
+
+  // Logo sizing
+  const LOGO_SIZE = 52;
   const LOGO_HALF = LOGO_SIZE / 2;
 
-  const THETA_LIMIT = Math.PI / 2 - 0.05;
-  const POLE_DAMP_START = THETA_LIMIT - 0.22;
-  const [rimMask, setRimMask] = useState(
-    "radial-gradient(circle, transparent 0px, transparent 0px, black 0px, black 0px, transparent 0px)"
-  );
+  // Trail
+  const trailPointsRef = useRef<Array<{ x: number; y: number; t: number }>>([]);
+  const TRAIL_DECAY = 1900; // shorter, more natural
 
-  // Markers (purple dots)
+  // Logo orbit when not hovering
+  const orbitalAngleRef = useRef(0);
+  const incPhaseRef = useRef(0);
+
+  // Marker system for Newark demo
   const markers = useMemo(
     () => [
       { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
-      { name: "Newark, NJ", lat: 40.7357, lon: -74.1724 }, // NJ example
+      { name: "Newark, NJ", lat: 40.7357, lon: -74.1724 },
       { name: "London", lat: 51.5072, lon: -0.1276 },
       { name: "Tokyo", lat: 35.6764, lon: 139.65 },
       { name: "Sydney", lat: -33.8688, lon: 151.2093 },
@@ -75,31 +110,59 @@ export const Globe = ({ className }: { className?: string }) => {
     []
   );
 
+  const markerVecs = useMemo(
+    () => markers.map((m) => ({ ...m, vec: latLonToVec3(m.lat, m.lon) })),
+    [markers]
+  );
+
+  const hoveredMarkerRef = useRef<string | null>(null);
+  const [tooltip, setTooltip] = useState<null | { title: string; subtitle: string }>(null);
+
   useEffect(() => {
     hoverRef.current = isHovered;
   }, [isHovered]);
 
+  // Helper: project world vec to screen using current phi/theta, shared by hover detection and logo orbit
+  const projectWorld = (world: Vec3) => {
+    const { size, center } = sceneRef.current;
+    const radius = size * 0.46; // slightly larger so globe visually fills more
+    const r = rotateVec(world, phiRef.current, thetaRef.current);
+    return {
+      sx: center + r.x * radius,
+      sy: center - r.y * radius,
+      z: r.z,
+      radius,
+      center,
+    };
+  };
+
   useEffect(() => {
     const dpr = 2;
-    const trailCanvas = trailCanvasRef.current;
-    const trailCtx = trailCanvas?.getContext("2d");
+    const fxCanvas = fxCanvasRef.current;
+    const fxCtx = fxCanvas?.getContext("2d");
 
     const syncSize = () => {
       const container = containerRef.current;
-      const size = container?.clientWidth ? Math.min(container.clientWidth, 760) : 720;
+      const w = container?.clientWidth || 780;
+
+      // Make the globe bigger: allow up to 920 if the section gives room
+      const size = Math.min(w, 920);
+
       sceneRef.current = { size, center: size / 2, dpr };
-      logoPosRef.current = { x: size / 2, y: size / 2 };
-      spotlightPosRef.current = { x: size / 2, y: size / 2 };
-      const radius = size * 0.44;
-      const rimHalf = 2;
-      setRimMask(
-        `radial-gradient(circle, transparent ${radius - (rimHalf + 1)}px, black ${radius - rimHalf}px, black ${radius + rimHalf}px, transparent ${radius + (rimHalf + 1)}px)`
-      );
-      if (trailCanvas) {
-        trailCanvas.width = Math.round(size * dpr);
-        trailCanvas.height = Math.round(size * dpr);
-        trailCanvas.style.width = `${size}px`;
-        trailCanvas.style.height = `${size}px`;
+
+      if (fxCanvas) {
+        fxCanvas.width = Math.round(size * dpr);
+        fxCanvas.height = Math.round(size * dpr);
+        fxCanvas.style.width = `${size}px`;
+        fxCanvas.style.height = `${size}px`;
+      }
+
+      const globeCanvas = globeCanvasRef.current;
+      if (globeCanvas) {
+        globeCanvas.width = Math.round(size * dpr);
+        globeCanvas.height = Math.round(size * dpr);
+        globeCanvas.style.width = `${size}px`;
+        globeCanvas.style.height = `${size}px`;
       }
     };
 
@@ -110,529 +173,592 @@ export const Globe = ({ className }: { className?: string }) => {
       resizeObserverRef.current.observe(containerRef.current);
     }
 
-    if (!canvasRef.current) return;
+    if (!globeCanvasRef.current) return;
 
-    // Globe: keep grayscale feel
-    const globe = createGlobe(canvasRef.current, {
+    // Start with a nice angle
+    if (phiRef.current === 0) phiRef.current = 1.2;
+
+    const globe = createGlobe(globeCanvasRef.current, {
       devicePixelRatio: dpr,
-      width: 600 * dpr,
-      height: 600 * dpr,
-      phi: 0,
-      theta: 0,
+      width: sceneRef.current.size * dpr,
+      height: sceneRef.current.size * dpr,
+      phi: phiRef.current,
+      theta: thetaRef.current,
       dark: 1,
       diffuse: 1.15,
       mapSamples: 16000,
       mapBrightness: 5.2,
-      baseColor: [0.25, 0.25, 0.25],
+      baseColor: [0.22, 0.22, 0.22], // black/white feel
       markerColor: [0.66, 0.24, 1],
-      glowColor: [0.22, 0.22, 0.22], // subdued so it stays mostly grayscale
+      glowColor: [0.18, 0.18, 0.18], // subdued default, we tint via overlay glow
       markers: markers.map((m) => ({
         location: [m.lat, m.lon] as [number, number],
-        size: m.name.includes("Newark") ? 0.075 : 0.06,
+        size: m.name.includes("Newark") ? 0.078 : 0.06,
       })),
       onRender: (state) => {
-        // Velocity target based on hover cursor position (center stop, edge faster)
-        const hovering = hoverRef.current;
-        const { xN, yN } = pointerRef.current;
+        // Zoom mode locks control to target orientation
+        if (zoomOpen) {
+          const newark = markerVecs.find((m) => m.name.includes("Newark"));
+          if (newark) {
+            // Center marker by setting phi to -lon, theta to +lat (approx)
+            const targetPhi = -degToRad(newark.lon);
+            const targetTheta = degToRad(newark.lat) * 0.55;
 
-        // deadzone shaping
-        const ax = Math.abs(xN);
-        const ay = Math.abs(yN);
-        const dx = ax < DEADZONE ? 0 : (ax - DEADZONE) / (1 - DEADZONE);
-        const dy = ay < DEADZONE ? 0 : (ay - DEADZONE) / (1 - DEADZONE);
+            phiRef.current += (targetPhi - phiRef.current) * 0.06;
+            thetaRef.current += (targetTheta - thetaRef.current) * 0.06;
 
-        // smooth curve for natural acceleration
-        const curve = (v: number) => v * v; // quadratic
-
-        const targetPhiVel = hovering
-          ? Math.sign(xN) * (AUTO_PHI_SPEED * 0.25 + curve(dx) * (MAX_PHI_SPEED - AUTO_PHI_SPEED * 0.25))
-          : 0;
-
-        const targetThetaVel = hovering ? Math.sign(yN) * (curve(dy) * MAX_THETA_SPEED) : 0;
-
-        // approach target smoothly
-        velPhiRef.current += (targetPhiVel - velPhiRef.current) * RESPONSE;
-        velThetaRef.current += (targetThetaVel - velThetaRef.current) * RESPONSE;
-
-        // when not hovering, damp extra wobble
-        if (!hovering) {
-          velThetaRef.current *= 0.86;
-          // relax back toward theta=0
-          thetaRef.current += (0 - thetaRef.current) * 0.03;
-        }
-
-        // integrate
-        if (hovering) {
-          phiRef.current += velPhiRef.current;
+            vPhiRef.current *= 0.85;
+            vThetaRef.current *= 0.85;
+          }
         } else {
-          phiRef.current += AUTO_PHI_SPEED;
-          velPhiRef.current *= 0.9;
+          const hovering = hoverRef.current && pointerRef.current.inside;
+
+          if (hovering) {
+            const { xN, yN, dist01 } = pointerRef.current;
+
+            // distance-based speed: center stop, edge fast
+            const ax = Math.abs(xN);
+            const ay = Math.abs(yN);
+            const dx = ax < DEADZONE ? 0 : (ax - DEADZONE) / (1 - DEADZONE);
+            const dy = ay < DEADZONE ? 0 : (ay - DEADZONE) / (1 - DEADZONE);
+
+            // shape it to feel natural
+            const curve = (v: number) => v * v;
+
+            const speedBoost = 0.35 + 0.65 * dist01;
+
+            const targetVPhi =
+              Math.sign(xN) *
+              (AUTO_PHI * 0.15 + curve(dx) * (MAX_PHI - AUTO_PHI * 0.15)) *
+              speedBoost;
+
+            // IMPORTANT: moving cursor UP should rotate UP (no inversion)
+            const targetVTheta = Math.sign(yN) * curve(dy) * MAX_THETA * speedBoost;
+
+            vPhiRef.current += (targetVPhi - vPhiRef.current) * RESPONSE;
+            vThetaRef.current += (targetVTheta - vThetaRef.current) * RESPONSE;
+
+            // friction near center
+            if (dx === 0) vPhiRef.current *= FRICTION;
+            if (dy === 0) vThetaRef.current *= FRICTION;
+
+            phiRef.current += vPhiRef.current;
+            thetaRef.current += vThetaRef.current;
+
+            // soft poles (no hard stop)
+            const SOFT_LIMIT = Math.PI / 2 - 0.05;
+            const SOFT_ZONE = 0.22;
+            const absT = Math.abs(thetaRef.current);
+            const poleStart = SOFT_LIMIT - SOFT_ZONE;
+            if (absT > poleStart) {
+              const prox = clamp((absT - poleStart) / SOFT_ZONE, 0, 1);
+              vThetaRef.current *= 1 - 0.55 * prox;
+            }
+            if (absT > SOFT_LIMIT) {
+              const sign = Math.sign(thetaRef.current) || 1;
+              const over = absT - SOFT_LIMIT;
+              thetaRef.current = sign * (SOFT_LIMIT + over * 0.25);
+              vThetaRef.current *= 0.65;
+            }
+          } else {
+            // autopilot continues from wherever you left it, no snapping
+            vPhiRef.current += (AUTO_PHI - vPhiRef.current) * 0.06;
+            vThetaRef.current *= 0.90;
+            thetaRef.current += (0 - thetaRef.current) * AUTO_THETA_RETURN;
+
+            phiRef.current += vPhiRef.current;
+            thetaRef.current += vThetaRef.current;
+          }
         }
-
-        thetaRef.current += velThetaRef.current;
-
-        // Soft damping near poles (no hard wall)
-        const absTheta = Math.abs(thetaRef.current);
-        if (absTheta > POLE_DAMP_START) {
-          const poleT = Math.min(
-            1,
-            (absTheta - POLE_DAMP_START) / (THETA_LIMIT - POLE_DAMP_START)
-          );
-          const velDamp = 1 - poleT * 0.75;
-          velThetaRef.current *= Math.max(0.15, velDamp);
-          thetaRef.current -= Math.sign(thetaRef.current) * poleT * poleT * 0.006;
-        }
-
-        if (Math.abs(thetaRef.current) > THETA_LIMIT) {
-          const over = Math.abs(thetaRef.current) - THETA_LIMIT;
-          thetaRef.current = Math.sign(thetaRef.current) * (THETA_LIMIT + over * 0.2);
-          velThetaRef.current *= 0.5;
-        }
-
-        // extra friction when hovering stops near center
-        if (hovering && targetPhiVel === 0) velPhiRef.current *= FRICTION;
 
         state.phi = phiRef.current;
         state.theta = thetaRef.current;
       },
     });
 
-    const project = (wx: number, wy: number, wz: number) => {
-      const { size, center } = sceneRef.current;
-      const radius = size * 0.44;
+    const drawRim = (ctx: CanvasRenderingContext2D, size: number, radius: number) => {
+      // Thin rim that hugs globe exactly using the same radius math
+      const cx = size / 2;
+      const cy = size / 2;
 
-      // Rotate by phi (Y axis) then theta (X axis), matching globe transform usage
-      const phi = phiRef.current;
-      const cosP = Math.cos(phi);
-      const sinP = Math.sin(phi);
+      ctx.save();
+      ctx.translate(cx, cy);
 
-      const x1 = wx * cosP + wz * sinP;
-      const y1 = wy;
-      const z1 = -wx * sinP + wz * cosP;
+      // draw many small arc segments to fake an angular gradient
+      const segments = 180;
+      const outer = radius + 2.5;
+      const inner = radius - 2.5;
 
-      const theta = thetaRef.current;
-      const cosT = Math.cos(theta);
-      const sinT = Math.sin(theta);
+      for (let i = 0; i < segments; i += 1) {
+        const t0 = (i / segments) * Math.PI * 2;
+        const t1 = ((i + 1) / segments) * Math.PI * 2;
 
-      const rx = x1;
-      const ry = y1 * cosT - z1 * sinT;
-      const rz = y1 * sinT + z1 * cosT;
+        // red -> purple -> blue -> purple -> red
+        const p = i / (segments - 1);
+        let r = 239,
+          g = 68,
+          b = 68;
+        if (p < 0.25) {
+          const q = p / 0.25;
+          r = Math.round(lerp(239, 168, q));
+          g = Math.round(lerp(68, 85, q));
+          b = Math.round(lerp(68, 247, q));
+        } else if (p < 0.5) {
+          const q = (p - 0.25) / 0.25;
+          r = Math.round(lerp(168, 59, q));
+          g = Math.round(lerp(85, 130, q));
+          b = Math.round(lerp(247, 246, q));
+        } else if (p < 0.75) {
+          const q = (p - 0.5) / 0.25;
+          r = Math.round(lerp(59, 168, q));
+          g = Math.round(lerp(130, 85, q));
+          b = Math.round(lerp(246, 247, q));
+        } else {
+          const q = (p - 0.75) / 0.25;
+          r = Math.round(lerp(168, 239, q));
+          g = Math.round(lerp(85, 68, q));
+          b = Math.round(lerp(247, 68, q));
+        }
 
-      return {
-        sx: center + rx * radius,
-        sy: center - ry * radius,
-        z: rz,
-        radius,
-        center,
-      };
-    };
-
-    const clampToGlobeCircle = (x: number, y: number, center: number, radius: number) => {
-      const dx = x - center;
-      const dy = y - center;
-      const dist = Math.hypot(dx, dy);
-      const maxR = radius * 0.998;
-      if (dist <= maxR || dist === 0) {
-        return { x, y, inside: dist <= radius };
+        ctx.beginPath();
+        ctx.arc(0, 0, (outer + inner) / 2, t0, t1);
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.65)`;
+        ctx.lineWidth = 5.0;
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = `rgba(${r},${g},${b},0.30)`;
+        ctx.stroke();
       }
-      return {
-        x: center + (dx / dist) * maxR,
-        y: center + (dy / dist) * maxR,
-        inside: false,
-      };
+
+      ctx.restore();
     };
 
-    const latLonToVec = (lat: number, lon: number): Vec3 => {
-      const latR = (lat * Math.PI) / 180;
-      const lonR = (lon * Math.PI) / 180;
-      const cosLat = Math.cos(latR);
-      return {
-        x: cosLat * Math.cos(lonR),
-        y: Math.sin(latR),
-        z: cosLat * Math.sin(lonR),
-      };
+    const drawHoverGlow = (ctx: CanvasRenderingContext2D, now: number) => {
+      const { size } = sceneRef.current;
+      const cx = size / 2;
+      const cy = size / 2;
+      const radius = size * 0.46;
+
+      const pointer = pointerRef.current;
+      const active = hoverRef.current && pointer.inside && !zoomOpen;
+
+      if (!active) return;
+
+      // Clip to globe
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Soft “region glow” that tints the dot-map underneath (screen blend)
+      const gx = pointer.sx;
+      const gy = pointer.sy;
+
+      // subtle pulse for life
+      const pulse = 0.88 + 0.12 * Math.sin(now / 220);
+
+      const grad = ctx.createRadialGradient(gx, gy, 0, gx, gy, radius * 0.52);
+      grad.addColorStop(0, `rgba(239,68,68,${0.22 * pulse})`);
+      grad.addColorStop(0.35, `rgba(168,85,247,${0.20 * pulse})`);
+      grad.addColorStop(0.62, `rgba(59,130,246,${0.14 * pulse})`);
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, size, size);
+
+      // Add some “dot pop” sparkle near cursor (cinematic, feels like dots react)
+      ctx.globalCompositeOperation = "lighter";
+      const sparkCount = 16;
+      for (let i = 0; i < sparkCount; i += 1) {
+        const a = (i / sparkCount) * Math.PI * 2 + (now / 1400);
+        const rr = radius * (0.10 + 0.18 * (i % 3) / 2) * pulse;
+        const sx = gx + Math.cos(a) * rr;
+        const sy = gy + Math.sin(a) * rr * 0.75;
+
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.2 + (i % 3) * 0.35, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.18)";
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "rgba(168,85,247,0.30)";
+        ctx.fill();
+      }
+
+      ctx.restore();
+      ctx.globalCompositeOperation = "source-over";
     };
 
-    const markerWorld = markers.map((m) => ({
-      name: m.name,
-      vec: latLonToVec(m.lat, m.lon),
-    }));
+    const drawTrail = (ctx: CanvasRenderingContext2D, now: number) => {
+      const { size } = sceneRef.current;
+      const cx = size / 2;
+      const cy = size / 2;
+      const radius = size * 0.46;
 
-    const drawTrail = (now: number) => {
-      if (!trailCtx) return;
-      const { size, dpr: d } = sceneRef.current;
-
-      trailCtx.save();
-      trailCtx.setTransform(d, 0, 0, d, 0, 0);
-      trailCtx.clearRect(0, 0, size, size);
-
-      // Hard clip to the globe circle
-      trailCtx.beginPath();
-      trailCtx.arc(size / 2, size / 2, size * 0.44, 0, Math.PI * 2);
-      trailCtx.clip();
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.clip();
 
       const pts = trailPointsRef.current;
       if (pts.length < 2) {
-        trailCtx.restore();
+        ctx.restore();
         return;
       }
 
-      const drawPass = (alphaMul: number, blur: number) => {
-        for (let i = 1; i < pts.length; i++) {
-          const prev = pts[i - 1];
-          const cur = pts[i];
-          const p0 = pts[Math.max(0, i - 2)];
-          const prog = i / (pts.length - 1); // 0 tail, 1 head
-          const age = Math.max(0, 1 - (now - cur.t) / TRAIL_DECAY);
-          const alpha = age * (0.22 + prog * 0.9) * 0.85 * alphaMul;
+      for (let i = 1; i < pts.length; i += 1) {
+        const prev = pts[i - 1];
+        const cur = pts[i];
+        const prog = i / (pts.length - 1);
+        const age = Math.max(0, 1 - (now - cur.t) / TRAIL_DECAY);
+        const alpha = age * (0.22 + prog * 0.9) * 0.9;
 
-          // red -> purple -> blue
-          let r: number, g: number, b: number;
-          if (prog < 0.5) {
-            const p = prog / 0.5;
-            r = Math.round(255 - p * 95);
-            g = Math.round(50 + p * 10);
-            b = Math.round(100 + p * 155);
-          } else {
-            const p = (prog - 0.5) / 0.5;
-            r = Math.round(160 - p * 110);
-            g = Math.round(60 + p * 80);
-            b = 255;
-          }
-
-          const cpX = prev.x + (cur.x - p0.x) * 0.25;
-          const cpY = prev.y + (cur.y - p0.y) * 0.25;
-
-          trailCtx.beginPath();
-          trailCtx.moveTo(prev.x, prev.y);
-          trailCtx.quadraticCurveTo(cpX, cpY, cur.x, cur.y);
-          trailCtx.lineCap = "round";
-          trailCtx.lineJoin = "round";
-          trailCtx.lineWidth = 1.8 + prog * 4.5;
-          trailCtx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
-          trailCtx.shadowBlur = blur;
-          trailCtx.shadowColor = `rgba(${r},${g},${b},${alpha * 0.9})`;
-          trailCtx.stroke();
+        let r = 255,
+          g = 70,
+          b = 75;
+        if (prog < 0.5) {
+          const p = prog / 0.5;
+          r = Math.round(lerp(255, 160, p));
+          g = Math.round(lerp(70, 68, p));
+          b = Math.round(lerp(75, 255, p));
+        } else {
+          const p = (prog - 0.5) / 0.5;
+          r = Math.round(lerp(160, 60, p));
+          g = Math.round(lerp(68, 125, p));
+          b = 255;
         }
-      };
 
-      // bloom pass then main pass
-      drawPass(0.30, 34);
-      drawPass(1.0, 26);
+        ctx.beginPath();
+        ctx.moveTo(prev.x, prev.y);
+        ctx.lineTo(cur.x, cur.y);
 
-      trailCtx.restore();
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        // Slightly thicker near head, shorter natural trail
+        ctx.lineWidth = 2.2 + prog * 6.0;
+
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.shadowBlur = 22;
+        ctx.shadowColor = `rgba(${r},${g},${b},${alpha * 0.75})`;
+        ctx.stroke();
+      }
+
+      ctx.restore();
     };
 
     const animate = (now: number) => {
-      const logoEl = logoRef.current;
-      const spotlightEl = spotlightRef.current;
-      const hovering = hoverRef.current;
-      const { center, size } = sceneRef.current;
-      const radius = size * 0.44;
-      const pointerPx = pointerPxRef.current;
-
-      const pointerClamped = clampToGlobeCircle(pointerPx.x, pointerPx.y, center, radius);
-      const cursorTracking = hovering && pointerPx.inside;
-
-      const spotlightTarget = hovering ? pointerClamped : { x: center, y: center, inside: true };
-      spotlightPosRef.current.x += (spotlightTarget.x - spotlightPosRef.current.x) * 0.22;
-      spotlightPosRef.current.y += (spotlightTarget.y - spotlightPosRef.current.y) * 0.22;
-
-      if (spotlightEl) {
-        spotlightEl.style.transform = `translate(${spotlightPosRef.current.x - 110}px, ${spotlightPosRef.current.y - 110}px)`;
+      if (!fxCtx) {
+        rafRef.current = requestAnimationFrame(animate);
+        return;
       }
 
-      // Logo movement rule:
-      // - Hovering and inside globe: track cursor 1:1 (clamped)
-      // - Otherwise: smooth autopilot orbit
-      let logoTargetX = center;
-      let logoTargetY = center;
-      let visible = true;
+      const { size, dpr: dd } = sceneRef.current;
+      const cx = size / 2;
+      const radius = size * 0.46;
 
-      if (!cursorTracking) {
-        orbitalAngleRef.current += AUTO_LOGO_SPEED;
-        incPhaseRef.current += 0.00055;
+      fxCtx.save();
+      fxCtx.setTransform(dd, 0, 0, dd, 0, 0);
+      fxCtx.clearRect(0, 0, size, size);
+
+      // Figure out logo position
+      const pointer = pointerRef.current;
+      const inside = hoverRef.current && pointer.inside && !zoomOpen;
+
+      let logoX = cx;
+      let logoY = cx;
+      let logoVisible = true;
+      let depthScale = 1;
+
+      if (inside) {
+        logoX = pointer.sx;
+        logoY = pointer.sy;
+        depthScale = 1;
+      } else {
+        // autopilot orbit, continuous, never resets
+        orbitalAngleRef.current += 0.0105; // slower than before
+        incPhaseRef.current += 0.00045;
+
         const inc = 0.18 + 0.42 * Math.sin(incPhaseRef.current);
         const a = orbitalAngleRef.current;
 
-        const wx = Math.cos(a);
-        const wy = Math.sin(a) * Math.sin(inc);
-        const wz = Math.sin(a) * Math.cos(inc);
+        const orbitVec: Vec3 = {
+          x: Math.cos(a),
+          y: Math.sin(a) * Math.sin(inc),
+          z: Math.sin(a) * Math.cos(inc),
+        };
 
-        const { sx, sy, z } = project(wx, wy, wz);
-        const clamped = clampToGlobeCircle(sx, sy, center, radius);
-        logoTargetX = clamped.x;
-        logoTargetY = clamped.y;
-        visible = z > 0;
-      } else {
-        const clamped = clampToGlobeCircle(pointerPx.x, pointerPx.y, center, radius);
-        logoTargetX = clamped.x;
-        logoTargetY = clamped.y;
-      }
+        const p = projectWorld(orbitVec);
+        logoVisible = p.z > 0;
+        depthScale = 0.90 + p.z * 0.12;
 
-      const logoLerp = cursorTracking ? 0.45 : 0.1;
-      logoPosRef.current.x += (logoTargetX - logoPosRef.current.x) * logoLerp;
-      logoPosRef.current.y += (logoTargetY - logoPosRef.current.y) * logoLerp;
+        // clamp to circle edge to keep it clean
+        const dx = p.sx - p.center;
+        const dy = p.sy - p.center;
+        const dist = Math.hypot(dx, dy);
+        const maxR = p.radius * 0.998;
 
-      // Update logo
-      if (logoEl) {
-        logoEl.style.opacity = visible ? "1" : "0";
-        if (visible) {
-          logoEl.style.transform = `translate(${logoPosRef.current.x - LOGO_HALF}px, ${logoPosRef.current.y - LOGO_HALF}px) scale(1)`;
+        if (dist > maxR && dist !== 0) {
+          logoX = p.center + (dx / dist) * maxR;
+          logoY = p.center + (dy / dist) * maxR;
+        } else {
+          logoX = p.sx;
+          logoY = p.sy;
         }
       }
 
-      // Trail points only while hovering and inside globe
-      if (cursorTracking && visible) {
-        const last = lastTrailPointRef.current;
-        const moved = last ? Math.hypot(logoPosRef.current.x - last.x, logoPosRef.current.y - last.y) : Infinity;
-        const dt = last ? now - last.t : Infinity;
-        if (moved >= 1.4 || dt >= 24) {
-          const point = { x: logoPosRef.current.x, y: logoPosRef.current.y, t: now };
-          trailPointsRef.current.push(point);
-          lastTrailPointRef.current = point;
-        }
-      } else {
-        lastTrailPointRef.current = null;
+      // Trail always active when logo is visible (auto or hover)
+      if (logoVisible) {
+        trailPointsRef.current.push({ x: logoX, y: logoY, t: now });
       }
       while (trailPointsRef.current.length && now - trailPointsRef.current[0].t > TRAIL_DECAY) {
         trailPointsRef.current.shift();
       }
 
-      // Marker hover detection (front-face only), tooltip only for Newark
-      let nearestNewark: { x: number; y: number; d: number } | null = null;
-      if (hovering && pointerPx.hasPointer) {
-        for (const marker of markerWorld) {
-          const { sx, sy, z } = project(marker.vec.x, marker.vec.y, marker.vec.z);
-          if (z <= 0) continue;
-          const d = Math.hypot(pointerPx.x - sx, pointerPx.y - sy);
-          if (d > 18) continue;
-          if (!marker.name.includes("Newark")) continue;
-          if (!nearestNewark || d < nearestNewark.d) {
-            nearestNewark = { x: sx, y: sy, d };
+      // Marker hover detection for Newark tooltip (only while hovering, front face only)
+      if (inside) {
+        let nearest = 18;
+        let hovered: string | null = null;
+
+        for (const m of markerVecs) {
+          const p = projectWorld(m.vec);
+          if (p.z <= 0) continue;
+          const d = Math.hypot(pointer.sx - p.sx, pointer.sy - p.sy);
+          if (d <= nearest) {
+            nearest = d;
+            hovered = m.name;
           }
+        }
+
+        const isNewark = hovered?.includes("Newark") ?? false;
+
+        if (isNewark && hoveredMarkerRef.current !== "Newark, NJ") {
+          hoveredMarkerRef.current = "Newark, NJ";
+          setTooltip({
+            title: "Newark Barbershop",
+            subtitle: "Demo referral: ACAI is handling calls and bookings here.",
+          });
+        }
+
+        if (!isNewark && hoveredMarkerRef.current !== null) {
+          hoveredMarkerRef.current = null;
+          setTooltip(null);
+        }
+      } else {
+        if (hoveredMarkerRef.current !== null) {
+          hoveredMarkerRef.current = null;
+          setTooltip(null);
         }
       }
 
-      const nextTooltip = nearestNewark ? { x: nearestNewark.x, y: nearestNewark.y } : null;
-      const prev = tooltipRef.current;
-      const changed =
-        (prev === null) !== (nextTooltip === null) ||
-        (prev !== null &&
-          nextTooltip !== null &&
-          (Math.abs(prev.x - nextTooltip.x) > 0.5 || Math.abs(prev.y - nextTooltip.y) > 0.5));
-      if (changed) {
-        tooltipRef.current = nextTooltip;
-        setNewarkTooltip(nextTooltip);
+      // FX order: rim -> hover glow -> trail (trail reads better above glow)
+      drawRim(fxCtx, size, radius);
+      drawHoverGlow(fxCtx, now);
+      drawTrail(fxCtx, now);
+
+      fxCtx.restore();
+
+      // Update logo DOM
+      const logoEl = logoRef.current;
+      if (logoEl) {
+        logoEl.style.opacity = logoVisible ? "1" : "0";
+        if (logoVisible) {
+          logoEl.style.transform = `translate(${logoX - LOGO_HALF}px, ${logoY - LOGO_HALF}px) scale(${depthScale})`;
+        }
       }
 
-      drawTrail(now);
       rafRef.current = requestAnimationFrame(animate);
     };
 
     rafRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-        resizeObserverRef.current = null;
-      }
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+
+      if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
+      resizeObserverRef.current = null;
+
       globe.destroy();
     };
-  }, [markers]);
+  }, [markers, markerVecs, zoomOpen]);
 
-  // Pointer mapping: normalized -1..1 relative to the globe circle
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const el = containerRef.current;
     if (!el) return;
+
     const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const px = event.clientX - rect.left;
+    const py = event.clientY - rect.top;
+
     const { size, center } = sceneRef.current;
-    const localX = (x / rect.width) * size;
-    const localY = (y / rect.height) * size;
+    const radius = size * 0.46;
 
-    const dx = (localX - center) / (size * 0.44);
-    const dy = (localY - center) / (size * 0.44);
-    const inside = dx * dx + dy * dy <= 1;
+    const localX = (px / rect.width) * size;
+    const localY = (py / rect.height) * size;
 
-    // clamp to -1..1
-    const xN = Math.max(-1, Math.min(1, dx));
-    const yN = Math.max(-1, Math.min(1, dy));
-    pointerRef.current = { xN, yN };
-    pointerPxRef.current = {
-      x: localX,
-      y: localY,
-      inside,
-      hasPointer: true,
-    };
+    const dx = localX - center;
+    const dy = localY - center;
+
+    const dist = Math.hypot(dx, dy);
+    const inside = dist <= radius;
+
+    const clampedDist = Math.min(dist, radius);
+    const nx = dist === 0 ? 0 : dx / dist;
+    const ny = dist === 0 ? 0 : dy / dist;
+
+    const sx = center + nx * clampedDist;
+    const sy = center + ny * clampedDist;
+
+    const xN = clamp(dx / radius, -1, 1);
+    const yN = clamp(dy / radius, -1, 1);
+
+    // dist01 should feel like speed, so use clamped distance
+    const dist01 = clamp(clampedDist / radius, 0, 1);
+
+    pointerRef.current = { xN, yN, sx, sy, inside, dist01 };
   };
 
   const onPointerLeave = () => {
-    // reset to center so it stops influencing after hover
-    pointerRef.current = { xN: 0, yN: 0 };
     const { center } = sceneRef.current;
-    pointerPxRef.current = {
-      x: center,
-      y: center,
-      inside: false,
-      hasPointer: false,
-    };
-    tooltipRef.current = null;
-    setNewarkTooltip(null);
+    pointerRef.current = { xN: 0, yN: 0, sx: center, sy: center, inside: false, dist01: 0 };
+    hoveredMarkerRef.current = null;
+    setTooltip(null);
   };
 
-  const stars = useMemo(
-    () =>
-      Array.from({ length: 26 }).map((_, i) => ({
-        id: `star-${i}`,
-        top: (i * 29) % 100,
-        left: (i * 53) % 100,
-        size: (i % 3) + 1,
-        opacity: 0.18 + (i % 5) * 0.04,
-      })),
-    []
-  );
+  const onClick = () => {
+    // Zoom is a client referral interaction, so only open zoom when Newark is hovered.
+    const hovered = hoveredMarkerRef.current;
+    if (hovered && hovered.includes("Newark")) {
+      setZoomOpen(true);
+    }
+  };
 
   return (
-    <div
-      ref={containerRef}
-      className={`relative ${className || ""}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        onPointerLeave();
-      }}
-      onPointerMove={onPointerMove}
-      style={{ touchAction: "none" }}
-    >
-      {/* Thin rim only (no wash over the globe) */}
+    <div className={`relative ${className || ""}`}>
       <div
-        className="absolute inset-0 rounded-full pointer-events-none"
-        style={{
-          background:
-            "conic-gradient(from 0deg, rgba(239,68,68,0.9), rgba(168,85,247,0.9), rgba(59,130,246,0.9), rgba(168,85,247,0.9), rgba(239,68,68,0.9))",
-          WebkitMaskImage: rimMask,
-          maskImage: rimMask,
-          opacity: isHovered ? 0.55 : 0.35,
-          filter: "blur(0.45px)",
-          transform: "translateZ(0)",
+        ref={containerRef}
+        className="relative mx-auto"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          onPointerLeave();
         }}
-      />
-
-      {/* Hover “liquid” spotlight (only on hover, only on the globe surface area) */}
-      <div
-        className="absolute inset-0 rounded-full pointer-events-none"
-        style={{
-          opacity: isHovered ? 1 : 0,
-          transition: "opacity 200ms ease",
-          WebkitMaskImage: "radial-gradient(circle, black 62%, transparent 66%)",
-          maskImage: "radial-gradient(circle, black 62%, transparent 66%)",
-        }}
+        onPointerMove={onPointerMove}
+        onClick={onClick}
+        style={{ touchAction: "none" }}
       >
-        <div
-          className="absolute inset-0"
+        {/* Stars background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+          {Array.from({ length: 24 }).map((_, i) => {
+            const top = (i * 29) % 100;
+            const left = (i * 53) % 100;
+            const size = (i % 3) + 1;
+            const opacity = 0.16 + (i % 5) * 0.04;
+            return (
+              <span
+                key={`star-${i}`}
+                className="absolute rounded-full bg-white/50"
+                style={{
+                  top: `${top}%`,
+                  left: `${left}%`,
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  opacity,
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* Globe canvas */}
+        <canvas
+          ref={globeCanvasRef}
           style={{
-            background:
-              "radial-gradient(circle at 50% 50%, rgba(239,68,68,0.0) 0%, rgba(239,68,68,0.0) 25%, rgba(0,0,0,0) 60%)",
+            width: sceneRef.current.size,
+            height: sceneRef.current.size,
+            maxWidth: "100%",
+            aspectRatio: "1 / 1",
+            display: "block",
           }}
         />
-        <div
-          ref={spotlightRef}
-          className="absolute"
-          style={{
-            left: 0,
-            top: 0,
-            width: 220,
-            height: 220,
-            transform: "translate(-9999px, -9999px)",
-            willChange: "transform",
-            background:
-              "radial-gradient(circle, rgba(239,68,68,0.28) 0%, rgba(168,85,247,0.22) 45%, rgba(59,130,246,0.14) 70%, transparent 100%)",
-            filter: "blur(10px)",
-          }}
-        />
-      </div>
 
-      {/* Stars */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
-        {stars.map((s) => (
-          <span
-            key={s.id}
-            className="absolute rounded-full bg-white/60"
-            style={{
-              top: `${s.top}%`,
-              left: `${s.left}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              opacity: s.opacity,
-            }}
-          />
-        ))}
-      </div>
+        {/* FX canvas (rim + glow + trail), perfectly aligned */}
+        <canvas ref={fxCanvasRef} className="absolute inset-0 pointer-events-none" />
 
-      {/* Trail canvas */}
-      <canvas ref={trailCanvasRef} className="absolute inset-0 pointer-events-none" />
-
-      {/* ACAI logo */}
-      <div
-        ref={logoRef}
-        className="absolute pointer-events-none"
-        style={{
-          width: LOGO_SIZE,
-          height: LOGO_SIZE,
-          willChange: "transform, opacity",
-        }}
-      >
+        {/* ACAI logo */}
         <div
-          className="absolute rounded-full blur-md"
+          ref={logoRef}
+          className="absolute pointer-events-none"
           style={{
-            inset: -10,
-            background:
-              "radial-gradient(circle, rgba(168,85,247,0.55) 0%, rgba(59,130,246,0.26) 55%, rgba(239,68,68,0.14) 80%, transparent 100%)",
-          }}
-        />
-        <div
-          className="relative h-full w-full rounded-full border-2 border-purple-300/70"
-          style={{
-            backgroundImage: "url('/justlogowithoutwordsACAI.jpeg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            boxShadow:
-              "0 0 20px rgba(168,85,247,0.9), 0 0 40px rgba(59,130,246,0.5), 0 0 60px rgba(239,68,68,0.2)",
-          }}
-        />
-      </div>
-
-      {/* Tooltip (Newark only) */}
-      {newarkTooltip && (
-        <div
-          className="absolute z-20 -translate-x-1/2 -translate-y-[115%] rounded-xl border border-white/10 bg-black/70 px-3 py-2 text-white shadow-2xl backdrop-blur"
-          style={{
-            left: newarkTooltip.x,
-            top: newarkTooltip.y,
-            boxShadow:
-              "0 0 24px rgba(168,85,247,0.18), 0 0 42px rgba(59,130,246,0.12)",
+            width: LOGO_SIZE,
+            height: LOGO_SIZE,
+            willChange: "transform, opacity",
           }}
         >
-          <div className="text-sm font-semibold">Newark, NJ</div>
+          <div
+            className="absolute rounded-full blur-md"
+            style={{
+              inset: -10,
+              background:
+                "radial-gradient(circle, rgba(168,85,247,0.55) 0%, rgba(59,130,246,0.26) 55%, rgba(239,68,68,0.14) 80%, transparent 100%)",
+            }}
+          />
+          <div
+            className="relative h-full w-full rounded-full border-2 border-purple-300/70"
+            style={{
+              backgroundImage: "url('/justlogowithoutwordsACAI.jpeg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              boxShadow:
+                "0 0 20px rgba(168,85,247,0.9), 0 0 40px rgba(59,130,246,0.5), 0 0 60px rgba(239,68,68,0.2)",
+            }}
+          />
         </div>
-      )}
 
-      {/* Globe canvas */}
-      <canvas
-        ref={canvasRef}
-        style={{
-          width: 720,
-          height: 720,
-          maxWidth: "100%",
-          aspectRatio: 1,
-        }}
-      />
+        {/* Hover tooltip for Newark only */}
+        {tooltip && !zoomOpen && (
+          <div
+            className="absolute left-1/2 top-6 z-20 w-[330px] -translate-x-1/2 rounded-2xl border border-white/10 bg-black/70 p-4 text-white shadow-2xl backdrop-blur"
+            style={{
+              boxShadow: "0 0 26px rgba(168,85,247,0.18), 0 0 44px rgba(59,130,246,0.12)",
+            }}
+          >
+            <div className="text-sm font-semibold">{tooltip.title}</div>
+            <div className="mt-1 text-sm text-white/75">{tooltip.subtitle}</div>
+            <div className="mt-2 text-xs text-white/50">Click Newark to zoom in.</div>
+          </div>
+        )}
+
+        {/* Zoom modal */}
+        {zoomOpen && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" />
+            <div className="relative w-[min(92%,740px)] rounded-3xl border border-white/10 bg-black/80 p-6 text-white shadow-2xl">
+              <button
+                onClick={() => setZoomOpen(false)}
+                className="absolute right-4 top-4 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-white/80 hover:bg-white/10"
+              >
+                X
+              </button>
+
+              <div className="text-lg font-semibold">Newark, New Jersey</div>
+              <div className="mt-1 text-sm text-white/70">
+                Demo referral card. This is where you’ll show a real client story, photos, metrics, and a booking CTA.
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="text-sm font-semibold">Newark Barbershop</div>
+                <div className="mt-1 text-sm text-white/70">
+                  ACAI answers calls, routes inquiries, and keeps bookings moving so the chair stays full.
+                </div>
+              </div>
+
+              <div className="mt-4 text-xs text-white/45">
+                Exit to return to the globe. Globe will resume from the exact orientation it was at.
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
