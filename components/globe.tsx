@@ -1,6 +1,6 @@
 "use client";
 import createGlobe from "cobe";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 // https://github.com/shuding/cobe
 export const Globe = ({ className }: { className?: string }) => {
@@ -12,29 +12,23 @@ export const Globe = ({ className }: { className?: string }) => {
   const [isHovered, setIsHovered] = useState(false);
   const hoverRef = useRef(false);
 
-  // Globe rotation — always spinning east, constant speed
-  const globePhiRef    = useRef(0);
-
-  // Logo orbit angle — advances independently of globe
-  const orbitAngleRef  = useRef(0);
-
-  // Orbit inclination slowly oscillates so the path tilts over time
-  const incAngleRef    = useRef(0);
+  const globeRotationRef = useRef(0);
+  const orbitalAngleRef  = useRef(0);
+  const incPhaseRef      = useRef(0);
 
   const rafRef            = useRef<number | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const sceneRef          = useRef({ size: 600, center: 300, dpr: 2 });
+  const trailPointsRef    = useRef<Array<{ x: number; y: number; t: number }>>([]);
 
-  // Trail points — always following logo
-  const trailPointsRef = useRef<Array<{ x: number; y: number; t: number }>>([]);
-  const logoPosRef     = useRef({ x: 300, y: 300 });
-  const logoVisRef     = useRef(true);
+  const TRAIL_DECAY = 3600;
 
   useEffect(() => { hoverRef.current = isHovered; }, [isHovered]);
 
   useEffect(() => {
+    if (!canvasRef.current) return;
+
     const dpr         = 2;
-    const logoEl      = logoRef.current;
     const trailCanvas = trailCanvasRef.current;
     const trailCtx    = trailCanvas?.getContext("2d");
 
@@ -49,13 +43,12 @@ export const Globe = ({ className }: { className?: string }) => {
       }
     };
     syncSize();
+
     if (containerRef.current) {
       resizeObserverRef.current = new ResizeObserver(syncSize);
       resizeObserverRef.current.observe(containerRef.current);
     }
-    if (!canvasRef.current) return;
 
-    // ── Cobe globe ────────────────────────────────────────────────────────
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: dpr,
       width:  600 * dpr,
@@ -67,25 +60,22 @@ export const Globe = ({ className }: { className?: string }) => {
       baseColor:   [0.28, 0.28, 0.28],
       markerColor: [0.66, 0.24, 1],
       glowColor:   [0.47, 0.33, 1],
+      // Purple dots at key cities
       markers: [
-        { location: [34.0522,  -118.2437] as [number, number], size: 0.06 },
-        { location: [40.7128,   -74.0060] as [number, number], size: 0.06 },
-        { location: [51.5072,    -0.1276] as [number, number], size: 0.06 },
-        { location: [35.6764,   139.6500] as [number, number], size: 0.06 },
-        { location: [-33.8688,  151.2093] as [number, number], size: 0.06 },
+        { location: [34.0522,  -118.2437] as [number, number], size: 0.06 }, // LA
+        { location: [40.7128,   -74.0060] as [number, number], size: 0.06 }, // NY
+        { location: [51.5072,    -0.1276] as [number, number], size: 0.06 }, // London
+        { location: [35.6764,   139.6500] as [number, number], size: 0.06 }, // Tokyo
+        { location: [-33.8688,  151.2093] as [number, number], size: 0.06 }, // Sydney
       ],
       onRender: (state) => {
-        // Globe always spins east at constant speed — hover slows slightly
-        const speed = hoverRef.current ? 0.0045 : 0.0060;
-        globePhiRef.current += speed;
-        state.phi = globePhiRef.current;
+        const base  = 0.0072;
+        const speed = hoverRef.current ? base * 0.7 : base;
+        globeRotationRef.current += speed;
+        state.phi = globeRotationRef.current;
       },
     });
 
-    const TRAIL_DECAY = 2800; // ms trail lasts
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
-    // ── Trail renderer ────────────────────────────────────────────────────
     const drawTrail = (now: number) => {
       if (!trailCtx) return;
       const { size, dpr: d } = sceneRef.current;
@@ -93,32 +83,30 @@ export const Globe = ({ className }: { className?: string }) => {
       trailCtx.setTransform(d, 0, 0, d, 0, 0);
       trailCtx.clearRect(0, 0, size, size);
 
-      // Always clipped to globe circle
+      // Hard clip — trail never leaves globe
       trailCtx.beginPath();
       trailCtx.arc(size / 2, size / 2, size * 0.44, 0, Math.PI * 2);
       trailCtx.clip();
 
       const pts = trailPointsRef.current;
-      if (pts.length < 2) { trailCtx.restore(); return; }
-
       for (let i = 1; i < pts.length; i++) {
         const prev = pts[i - 1];
         const cur  = pts[i];
         const prog = i / (pts.length - 1); // 0=tail 1=head
         const age  = Math.max(0, 1 - (now - cur.t) / TRAIL_DECAY);
-        const alpha = age * (0.15 + prog * 0.85) * 0.75;
+        const alpha = age * (0.25 + prog * 0.9) * 0.85;
 
-        // Red(tail) → purple(mid) → blue(head)
-        let r = 255, g = 70, b = 80;
+        // Vivid gradient: red→purple→blue
+        let r: number, g: number, b: number;
         if (prog < 0.5) {
           const p = prog / 0.5;
-          r = Math.round(lerp(255, 160, p));
-          g = Math.round(lerp(70,  60,  p));
-          b = Math.round(lerp(80,  255, p));
+          r = Math.round(255 - p * 95);
+          g = Math.round(50  + p * 10);
+          b = Math.round(100 + p * 155);
         } else {
           const p = (prog - 0.5) / 0.5;
-          r = Math.round(lerp(160, 55,  p));
-          g = Math.round(lerp(60,  120, p));
+          r = Math.round(160 - p * 110);
+          g = Math.round(60  + p * 80);
           b = 255;
         }
 
@@ -127,77 +115,59 @@ export const Globe = ({ className }: { className?: string }) => {
         trailCtx.lineTo(cur.x,  cur.y);
         trailCtx.lineCap     = "round";
         trailCtx.lineJoin    = "round";
-        trailCtx.lineWidth   = 1.5 + prog * 6.5;
+        trailCtx.lineWidth   = 2.5 + prog * 8;   // thick near logo
         trailCtx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
-        trailCtx.shadowBlur  = 16;
-        trailCtx.shadowColor = `rgba(${r},${g},${b},${alpha * 0.7})`;
+        trailCtx.shadowBlur  = 22;
+        trailCtx.shadowColor = `rgba(${r},${g},${b},${alpha * 0.85})`;
         trailCtx.stroke();
       }
       trailCtx.restore();
     };
 
-    // ── Animation loop ────────────────────────────────────────────────────
     const animate = (now: number) => {
-      const { size, center } = sceneRef.current;
-      const radius = size * 0.44;
+      // Faster orbit — wraps around in ~3.5s visible, ~1s behind
+      orbitalAngleRef.current += 0.022;
+      // Inclination slowly oscillates — flat → tilted → flat
+      incPhaseRef.current += 0.0007;
+      const inc = 0.2 + 0.38 * Math.sin(incPhaseRef.current);
 
-      // Advance orbit angle — logo travels around globe slightly faster
-      // than the globe itself spins, so it visibly laps the surface
-      orbitAngleRef.current  += 0.0095;
+      const a   = orbitalAngleRef.current;
+      const wx  = Math.cos(a);
+      const wy  = Math.sin(a) * Math.sin(inc);
+      const wz  = Math.sin(a) * Math.cos(inc);
 
-      // Inclination oscillates slowly between ~10° and ~55°
-      // This makes the orbit path tilt over time — flat → diagonal → flat
-      incAngleRef.current += 0.0008;
-      const inc = 0.18 + 0.37 * Math.sin(incAngleRef.current); // radians ~10°–55°
-
-      const oa = orbitAngleRef.current;
-
-      // ── Logo world-space position on inclined orbit ───────────────────
-      // Orbit is a unit circle tilted by `inc` from the equatorial plane.
-      // x = cos(angle)     — horizontal
-      // y = sin(angle)*sin(inc)  — vertical (latitude)
-      // z = sin(angle)*cos(inc)  — depth
-      const wx = Math.cos(oa);
-      const wy = Math.sin(oa) * Math.sin(inc);
-      const wz = Math.sin(oa) * Math.cos(inc);
-
-      // ── Project to screen using LIVE globe phi ────────────────────────
-      // rotateY matches Cobe's phi rotation
-      const phi = globePhiRef.current;
+      // Project to screen using live globe rotation
+      const phi = globeRotationRef.current;
       const rx  =  wx * Math.cos(phi) + wz * Math.sin(phi);
       const ry  =  wy;
       const rz  = -wx * Math.sin(phi) + wz * Math.cos(phi);
 
+      const { size, center } = sceneRef.current;
+      const radius = size * 0.44;
       const sx = center + rx * radius;
       const sy = center - ry * radius;
 
-      // rz > 0 = front of globe (visible); rz <= 0 = behind globe (hidden)
+      // rz > 0 = front face (visible)
       const visible = rz > 0;
-      logoVisRef.current  = visible;
-      logoPosRef.current  = { x: sx, y: sy };
 
-      // Only push trail points when logo is on the front face
+      if (logoRef.current) {
+        logoRef.current.style.opacity = visible ? "1" : "0";
+        if (visible) {
+          // Logo size: 44px base, slight depth scale
+          const depthScale = 0.82 + rz * 0.14;
+          logoRef.current.style.transform =
+            `translate(${sx - 22}px, ${sy - 22}px) scale(${depthScale})`;
+        }
+      }
+
       if (visible) {
         trailPointsRef.current.push({ x: sx, y: sy, t: now });
       }
-
-      // Trim old trail points
       while (
-        trailPointsRef.current.length > 0 &&
+        trailPointsRef.current.length &&
         now - trailPointsRef.current[0].t > TRAIL_DECAY
       ) {
         trailPointsRef.current.shift();
-      }
-
-      // ── Update logo DOM ───────────────────────────────────────────────
-      if (logoEl) {
-        logoEl.style.opacity = visible ? "1" : "0";
-        if (visible) {
-          // Scale slightly larger when in "front" (rz near 1) — depth cue
-          const depthScale = 0.55 + rz * 0.12;
-          logoEl.style.transform = `translate(${sx - 20}px, ${sy - 20}px) scale(${depthScale})`;
-          logoEl.style.zIndex    = "10";
-        }
       }
 
       drawTrail(now);
@@ -220,7 +190,7 @@ export const Globe = ({ className }: { className?: string }) => {
         top:     (i * 29) % 100,
         left:    (i * 53) % 100,
         size:    (i % 3) + 1,
-        opacity: 0.14 + (i % 5) * 0.04,
+        opacity: 0.12 + (i % 5) * 0.04,
       })),
     []
   );
@@ -232,16 +202,31 @@ export const Globe = ({ className }: { className?: string }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Glow behind globe */}
-      <div className="absolute inset-10 rounded-full bg-gradient-to-r from-red-500/16 via-purple-500/18 to-blue-500/16 blur-3xl" />
+      {/* Animated gradient energy ring — replaces static blue ring */}
+      <div
+        className="absolute inset-6 rounded-full opacity-25 blur-2xl animate-[spin_14s_linear_infinite]"
+        style={{
+          background:
+            "conic-gradient(from 0deg, #ef4444, #a855f7, #3b82f6, #a855f7, #ef4444)",
+        }}
+      />
+
+      {/* Subtle ambient glow */}
+      <div className="absolute inset-12 rounded-full bg-gradient-to-r from-red-500/10 via-purple-500/14 to-blue-500/10 blur-3xl" />
 
       {/* Stars */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
         {stars.map((s) => (
           <span
             key={s.id}
-            className="absolute rounded-full bg-white/40"
-            style={{ top: `${s.top}%`, left: `${s.left}%`, width: `${s.size}px`, height: `${s.size}px`, opacity: s.opacity }}
+            className="absolute rounded-full bg-white/50"
+            style={{
+              top:     `${s.top}%`,
+              left:    `${s.left}%`,
+              width:   `${s.size}px`,
+              height:  `${s.size}px`,
+              opacity: s.opacity,
+            }}
           />
         ))}
       </div>
@@ -249,30 +234,39 @@ export const Globe = ({ className }: { className?: string }) => {
       {/* Trail canvas */}
       <canvas ref={trailCanvasRef} className="absolute inset-0 pointer-events-none" />
 
-      {/* ACAI logo — orbits continuously */}
+      {/* ACAI logo — 44×44, orbits continuously */}
       <div
         ref={logoRef}
-        className="absolute h-10 w-10 pointer-events-none"
-        style={{ willChange: "transform, opacity" }}
+        className="absolute pointer-events-none"
+        style={{
+          width:  44,
+          height: 44,
+          willChange: "transform, opacity",
+        }}
       >
-        <div className="absolute inset-[-7px] rounded-full bg-gradient-to-r from-red-500/14 via-purple-500/16 to-blue-500/14 blur-md" />
+        {/* Glow halo behind logo */}
         <div
-          className="relative h-full w-full rounded-full border border-blue-300/60 shadow-[0_0_12px_rgba(59,130,246,0.3),0_0_8px_rgba(168,85,247,0.22)]"
+          className="absolute rounded-full blur-md"
+          style={{
+            inset: -8,
+            background:
+              "radial-gradient(circle, rgba(168,85,247,0.55) 0%, rgba(59,130,246,0.3) 60%, transparent 100%)",
+          }}
+        />
+        {/* Logo image */}
+        <div
+          className="relative h-full w-full rounded-full border-2 border-purple-300/70"
           style={{
             backgroundImage:    "url('/justlogowithoutwordsACAI.jpeg')",
             backgroundSize:     "cover",
             backgroundPosition: "center",
+            boxShadow:
+              "0 0 16px rgba(168,85,247,0.7), 0 0 32px rgba(59,130,246,0.4)",
           }}
         />
       </div>
 
-      {/* Orbital rings */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className={`absolute inset-8 rounded-full border border-purple-400/20 ${isHovered ? "animate-[spin_22s_linear_infinite]" : "animate-[spin_15s_linear_infinite]"}`} />
-        <div className={`absolute inset-14 rounded-full border border-blue-400/20 ${isHovered ? "animate-[spin_30s_linear_infinite_reverse]" : "animate-[spin_21s_linear_infinite_reverse]"}`} />
-      </div>
-
-      {/* Cobe globe canvas */}
+      {/* Cobe globe */}
       <canvas
         ref={canvasRef}
         style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1 }}
