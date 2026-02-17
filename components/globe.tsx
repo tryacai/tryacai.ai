@@ -161,10 +161,8 @@ export const Globe = ({ className }: { className?: string }) => {
     phaseStart: number;
     flightDuration: number;
     altitudeMax: number;
-    fromVec: Vec3;
-    midVec: Vec3;
-    toVec: Vec3;
-    twoLap: boolean;
+    fromLocation: { lat: number; lon: number; name: string };
+    toLocation: { lat: number; lon: number; name: string };
     logoPos: { x: number; y: number };
     logoVisible: boolean;
     depthScale: number;
@@ -176,10 +174,8 @@ export const Globe = ({ className }: { className?: string }) => {
     phaseStart: 0,
     flightDuration: 9000,
     altitudeMax: 0.24,
-    fromVec: latLonToVec3(40.7128, -74.0060),
-    midVec: latLonToVec3(51.5072, -0.1276),
-    toVec: latLonToVec3(51.5072, -0.1276),
-    twoLap: false,
+    fromLocation: { lat: 40.7128, lon: -74.0060, name: "New York" },
+    toLocation: { lat: 51.5072, lon: -0.1276, name: "London" },
     logoPos: { x: 300, y: 300 },
     logoVisible: true,
     depthScale: 1,
@@ -187,13 +183,13 @@ export const Globe = ({ className }: { className?: string }) => {
     targetPhi: 0,
   });
 
-  const locations = useMemo(
+  const surfacePositions = useMemo(
     () => [
-      { lat: 40.7128, lon: -74.0060 },
-      { lat: 51.5072, lon: -0.1276 },
-      { lat: -23.5505, lon: -46.6333 },
-      { lat: 35.6764, lon: 139.65 },
-      { lat: -33.8688, lon: 151.2093 },
+      { lat: 40.7128, lon: -74.0060, name: "New York" },
+      { lat: 51.5072, lon: -0.1276, name: "London" },
+      { lat: -23.5505, lon: -46.6333, name: "São Paulo" },
+      { lat: 35.6764, lon: 139.65, name: "Tokyo" },
+      { lat: -33.8688, lon: 151.2093, name: "Sydney" },
     ],
     []
   );
@@ -236,36 +232,19 @@ export const Globe = ({ className }: { className?: string }) => {
     if (!canvasRef.current) return;
 
     const buildSegment = (segmentIndex: number) => {
-      const fromLocation = locations[segmentIndex];
-      const toLocation = locations[(segmentIndex + 1) % locations.length];
+      const fromLocation = surfacePositions[segmentIndex];
+      const toLocation = surfacePositions[(segmentIndex + 1) % surfacePositions.length];
 
-      const fromVec = latLonToVec3(fromLocation.lat, fromLocation.lon);
-      const toVec = latLonToVec3(toLocation.lat, toLocation.lon);
-      const baseMid = normalize(add(fromVec, toVec));
-
-      const normalAxis = normalize(cross(fromVec, toVec));
       const altitudeVariation = 0.9 + Math.random() * 0.2;
-      const driftAngle = ((Math.random() * 2 - 1) * 8 * Math.PI) / 180;
-      const bendAngle = ((20 + Math.random() * 8) * Math.PI) / 180;
-
-      let midVec = rotateAroundAxis(baseMid, normalAxis, bendAngle);
-      midVec = rotateAroundAxis(midVec, fromVec, driftAngle);
-
-      const twoLap = segmentIndex === 2;
-      if (twoLap) {
-        midVec = rotateAroundAxis(midVec, normalAxis, (14 * Math.PI) / 180);
-      }
 
       const targetPhi = -degToRad(toLocation.lon);
 
       return {
-        fromVec,
-        midVec,
-        toVec,
+        fromLocation,
+        toLocation,
         targetPhi,
-        flightDuration: (8000 + Math.random() * 2000) * (twoLap ? 1.08 : 1),
-        altitudeMax: 0.22 * altitudeVariation * (twoLap ? 1.12 : 1),
-        twoLap,
+        flightDuration: 8000 + Math.random() * 2000,
+        altitudeMax: 0.22 * altitudeVariation,
       };
     };
 
@@ -274,12 +253,10 @@ export const Globe = ({ className }: { className?: string }) => {
     state.segmentIndex = 0;
     state.phase = "flight";
     state.phaseStart = performance.now();
-    state.fromVec = segment0.fromVec;
-    state.midVec = segment0.midVec;
-    state.toVec = segment0.toVec;
+    state.fromLocation = segment0.fromLocation;
+    state.toLocation = segment0.toLocation;
     state.flightDuration = segment0.flightDuration;
     state.altitudeMax = segment0.altitudeMax;
-    state.twoLap = segment0.twoLap;
     state.targetPhi = segment0.targetPhi;
     targetPhiRef.current = segment0.targetPhi;
 
@@ -296,13 +273,10 @@ export const Globe = ({ className }: { className?: string }) => {
       baseColor: [0.28, 0.28, 0.28],
       markerColor: [0.66, 0.24, 1],
       glowColor: [0.47, 0.33, 1],
-      markers: [
-        { location: [40.7128, -74.0060], size: 0.07 },
-        { location: [51.5072, -0.1276], size: 0.06 },
-        { location: [-23.5505, -46.6333], size: 0.06 },
-        { location: [35.6764, 139.65], size: 0.07 },
-        { location: [-33.8688, 151.2093], size: 0.06 },
-      ],
+      markers: surfacePositions.map((position, index) => ({
+        location: [position.lat, position.lon],
+        size: index === 0 || index === 3 ? 0.07 : 0.06,
+      })),
       onRender: (renderState) => {
         const baseSpeed = 0.0065;
         const hoverSpeed = baseSpeed * 0.67;
@@ -386,30 +360,23 @@ export const Globe = ({ className }: { className?: string }) => {
             ? 0.22 + cruiseEase((progress - 0.22) / 0.56) * 0.56
             : 0.78 + landingEase((progress - 0.78) / 0.22) * 0.22;
 
-        let surfaceVec: Vec3;
-        if (easedProgress < 0.5) {
-          surfaceVec = slerp(current.fromVec, current.midVec, easedProgress * 2);
-        } else {
-          surfaceVec = slerp(current.midVec, current.toVec, (easedProgress - 0.5) * 2);
-        }
+        const fromVec = latLonToVec3(current.fromLocation.lat, current.fromLocation.lon);
+        const toVec = latLonToVec3(current.toLocation.lat, current.toLocation.lon);
+        const slerpedVec = slerp(fromVec, toVec, easedProgress);
 
-        if (current.twoLap) {
-          const lapTwist = Math.sin(easedProgress * Math.PI * 2) * 0.1;
-          surfaceVec = rotateAroundAxis(surfaceVec, current.fromVec, lapTwist * (1 - easedProgress));
-        }
+        const altitudeScale = Math.sin(Math.PI * easedProgress) * current.altitudeMax;
+        const posVec = scale(normalize(slerpedVec), 1 + altitudeScale);
 
-        const altitude = Math.sin(Math.PI * easedProgress) * current.altitudeMax;
-        const positionVec = scale(normalize(surfaceVec), 1 + altitude);
+        const rotatedVec = rotateY(posVec, globeRotationRef.current);
+        const sceneSize = sceneRef.current.size;
+        const radius = sceneSize * 0.44;
+        const screenX = sceneSize / 2 + rotatedVec.x * radius;
+        const screenY = sceneSize / 2 - rotatedVec.y * radius;
 
-        const rotated = rotateY(positionVec, globeRotationRef.current);
-        const projected = project(rotated, sceneRef.current.size);
-        const isFront = rotated.z > 0;
-
-        current.logoVisible = isFront;
-        current.logoPos = { x: projected.x, y: projected.y };
-
-        if (isFront) {
-          current.points.push({ x: projected.x, y: projected.y, t: now });
+        current.logoVisible = rotatedVec.z > 0;
+        if (current.logoVisible) {
+          current.logoPos = { x: screenX, y: screenY };
+          current.points.push({ x: screenX, y: screenY, t: now });
         }
         while (current.points.length && now - current.points[0].t > 3200) {
           current.points.shift();
@@ -474,7 +441,7 @@ export const Globe = ({ className }: { className?: string }) => {
         current.depthScale = 1;
 
         if (reboundProgress >= 1) {
-          const nextIndex = (current.segmentIndex + 1) % locations.length;
+          const nextIndex = (current.segmentIndex + 1) % surfacePositions.length;
           const nextSegment = buildSegment(nextIndex);
 
           current.segmentIndex = nextIndex;
@@ -482,10 +449,8 @@ export const Globe = ({ className }: { className?: string }) => {
           current.phaseStart = now;
           current.flightDuration = nextSegment.flightDuration;
           current.altitudeMax = nextSegment.altitudeMax;
-          current.fromVec = nextSegment.fromVec;
-          current.midVec = nextSegment.midVec;
-          current.toVec = nextSegment.toVec;
-          current.twoLap = nextSegment.twoLap;
+          current.fromLocation = nextSegment.fromLocation;
+          current.toLocation = nextSegment.toLocation;
           current.targetPhi = nextSegment.targetPhi;
           current.points = [];
           isPausedRef.current = false;
@@ -531,7 +496,7 @@ export const Globe = ({ className }: { className?: string }) => {
       }
       globe.destroy();
     };
-  }, [locations]);
+  }, [surfacePositions]);
 
   const stars = useMemo(
     () =>
