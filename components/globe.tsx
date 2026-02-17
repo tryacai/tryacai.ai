@@ -49,9 +49,11 @@ export const Globe = ({ className }: { className?: string }) => {
   const patternTimerRef = useRef(0);
 
   const trailRef = useRef<Array<{ x: number; y: number; t: number }>>([]);
+  const markerPulseRef = useRef<number[]>([]);
+  const lastFrameRef = useRef(0);
 
   // Slightly longer, cleaner trail
-  const TRAIL_DECAY = 1400;
+  const TRAIL_DECAY = 1900;
 
   const surfaceMarkers = useMemo(
     () => [
@@ -134,7 +136,7 @@ export const Globe = ({ className }: { className?: string }) => {
       markerColor: [0.85, 0.45, 1.0],
       markers: surfaceMarkers.map((m) => ({
         location: [m.lat, m.lon] as [number, number],
-        size: m.name.includes("Newark") ? 0.075 : 0.062,
+        size: 0.065,
       })),
 
       onRender: (state) => {
@@ -159,6 +161,7 @@ export const Globe = ({ className }: { className?: string }) => {
       ctx.rotate(angleOffset);
 
       const segments = 72;
+      const rimPulse = 0.65 + Math.sin(now * 0.002) * 0.15;
       for (let i = 0; i < segments; i++) {
         const a1 = (i / segments) * Math.PI * 2;
         const a2 = ((i + 1) / segments) * Math.PI * 2;
@@ -185,10 +188,10 @@ export const Globe = ({ className }: { className?: string }) => {
 
         ctx.beginPath();
         ctx.arc(0, 0, r, a1, a2);
-        ctx.strokeStyle = `rgba(${red},${grn},${blu},0.58)`;
+        ctx.strokeStyle = `rgba(${red},${grn},${blu},${0.58 * rimPulse})`;
         ctx.lineWidth = 3.1;
         ctx.shadowBlur = 8;
-        ctx.shadowColor = `rgba(${red},${grn},${blu},0.20)`;
+        ctx.shadowColor = `rgba(${red},${grn},${blu},${0.20 * rimPulse})`;
         ctx.stroke();
       }
 
@@ -220,9 +223,9 @@ export const Globe = ({ className }: { className?: string }) => {
         ctx.moveTo(prev.x, prev.y);
         ctx.lineTo(cur.x, cur.y);
 
-        ctx.lineWidth = 2.4 + prog * 5.2;
+        ctx.lineWidth = 4 + prog * 5.2;
         ctx.strokeStyle = `rgba(168,85,247,${alpha})`;
-        ctx.shadowBlur = 26;
+        ctx.shadowBlur = 40;
         ctx.shadowColor = `rgba(168,85,247,${alpha * 0.95})`;
         ctx.lineCap = "round";
         ctx.stroke();
@@ -258,6 +261,9 @@ export const Globe = ({ className }: { className?: string }) => {
         return;
       }
 
+      const dt = lastFrameRef.current ? now - lastFrameRef.current : 16;
+      lastFrameRef.current = now;
+
       const { size, dpr } = sceneRef.current;
       const c = size / 2;
       const r = size * GLOBE_RADIUS;
@@ -266,8 +272,8 @@ export const Globe = ({ className }: { className?: string }) => {
       fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       fxCtx.clearRect(0, 0, size, size);
 
-      // Orbit speed, smoother, slower
-      orbitalAngleRef.current += 0.0145;
+      // Orbit speed, smooth and continuous
+      orbitalAngleRef.current += 0.024;
       patternTimerRef.current += 1;
 
       // Cycle patterns slower, and crossfade
@@ -335,31 +341,61 @@ export const Globe = ({ className }: { className?: string }) => {
       drawRim(fxCtx, now);
       drawTrail(fxCtx, now);
 
-      const visible = rotated.z > -0.02;
-
-      if (visible) {
-        trailRef.current.push({ x: sx, y: sy, t: now });
-      }
-
-      while (trailRef.current.length && now - trailRef.current[0].t > TRAIL_DECAY) {
-        trailRef.current.shift();
-      }
+      const visible = rotated.z > -0.05;
 
       // Brighten dots when logo passes nearby (cinematic “activations”)
-      if (visible) {
-        for (const m of markerVecs) {
-          const mv = rotateY(m.vec, phiRef.current);
-          if (mv.z <= 0) continue;
+      if (!markerPulseRef.current.length) {
+        markerPulseRef.current = new Array(markerVecs.length).fill(0);
+      }
 
-          const mx = c + mv.x * r;
-          const my = c + mv.y * r;
+      for (let i = 0; i < markerVecs.length; i++) {
+        const m = markerVecs[i];
+        const mv = rotateY(m.vec, phiRef.current);
+        if (mv.z <= 0) {
+          markerPulseRef.current[i] = Math.max(
+            0,
+            markerPulseRef.current[i] - dt / 800
+          );
+          continue;
+        }
 
-          const dist = Math.hypot(mx - sx, my - sy);
-          const influence = clamp01(1 - dist / 100);
+        const mx = c + mv.x * r;
+        const my = c + mv.y * r;
 
-          if (influence > 0.05) {
-            drawMarkerPulse(fxCtx, mx, my, influence);
-          }
+        const dist = visible ? Math.hypot(mx - sx, my - sy) : Infinity;
+        const target = dist <= 35 ? 1 : 0;
+        const current = markerPulseRef.current[i] ?? 0;
+        const blend = clamp01(dt / 800);
+        const next = current + (target - current) * blend;
+        markerPulseRef.current[i] = next;
+
+        const influence = clamp01(1 - dist / 100);
+        if (visible && influence > 0.05) {
+          drawMarkerPulse(fxCtx, mx, my, influence);
+        }
+
+        if (next > 0.01) {
+          const size = 0.065 + (0.085 - 0.065) * next;
+          const radius = r * size * 0.5;
+          const purple = { r: 168, g: 85, b: 247 };
+          const blue = { r: 59, g: 130, b: 246 };
+          const gradientMix = 0.5;
+          const targetR = purple.r + (blue.r - purple.r) * gradientMix;
+          const targetG = purple.g + (blue.g - purple.g) * gradientMix;
+          const targetB = purple.b + (blue.b - purple.b) * gradientMix;
+
+          const base = { r: 217, g: 115, b: 255 };
+          const finalR = base.r + (targetR - base.r) * next;
+          const finalG = base.g + (targetG - base.g) * next;
+          const finalB = base.b + (targetB - base.b) * next;
+
+          fxCtx.save();
+          fxCtx.globalCompositeOperation = "lighter";
+          fxCtx.fillStyle = `rgba(${finalR},${finalG},${finalB},${0.7 * next})`;
+          fxCtx.beginPath();
+          fxCtx.arc(mx, my, radius, 0, Math.PI * 2);
+          fxCtx.fill();
+          fxCtx.restore();
         }
       }
 
@@ -368,9 +404,17 @@ export const Globe = ({ className }: { className?: string }) => {
       if (logoEl) {
         logoEl.style.opacity = visible ? "1" : "0.12";
         if (visible) {
-          const depthScale = 0.8 + rotated.z * 0.2;
-          logoEl.style.transform = `translate(${sx - 32}px, ${sy - 32}px) scale(${depthScale})`;
+          const depthScale = 0.84 + rotated.z * 0.24;
+          logoEl.style.transform = `translate(${sx - 36}px, ${sy - 36}px) scale(${depthScale})`;
         }
+      }
+
+      if (visible) {
+        trailRef.current.push({ x: sx, y: sy, t: now });
+      }
+
+      while (trailRef.current.length && now - trailRef.current[0].t > TRAIL_DECAY) {
+        trailRef.current.shift();
       }
 
       fxCtx.restore();
@@ -406,12 +450,16 @@ export const Globe = ({ className }: { className?: string }) => {
         }}
       />
 
-      <canvas ref={fxCanvasRef} className="absolute inset-0 pointer-events-none" />
+      <canvas
+        ref={fxCanvasRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{ zIndex: 10 }}
+      />
 
       <div
         ref={logoRef}
         className="absolute pointer-events-none"
-        style={{ width: 64, height: 64, willChange: "transform, opacity" }}
+        style={{ width: 72, height: 72, willChange: "transform, opacity", zIndex: 20 }}
       >
         <div
           className="absolute rounded-full blur-2xl"
