@@ -141,7 +141,7 @@ export const Globe = ({ className }: { className?: string }) => {
   const [isHovered, setIsHovered] = useState(false);
   const hoverRef = useRef(false);
 
-  const globeRotationRef = useRef(0);
+  const globeRotationRef = useRef(1.3);
   const globeSpeedRef = useRef(0.0065);
   const targetPhiRef = useRef(0);
   const isPausedRef = useRef(false);
@@ -186,8 +186,8 @@ export const Globe = ({ className }: { className?: string }) => {
   const surfacePositions = useMemo(
     () => [
       { lat: 40.7128, lon: -74.0060, name: "New York" },
-      { lat: 51.5072, lon: -0.1276, name: "London" },
       { lat: -23.5505, lon: -46.6333, name: "São Paulo" },
+      { lat: 51.5072, lon: -0.1276, name: "London" },
       { lat: 35.6764, lon: 139.65, name: "Tokyo" },
       { lat: -33.8688, lon: 151.2093, name: "Sydney" },
     ],
@@ -264,7 +264,7 @@ export const Globe = ({ className }: { className?: string }) => {
       devicePixelRatio: dpr,
       width: 600 * dpr,
       height: 600 * dpr,
-      phi: 0,
+      phi: 1.3,
       theta: 0,
       dark: 1,
       diffuse: 1.2,
@@ -296,6 +296,11 @@ export const Globe = ({ className }: { className?: string }) => {
       trailCtx.save();
       trailCtx.setTransform(localDpr, 0, 0, localDpr, 0, 0);
       trailCtx.clearRect(0, 0, size, size);
+      const cx = size / 2;
+      const r = size * 0.44;
+      trailCtx.beginPath();
+      trailCtx.arc(cx, cx, r, 0, Math.PI * 2);
+      trailCtx.clip();
 
       const points = flightStateRef.current.points;
       if (points.length > 1) {
@@ -362,7 +367,19 @@ export const Globe = ({ className }: { className?: string }) => {
 
         const fromVec = latLonToVec3(current.fromLocation.lat, current.fromLocation.lon);
         const toVec = latLonToVec3(current.toLocation.lat, current.toLocation.lon);
-        const slerpedVec = slerp(fromVec, toVec, easedProgress);
+        let dLon = current.toLocation.lon - current.fromLocation.lon;
+        if (dLon < 0) dLon += 360;
+        let effectiveToVec = toVec;
+        if (dLon > 180) {
+          const midLon = current.fromLocation.lon + dLon / 2;
+          const midLat = (current.fromLocation.lat + current.toLocation.lat) / 2;
+          const midVec = normalize(latLonToVec3(midLat, midLon));
+          effectiveToVec =
+            easedProgress < 0.5
+              ? slerp(fromVec, midVec, easedProgress * 2)
+              : slerp(midVec, toVec, (easedProgress - 0.5) * 2);
+        }
+        const slerpedVec = dLon > 180 ? effectiveToVec : slerp(fromVec, toVec, easedProgress);
 
         const altitudeScale = Math.sin(Math.PI * easedProgress) * current.altitudeMax;
         const posVec = scale(normalize(slerpedVec), 1 + altitudeScale);
