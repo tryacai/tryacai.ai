@@ -40,7 +40,7 @@ export const Globe = ({ className }: { className?: string }) => {
   const rafRef = useRef<number | null>(null);
 
   // Tunables
-  const TRAIL_DECAY = 3600;
+  const TRAIL_DECAY = 1600;
 
   // Autopilot
   const AUTO_PHI_SPEED = 0.0048; // slower default than before
@@ -48,10 +48,10 @@ export const Globe = ({ className }: { className?: string }) => {
 
   // Hover control feel
   const DEADZONE = 0.08; // near center, stop
-  const MAX_PHI_SPEED = 0.020; // fast edge
-  const MAX_THETA_SPEED = 0.014;
+  const MAX_PHI_SPEED = 0.012; // fast edge
+  const MAX_THETA_SPEED = 0.008;
   const FRICTION = 0.88; // hover release smoothing
-  const RESPONSE = 0.22; // how quickly velocity approaches target
+  const RESPONSE = 0.14; // how quickly velocity approaches target
 
   // Visual sizes
   const LOGO_SIZE = 52; // larger
@@ -59,6 +59,9 @@ export const Globe = ({ className }: { className?: string }) => {
 
   const THETA_LIMIT = Math.PI / 2 - 0.05;
   const POLE_DAMP_START = THETA_LIMIT - 0.22;
+  const [rimMask, setRimMask] = useState(
+    "radial-gradient(circle, transparent 0px, transparent 0px, black 0px, black 0px, transparent 0px)"
+  );
 
   // Markers (purple dots)
   const markers = useMemo(
@@ -87,6 +90,11 @@ export const Globe = ({ className }: { className?: string }) => {
       sceneRef.current = { size, center: size / 2, dpr };
       logoPosRef.current = { x: size / 2, y: size / 2 };
       spotlightPosRef.current = { x: size / 2, y: size / 2 };
+      const radius = size * 0.44;
+      const rimHalf = 2;
+      setRimMask(
+        `radial-gradient(circle, transparent ${radius - (rimHalf + 1)}px, black ${radius - rimHalf}px, black ${radius + rimHalf}px, transparent ${radius + (rimHalf + 1)}px)`
+      );
       if (trailCanvas) {
         trailCanvas.width = Math.round(size * dpr);
         trailCanvas.height = Math.round(size * dpr);
@@ -138,7 +146,7 @@ export const Globe = ({ className }: { className?: string }) => {
 
         const targetPhiVel = hovering
           ? Math.sign(xN) * (AUTO_PHI_SPEED * 0.25 + curve(dx) * (MAX_PHI_SPEED - AUTO_PHI_SPEED * 0.25))
-          : AUTO_PHI_SPEED;
+          : 0;
 
         const targetThetaVel = hovering ? Math.sign(yN) * (curve(dy) * MAX_THETA_SPEED) : 0;
 
@@ -154,7 +162,12 @@ export const Globe = ({ className }: { className?: string }) => {
         }
 
         // integrate
-        phiRef.current += velPhiRef.current;
+        if (hovering) {
+          phiRef.current += velPhiRef.current;
+        } else {
+          phiRef.current += AUTO_PHI_SPEED;
+          velPhiRef.current *= 0.9;
+        }
 
         thetaRef.current += velThetaRef.current;
 
@@ -264,10 +277,11 @@ export const Globe = ({ className }: { className?: string }) => {
         return;
       }
 
-      const drawPass = (alphaMul: number, widthAdd: number, blur: number) => {
+      const drawPass = (alphaMul: number, blur: number) => {
         for (let i = 1; i < pts.length; i++) {
           const prev = pts[i - 1];
           const cur = pts[i];
+          const p0 = pts[Math.max(0, i - 2)];
           const prog = i / (pts.length - 1); // 0 tail, 1 head
           const age = Math.max(0, 1 - (now - cur.t) / TRAIL_DECAY);
           const alpha = age * (0.22 + prog * 0.9) * 0.85 * alphaMul;
@@ -286,12 +300,15 @@ export const Globe = ({ className }: { className?: string }) => {
             b = 255;
           }
 
+          const cpX = prev.x + (cur.x - p0.x) * 0.25;
+          const cpY = prev.y + (cur.y - p0.y) * 0.25;
+
           trailCtx.beginPath();
           trailCtx.moveTo(prev.x, prev.y);
-          trailCtx.lineTo(cur.x, cur.y);
+          trailCtx.quadraticCurveTo(cpX, cpY, cur.x, cur.y);
           trailCtx.lineCap = "round";
           trailCtx.lineJoin = "round";
-          trailCtx.lineWidth = 3.0 + prog * 9.5 + widthAdd;
+          trailCtx.lineWidth = 1.8 + prog * 4.5;
           trailCtx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
           trailCtx.shadowBlur = blur;
           trailCtx.shadowColor = `rgba(${r},${g},${b},${alpha * 0.9})`;
@@ -300,8 +317,8 @@ export const Globe = ({ className }: { className?: string }) => {
       };
 
       // bloom pass then main pass
-      drawPass(0.30, 4, 34);
-      drawPass(1.0, 0, 26);
+      drawPass(0.30, 34);
+      drawPass(1.0, 26);
 
       trailCtx.restore();
     };
@@ -499,10 +516,8 @@ export const Globe = ({ className }: { className?: string }) => {
         style={{
           background:
             "conic-gradient(from 0deg, rgba(239,68,68,0.9), rgba(168,85,247,0.9), rgba(59,130,246,0.9), rgba(168,85,247,0.9), rgba(239,68,68,0.9))",
-          WebkitMaskImage:
-            "radial-gradient(circle, transparent calc(44% - 3px), black calc(44% - 2px), black calc(44% + 2px), transparent calc(44% + 3px))",
-          maskImage:
-            "radial-gradient(circle, transparent calc(44% - 3px), black calc(44% - 2px), black calc(44% + 2px), transparent calc(44% + 3px))",
+          WebkitMaskImage: rimMask,
+          maskImage: rimMask,
           opacity: isHovered ? 0.55 : 0.35,
           filter: "blur(0.45px)",
           transform: "translateZ(0)",
