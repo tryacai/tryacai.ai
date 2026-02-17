@@ -1,31 +1,14 @@
 "use client";
-
 import createGlobe from "cobe";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Vec3 = { x: number; y: number; z: number };
 
-const degToRad = (degrees: number) => (degrees * Math.PI) / 180;
+const degToRad = (d: number) => (d * Math.PI) / 180;
 
 const latLonToVec3 = (lat: number, lon: number): Vec3 => {
-  const latRad = degToRad(lat);
-  const lonRad = degToRad(lon);
-  const cosLat = Math.cos(latRad);
-  return {
-    x: cosLat * Math.cos(lonRad),
-    y: Math.sin(latRad),
-    z: cosLat * Math.sin(lonRad),
-  };
-};
-
-const rotateY = (vec: Vec3, phi: number): Vec3 => {
-  const cosPhi = Math.cos(phi);
-  const sinPhi = Math.sin(phi);
-  return {
-    x: vec.x * cosPhi + vec.z * sinPhi,
-    y: vec.y,
-    z: -vec.x * sinPhi + vec.z * cosPhi,
-  };
+  const lr = degToRad(lat), lo = degToRad(lon), cl = Math.cos(lr);
+  return { x: cl * Math.cos(lo), y: Math.sin(lr), z: cl * Math.sin(lo) };
 };
 
 const normalize = (v: Vec3): Vec3 => {
@@ -33,231 +16,285 @@ const normalize = (v: Vec3): Vec3 => {
   return { x: v.x / l, y: v.y / l, z: v.z / l };
 };
 
-const dot = (a: Vec3, b: Vec3) => a.x * b.x + a.y * b.y + a.z * b.z;
-
-const slerp = (from: Vec3, to: Vec3, t: number): Vec3 => {
-  const a = normalize(from);
-  const b = normalize(to);
-  const d = Math.max(-1, Math.min(1, dot(a, b)));
-  const theta = Math.acos(d);
-  if (theta < 1e-5) return a;
-  const sinTheta = Math.sin(theta);
-  const w1 = Math.sin((1 - t) * theta) / sinTheta;
-  const w2 = Math.sin(t * theta) / sinTheta;
-  return normalize({
-    x: a.x * w1 + b.x * w2,
-    y: a.y * w1 + b.y * w2,
-    z: a.z * w1 + b.z * w2,
-  });
+const slerp = (a: Vec3, b: Vec3, t: number): Vec3 => {
+  const na = normalize(a), nb = normalize(b);
+  const d = Math.max(-1, Math.min(1, na.x*nb.x + na.y*nb.y + na.z*nb.z));
+  const th = Math.acos(d);
+  if (th < 1e-5) return na;
+  const s = Math.sin(th);
+  const w1 = Math.sin((1-t)*th)/s, w2 = Math.sin(t*th)/s;
+  return normalize({ x: na.x*w1+nb.x*w2, y: na.y*w1+nb.y*w2, z: na.z*w1+nb.z*w2 });
 };
 
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const slerpEast = (fl: number, flo: number, tl: number, tlo: number, t: number): Vec3 => {
+  let dLon = tlo - flo;
+  if (dLon < 0) dLon += 360;
+  const fv = latLonToVec3(fl, flo);
+  const tv = latLonToVec3(tl, tlo);
+  if (dLon <= 180) return slerp(fv, tv, t);
+  const mid = normalize(latLonToVec3((fl+tl)/2, flo+dLon/2));
+  return t < 0.5 ? slerp(fv, mid, t*2) : slerp(mid, tv, (t-0.5)*2);
+};
+
+const lerp = (a: number, b: number, t: number) => a + (b-a)*t;
 
 export const Globe = ({ className }: { className?: string }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef   = useRef<HTMLDivElement>(null);
+  const canvasRef      = useRef<HTMLCanvasElement>(null);
   const trailCanvasRef = useRef<HTMLCanvasElement>(null);
-  const logoRef = useRef<HTMLDivElement>(null);
-  const pulseRef = useRef<HTMLDivElement>(null);
+  const logoRef        = useRef<HTMLDivElement>(null);
+  const pulseRef       = useRef<HTMLDivElement>(null);
 
   const [isHovered, setIsHovered] = useState(false);
+  const hoverRef = useRef(false);
 
-  const globeRotationRef = useRef(1.3);
-  const globeSpeedRef = useRef(0.006);
-  const targetPhiRef = useRef(1.3);
-  const isPausedRef = useRef(false);
+  const globeRotationRef = useRef(0);
+  const globeSpeedRef    = useRef(0.0065);
+  const targetSpeedRef   = useRef(0.0065);
 
-  const rafRef = useRef<number | null>(null);
+  const rafRef            = useRef<number | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const sceneRef          = useRef({ size: 600, center: 300, dpr: 2 });
 
-  const surfacePositions = useMemo(
-    () => [
-      { lat: 40.7128, lon: -74.006, name: "New York" },
-      { lat: -23.5505, lon: -46.6333, name: "São Paulo" },
-      { lat: 51.5072, lon: -0.1276, name: "London" },
-      { lat: 35.6764, lon: 139.65, name: "Tokyo" },
-      { lat: -33.8688, lon: 151.2093, name: "Sydney" },
-    ],
-    []
-  );
+  const surfacePositions = useMemo(() => [
+    { lat: 34.0522,  lon: -118.2437 },
+    { lat: 40.7128,  lon:  -74.0060 },
+    { lat: 51.5072,  lon:   -0.1276 },
+    { lat: 35.6764,  lon:  139.6500 },
+    { lat: -33.8688, lon:  151.2093 },
+  ], []);
 
-  const stateRef = useRef({
+  const flightStateRef = useRef({
     segmentIndex: 0,
-    phase: "flight" as "flight" | "landing" | "hold",
+    phase: "flight" as "flight" | "landing" | "hold" | "rebound",
     phaseStart: 0,
-    duration: 9000,
-    altitude: 0.25,
-    from: surfacePositions[0],
-    to: surfacePositions[1],
+    fromLat: 34.0522, fromLon: -118.2437,
+    toLat:   40.7128, toLon:   -74.006,
+    landingVec: latLonToVec3(40.7128, -74.006),
+    points: [] as Array<{ x: number; y: number; t: number }>,
     logoPos: { x: 300, y: 300 },
-    visible: true,
-    scale: 1,
-    trail: [] as { x: number; y: number; t: number }[],
+    logoVisible: false,
+    depthScale: 1,
   });
 
+  const FLIGHT_DURATION  = 6000;
+  const ALTITUDE_MAX     = 0.22;
+  const HOLD_DURATION    = 3000;
+  const LANDING_DURATION = 1000;
+  const REBOUND_DURATION = 600;
+  const TRAIL_DECAY      = 3200;
+  const BASE_SPEED       = 0.0065;
+  const LAND_SPEED       = 0;
+
+  useEffect(() => { hoverRef.current = isHovered; }, [isHovered]);
+
   useEffect(() => {
-    if (!canvasRef.current) return;
+
     const dpr = 2;
+    const logoElement  = logoRef.current;
+    const pulseElement = pulseRef.current;
+    const trailCanvas  = trailCanvasRef.current;
+    const trailCtx     = trailCanvas?.getContext("2d");
+
+    const syncCanvasSize = () => {
+      const size = containerRef.current?.clientWidth || 600;
+      sceneRef.current = { size, center: size/2, dpr };
+      if (trailCanvas) {
+        trailCanvas.width  = Math.round(size*dpr);
+        trailCanvas.height = Math.round(size*dpr);
+        trailCanvas.style.width  = `${size}px`;
+        trailCanvas.style.height = `${size}px`;
+      }
+    };
+
+    syncCanvasSize();
+    if (containerRef.current) {
+      resizeObserverRef.current = new ResizeObserver(syncCanvasSize);
+      resizeObserverRef.current.observe(containerRef.current);
+    }
+    if (!canvasRef.current) return;
+
+    const projectLive = (wx: number, wy: number, wz: number) => {
+      const { size, center } = sceneRef.current;
+      const phi = globeRotationRef.current;
+      const rx =  wx*Math.cos(phi) + wz*Math.sin(phi);
+      const ry =  wy;
+      const rz = -wx*Math.sin(phi) + wz*Math.cos(phi);
+      return {
+        sx: center + rx*size*0.44,
+        sy: center - ry*size*0.44,
+        z:  rz,
+      };
+    };
 
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: dpr,
-      width: 600 * dpr,
-      height: 600 * dpr,
-      phi: globeRotationRef.current,
+      width: 600*dpr, height: 600*dpr,
+      phi: 0,
       theta: 0,
       dark: 1,
       diffuse: 1.2,
       mapSamples: 16000,
       mapBrightness: 6,
-      baseColor: [0.28, 0.28, 0.28],
-      markerColor: [0.66, 0.24, 1],
-      glowColor: [0.47, 0.33, 1],
-      markers: surfacePositions.map((p) => ({
-        location: [p.lat, p.lon] as [number, number],
-        size: 0.07,
+      baseColor: [0.28,0.28,0.28],
+      markerColor: [0.66,0.24,1],
+      glowColor: [0.47,0.33,1],
+      markers: surfacePositions.map(p => ({
+        location: [p.lat, p.lon] as [number,number],
+        size: 0.06,
       })),
-      onRender: (renderState) => {
-        const base = 0.006;
-        const hover = base * 0.7;
-        const targetSpeed = isPausedRef.current ? 0 : isHovered ? hover : base;
-        globeSpeedRef.current += (targetSpeed - globeSpeedRef.current) * 0.08;
-
-        const delta = targetPhiRef.current - globeRotationRef.current;
-        globeRotationRef.current += globeSpeedRef.current + delta * 0.015;
-
-        renderState.phi = globeRotationRef.current;
-      },
+      onRender: state => {
+        const hoverFactor = hoverRef.current ? 0.7 : 1;
+        const target = targetSpeedRef.current * hoverFactor;
+        globeSpeedRef.current += (target - globeSpeedRef.current) * 0.06;
+        globeRotationRef.current += globeSpeedRef.current;
+        state.phi = globeRotationRef.current;
+      }
     });
 
-    const trailCtx = trailCanvasRef.current?.getContext("2d");
-
-    const buildNext = () => {
-      const nextIndex =
-        (stateRef.current.segmentIndex + 1) % surfacePositions.length;
-      const from = surfacePositions[stateRef.current.segmentIndex];
-      const to = surfacePositions[nextIndex];
-
-      stateRef.current.segmentIndex = nextIndex;
-      stateRef.current.from = from;
-      stateRef.current.to = to;
-      stateRef.current.duration = 8000 + Math.random() * 2000;
-      stateRef.current.altitude = 0.22 + Math.random() * 0.08;
-      stateRef.current.phase = "flight";
-      stateRef.current.phaseStart = performance.now();
-      stateRef.current.trail = [];
-      targetPhiRef.current = 1.3 - degToRad(to.lon);
+    const buildSegment = (idx: number) => {
+      const from = surfacePositions[idx];
+      const to   = surfacePositions[(idx+1) % surfacePositions.length];
+      return {
+        fromLat: from.lat,
+        fromLon: from.lon,
+        toLat:   to.lat,
+        toLon:   to.lon,
+        landingVec: latLonToVec3(to.lat, to.lon)
+      };
     };
 
-    stateRef.current.phaseStart = performance.now();
-    targetPhiRef.current = 1.3 - degToRad(surfacePositions[1].lon);
+    const seg0 = buildSegment(0);
+    Object.assign(flightStateRef.current, { ...seg0, phaseStart: performance.now() });
+
+    const drawTrail = (now: number) => {
+      if (!trailCtx) return;
+      const { size, dpr } = sceneRef.current;
+      trailCtx.save();
+      trailCtx.setTransform(dpr,0,0,dpr,0,0);
+      trailCtx.clearRect(0,0,size,size);
+      trailCtx.beginPath();
+      trailCtx.arc(size/2,size/2,size*0.44,0,Math.PI*2);
+      trailCtx.clip();
+
+      const pts = flightStateRef.current.points;
+      for (let i=1;i<pts.length;i++){
+        const prev = pts[i-1];
+        const cur  = pts[i];
+        const prog = i/(pts.length-1);
+        const age  = Math.max(0,1-(now-cur.t)/TRAIL_DECAY);
+        const alpha = age*(0.2+prog*0.8)*0.7;
+
+        trailCtx.beginPath();
+        trailCtx.moveTo(prev.x,prev.y);
+        trailCtx.lineTo(cur.x,cur.y);
+        trailCtx.lineCap="round";
+        trailCtx.lineJoin="round";
+        trailCtx.lineWidth=2+prog*6;
+        trailCtx.strokeStyle=`rgba(150,90,255,${alpha})`;
+        trailCtx.shadowBlur=14;
+        trailCtx.shadowColor=`rgba(150,90,255,${alpha})`;
+        trailCtx.stroke();
+      }
+      trailCtx.restore();
+    };
 
     const animate = (now: number) => {
-      const s = stateRef.current;
-      const progress = Math.min(
-        (now - s.phaseStart) / s.duration,
-        1
-      );
+      const s = flightStateRef.current;
+      let logoOffsetY = 0;
 
-      const fromVec = latLonToVec3(s.from.lat, s.from.lon);
-      const toVec = latLonToVec3(s.to.lat, s.to.lon);
+      if (s.phase === "flight") {
 
-      const pathVec = slerp(fromVec, toVec, progress);
-      const altitude =
-        1 + s.altitude * Math.sin(Math.PI * progress);
-      const world = {
-        x: pathVec.x * altitude,
-        y: pathVec.y * altitude,
-        z: pathVec.z * altitude,
-      };
+        targetSpeedRef.current = BASE_SPEED;
 
-      const rotated = rotateY(world, globeRotationRef.current);
+        const raw = Math.min((now - s.phaseStart)/FLIGHT_DURATION,1);
+        const sv  = slerpEast(s.fromLat,s.fromLon,s.toLat,s.toLon,raw);
+        const alt = 1 + ALTITUDE_MAX*Math.sin(Math.PI*raw);
+        const { sx,sy,z } = projectLive(sv.x*alt,sv.y*alt,sv.z*alt);
 
-      const size = 600;
-      const radius = size * 0.44;
-      const cx = size / 2;
-      const x = cx + rotated.x * radius;
-      const y = cx - rotated.y * radius;
+        // --- LANDING ALIGNMENT FIX ---
+        if (raw > 0.85) {
+          const targetPhi = -degToRad(s.toLon);
+          const delta = targetPhi - globeRotationRef.current;
+          globeRotationRef.current += delta * 0.04;
+        }
 
-      s.visible = rotated.z > 0;
+        s.logoVisible = z>0;
+        if (s.logoVisible){
+          s.logoPos={x:sx,y:sy};
+          s.points.push({x:sx,y:sy,t:now});
+        }
+        while(s.points.length && now-s.points[0].t>TRAIL_DECAY) s.points.shift();
 
-      if (s.visible) {
-        s.logoPos = { x, y };
-        s.trail.push({ x, y, t: now });
+        s.depthScale = 1 + 0.25*Math.sin(Math.PI*raw);
+
+        if (raw>=1){
+          s.phase="landing";
+          s.phaseStart=now;
+          targetSpeedRef.current = LAND_SPEED;
+        }
+
+      } else if (s.phase==="landing"){
+        const {sx,sy,z}=projectLive(s.landingVec.x,s.landingVec.y,s.landingVec.z);
+        s.logoVisible=z>0;
+        s.logoPos={x:sx,y:sy};
+        const lp=Math.min((now-s.phaseStart)/LANDING_DURATION,1);
+        logoOffsetY=Math.sin(lp*Math.PI*5)*(1-lp)*2;
+        if(lp>=1){s.phase="hold";s.phaseStart=now;}
       }
-
-      while (s.trail.length && now - s.trail[0].t > 3000) {
-        s.trail.shift();
+      else if(s.phase==="hold"){
+        targetSpeedRef.current=LAND_SPEED;
+        const {sx,sy,z}=projectLive(s.landingVec.x,s.landingVec.y,s.landingVec.z);
+        s.logoVisible=z>0;
+        s.logoPos={x:sx,y:sy};
+        if(now-s.phaseStart>=HOLD_DURATION){s.phase="rebound";s.phaseStart=now;}
       }
-
-      if (progress >= 1) {
-        buildNext();
-      }
-
-      if (logoRef.current) {
-        logoRef.current.style.opacity = s.visible ? "1" : "0";
-        logoRef.current.style.transform = `translate(${s.logoPos.x - 20}px, ${s.logoPos.y - 20}px) scale(0.8)`;
-      }
-
-      if (trailCtx) {
-        trailCtx.clearRect(0, 0, size, size);
-        trailCtx.beginPath();
-        trailCtx.arc(cx, cx, radius, 0, Math.PI * 2);
-        trailCtx.clip();
-
-        for (let i = 1; i < s.trail.length; i++) {
-          const p = s.trail[i - 1];
-          const c = s.trail[i];
-          const t = i / s.trail.length;
-          trailCtx.beginPath();
-          trailCtx.moveTo(p.x, p.y);
-          trailCtx.lineTo(c.x, c.y);
-          trailCtx.lineWidth = 2 + t * 5;
-          trailCtx.strokeStyle = `rgba(255,100,200,${0.4 * t})`;
-          trailCtx.stroke();
+      else{
+        const rp=Math.min((now-s.phaseStart)/REBOUND_DURATION,1);
+        logoOffsetY=-Math.sin(rp*Math.PI)*6;
+        if(rp>=1){
+          targetSpeedRef.current=BASE_SPEED;
+          const next=(s.segmentIndex+1)%surfacePositions.length;
+          const seg=buildSegment(next);
+          Object.assign(s,{segmentIndex:next,...seg,phase:"flight",phaseStart:now,points:[]});
         }
       }
 
-      rafRef.current = requestAnimationFrame(animate);
+      if(logoElement){
+        logoElement.style.opacity=s.logoVisible?"1":"0";
+        if(s.logoVisible){
+          logoElement.style.transform=`translate(${s.logoPos.x-20}px,${s.logoPos.y-20+logoOffsetY}px) scale(${0.6*s.depthScale})`;
+        }
+      }
+
+      drawTrail(now);
+      rafRef.current=requestAnimationFrame(animate);
     };
 
-    rafRef.current = requestAnimationFrame(animate);
+    rafRef.current=requestAnimationFrame(animate);
 
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    return ()=>{
+      if(rafRef.current) cancelAnimationFrame(rafRef.current);
+      if(resizeObserverRef.current) resizeObserverRef.current.disconnect();
       globe.destroy();
     };
-  }, [surfacePositions, isHovered]);
+
+  },[surfacePositions]);
 
   return (
-    <div
-      ref={containerRef}
-      className={`relative ${className || ""}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <canvas
-        ref={trailCanvasRef}
-        className="absolute inset-0 pointer-events-none"
-      />
-
-      <div
-        ref={logoRef}
-        className="absolute h-10 w-10 pointer-events-none"
-        style={{
-          backgroundImage: "url('/justlogowithoutwordsACAI.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
-
-      <canvas
-        ref={canvasRef}
-        style={{
-          width: 600,
-          height: 600,
-          maxWidth: "100%",
-          aspectRatio: 1,
-        }}
-      />
+    <div ref={containerRef} className={`relative ${className||""}`}>
+      <canvas ref={trailCanvasRef} className="absolute inset-0 pointer-events-none" />
+      <div ref={logoRef} className="absolute h-10 w-10 pointer-events-none">
+        <div
+          className="h-full w-full rounded-full"
+          style={{
+            backgroundImage:"url('/justlogowithoutwordsACAI.jpeg')",
+            backgroundSize:"cover",
+            backgroundPosition:"center",
+          }}
+        />
+      </div>
+      <canvas ref={canvasRef} style={{width:600,height:600,maxWidth:"100%",aspectRatio:1}}/>
     </div>
   );
 };
