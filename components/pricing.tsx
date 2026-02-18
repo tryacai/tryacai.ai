@@ -22,7 +22,7 @@ type TierRange = {
 type IndustryPricing = {
   tier1: TierRange;
   tier2Multiplier: number;
-  tier3: TierRange;
+  tier3: TierRange | null;
 };
 
 type IndustryPricingResult = {
@@ -51,14 +51,11 @@ const getPricingForIndustry = (industry: string): IndustryPricingResult => {
   const pricingData: Record<string, IndustryPricing> = {
     Barbers: {
       tier1: {
-        monthlyRange: "$149",
+        monthlyRange: "$79 - $149",
         onboardingRange: "$199 - $399",
       },
       tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$499+",
-        onboardingRange: "$1,000 - $2,000",
-      },
+      tier3: null, // hidden for barbers
     },
     Detailing: {
       tier1: {
@@ -187,47 +184,50 @@ const getPricingForIndustry = (industry: string): IndustryPricingResult => {
 
   return {
     tier1: {
-      name: "The Solo Chair",
-      monthlyRange: "$149",
+      name: "AI Receptionist",
+      monthlyRange: data.tier1.monthlyRange,
       onboardingRange: data.tier1.onboardingRange,
       features: [
-        "Never miss a booking while you're mid-cut.",
-        "Fill your chair without living on your phone.",
-        "Turn every call into a polished first impression.",
-        "Know exactly who called and what they needed.",
-        "Keep your day fully booked without back-and-forth.",
+        "24/7 AI call answering",
+        "Instant appointment scheduling",
+        "Natural conversation AI",
+        "Call summaries and logging",
+        "Calendar integration",
       ],
     },
     tier2: {
-      name: "The Shop",
-      monthlyRange: "$299",
+      name: "Growth Automation",
+      monthlyRange: data.tier1.monthlyRange,
       onboardingRange: data.tier1.onboardingRange,
       features: [
-        "Wake up to new 5-star reviews without asking for them.",
-        "Bring clients back in before your week slows down.",
-        "Recover lost bookings automatically after missed calls.",
-        "Keep every lead warm until they book.",
-        "Grow repeat business without extra admin work.",
+        "Everything in AI Receptionist",
+        "Automated follow-up sequences",
+        "Review generation automation",
+        "Missed call text-back",
+        "Customer re-engagement campaigns",
       ],
-      note: "Built for busy barbershops ready to scale.",
+      note: "Price = Tier 1 + 40-60%",
     },
-    tier3: {
-      name: "The Empire",
-      monthlyRange: "$499+",
-      onboardingRange: data.tier3.onboardingRange,
-      features: [
-        "Run multiple locations with one consistent booking system.",
-        "Route high-value clients to the right chair every time.",
-        "Automate operations so your team stays focused on service.",
-        "Turn every location into a review and referral engine.",
-        "Scale revenue without scaling front-desk chaos.",
-      ],
-    },
+    tier3: data.tier3
+      ? {
+          name: "Full AI Infrastructure",
+          monthlyRange: data.tier3.monthlyRange,
+          onboardingRange: data.tier3.onboardingRange,
+          features: [
+            "Everything in previous tiers",
+            "Intelligent quote routing",
+            "Multi-location support",
+            "Advanced CRM integration",
+            "Custom workflow automation",
+            "Priority support & strategy",
+          ],
+        }
+      : null,
   };
 };
 
 export function Pricing() {
-  const [selectedIndustry, setSelectedIndustry] = useState("Barbers");
+  const [selectedIndustry, setSelectedIndustry] = useState("Plumbing");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const pricing = getPricingForIndustry(selectedIndustry);
@@ -286,14 +286,7 @@ export function Pricing() {
         </p>
       </div>
 
-      <div className="mx-auto mt-8 max-w-6xl relative z-20">
-        <div className="mb-6 rounded-xl border border-amber-300 bg-amber-200/90 px-6 py-4 text-center shadow-sm">
-          <p className="text-sm md:text-base font-bold text-amber-950 tracking-wide">
-            All plans include a 14-day free pilot — no card required
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 items-stretch md:grid-cols-3">
+      <div className="mx-auto mt-8 grid relative z-20 grid-cols-1 gap-6 items-stretch md:grid-cols-3 max-w-6xl">
         {tiers.map((tier, tierIdx) => {
           return (
             <motion.div
@@ -432,7 +425,6 @@ export function Pricing() {
             </motion.div>
           );
         })}
-        </div>
       </div>
 
       <p className="text-center text-sm text-neutral-600 dark:text-neutral-400 mt-8 max-w-2xl mx-auto">
