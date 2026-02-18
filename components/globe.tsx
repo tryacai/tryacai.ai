@@ -5,16 +5,8 @@ import { useEffect, useMemo, useRef } from "react";
 
 type Vec3 = { x: number; y: number; z: number };
 type TrailPoint = { x: number; y: number; t: number };
-type Scene = {
-  outerSize: number;
-  size: number;
-  radius: number;
-  center: number;
-  offset: number;
-  dpr: number;
-};
 
-const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 
 const smoothStep = (edge0: number, edge1: number, value: number) => {
   const t = clamp((value - edge0) / (edge1 - edge0), 0, 1);
@@ -32,34 +24,79 @@ const mixVec = (a: Vec3, b: Vec3, t: number): Vec3 => ({
   z: a.z + (b.z - a.z) * t,
 });
 
-const drawRim = (
-  ctx: CanvasRenderingContext2D,
-  now: number,
-  centerX: number,
-  centerY: number,
-  radius: number
-) => {
+const rotateY = (v: Vec3, phi: number): Vec3 => {
+  const cosP = Math.cos(phi);
+  const sinP = Math.sin(phi);
+  return {
+    x: v.x * cosP + v.z * sinP,
+    y: v.y,
+    z: -v.x * sinP + v.z * cosP,
+  };
+};
+
+const rotateX = (v: Vec3, theta: number): Vec3 => {
+  const cosT = Math.cos(theta);
+  const sinT = Math.sin(theta);
+  return {
+    x: v.x,
+    y: v.y * cosT - v.z * sinT,
+    z: v.y * sinT + v.z * cosT,
+  };
+};
+
+const latLonToWorld = (lat: number, lon: number): Vec3 => {
+  const latR = (lat * Math.PI) / 180;
+  const lonR = (lon * Math.PI) / 180;
+  const cosLat = Math.cos(latR);
+  return {
+    x: cosLat * Math.cos(lonR),
+    y: Math.sin(latR),
+    z: cosLat * Math.sin(lonR),
+  };
+};
+
+const drawRim = (ctx: CanvasRenderingContext2D, now: number, cx: number, cy: number, r: number) => {
   const segments = 60;
-  const rotation = now * 0.0002;
-  const pulse = 0.6 + Math.sin(now * 0.002) * 0.2;
+  const rotation = now * 0.00022;
+  const pulse = 0.52 + Math.sin(now * 0.002) * 0.16;
 
   ctx.save();
   ctx.lineWidth = 4.5;
   ctx.lineCap = "round";
 
-  for (let segment = 0; segment < segments; segment++) {
-    const t0 = segment / segments;
-    const t1 = (segment + 1) / segments;
+  for (let i = 0; i < segments; i += 1) {
+    const t0 = i / segments;
+    const t1 = (i + 1) / segments;
+
     const a0 = t0 * Math.PI * 2 + rotation;
     const a1 = t1 * Math.PI * 2 + rotation;
-    const wave = 0.5 + 0.5 * Math.sin(now * 0.0008 + segment * 0.26);
-    const red = Math.round(226 - wave * 55);
-    const green = Math.round(82 + wave * 42);
-    const blue = Math.round(248 - wave * 26);
+
+    // red -> purple -> blue -> purple -> red
+    const prog = t0;
+    let red = 239;
+    let green = 68;
+    let blue = 68;
+
+    if (prog < 0.33) {
+      const p = prog / 0.33;
+      red = Math.round(239 - p * 71);
+      green = Math.round(68 + p * 17);
+      blue = Math.round(68 + p * 179);
+    } else if (prog < 0.67) {
+      const p = (prog - 0.33) / 0.34;
+      red = Math.round(168 - p * 109);
+      green = Math.round(85 + p * 45);
+      blue = Math.round(247 + p * 9);
+    } else {
+      const p = (prog - 0.67) / 0.33;
+      red = Math.round(59 + p * 180);
+      green = Math.round(130 - p * 62);
+      blue = Math.round(246 - p * 178);
+    }
 
     ctx.strokeStyle = `rgba(${red},${green},${blue},${pulse})`;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, a0, a1);
+    ctx.arc(cx, cy, r, a0, a1);
     ctx.stroke();
   }
 
@@ -68,30 +105,34 @@ const drawRim = (
 
 export const Globe = ({ className }: { className?: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const trailCanvasRef = useRef<HTMLCanvasElement>(null);
+  const globeCanvasRef = useRef<HTMLCanvasElement>(null);
+  const fxCanvasRef = useRef<HTMLCanvasElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
 
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
-  const sceneRef = useRef<Scene>({
-    outerSize: 720,
+  const rafRef = useRef<number | null>(null);
+
+  const sceneRef = useRef({
     size: 720,
-    radius: 316.8,
     center: 360,
-    offset: 0,
+    radius: 316.8, // size * 0.44
     dpr: 2,
   });
 
   const phiRef = useRef(0);
   const thetaRef = useRef(0);
-  const orbitStartRef = useRef(0);
-  const trailPointsRef = useRef<TrailPoint[]>([]);
-  const rafRef = useRef<number | null>(null);
 
-  const TRAIL_DECAY = 1400;
-  const AUTO_PHI_SPEED = 0.0036;
+  const orbitStartRef = useRef(0);
+  const trailRef = useRef<TrailPoint[]>([]);
+
   const LOGO_SIZE = 52;
   const LOGO_HALF = LOGO_SIZE / 2;
+
+  const TRAIL_DECAY = 1400;
+  const TRAIL_MAX_POINTS = 220;
+
+  // Slower, smoother
+  const AUTO_PHI_SPEED = 0.0034;
 
   const markers = useMemo(
     () => [
@@ -107,277 +148,79 @@ export const Globe = ({ className }: { className?: string }) => {
   const continentDots = useMemo(
     () =>
       [
-        [49, -123], [39, -98], [28, -82], [19, -99], [-23, -46], [-34, -58],
-        [52, 10], [46, 2], [41, 29], [31, 35], [30, 31], [6, 3],
-        [-1, 36], [-26, 28], [55, 37], [23, 78], [35, 104], [1, 104],
-        [36, 139], [14, 121], [-6, 107], [-33, 151], [64, -20], [-41, 174],
+        [49, -123],
+        [39, -98],
+        [28, -82],
+        [19, -99],
+        [-23, -46],
+        [-34, -58],
+        [52, 10],
+        [46, 2],
+        [41, 29],
+        [31, 35],
+        [30, 31],
+        [6, 3],
+        [-1, 36],
+        [-26, 28],
+        [55, 37],
+        [23, 78],
+        [35, 104],
+        [1, 104],
+        [36, 139],
+        [14, 121],
+        [-6, 107],
+        [-33, 151],
+        [64, -20],
+        [-41, 174],
       ] as Array<[number, number]>,
     []
   );
 
   useEffect(() => {
-    const dpr = 2;
-    const globeCanvas = canvasRef.current;
-    const trailCanvas = trailCanvasRef.current;
-    if (!globeCanvas || !trailCanvas) return;
+    const globeCanvas = globeCanvasRef.current;
+    const fxCanvas = fxCanvasRef.current;
+    const container = containerRef.current;
+    if (!globeCanvas || !fxCanvas || !container) return;
 
-    const trailCtx = trailCanvas.getContext("2d");
-    if (!trailCtx) return;
-
-    const toWorld = (lat: number, lon: number): Vec3 => {
-      const latR = (lat * Math.PI) / 180;
-      const lonR = (lon * Math.PI) / 180;
-      const cosLat = Math.cos(latR);
-      return {
-        x: cosLat * Math.cos(lonR),
-        y: Math.sin(latR),
-        z: cosLat * Math.sin(lonR),
-      };
-    };
-
-    const continentVectors = continentDots.map(([lat, lon]) => toWorld(lat, lon));
-
-    const orbitPatterns: Array<(time: number) => Vec3> = [
-      (time) => ({
-        x: Math.cos(time * 0.62),
-        y: 0.52 * Math.sin(time * 0.44),
-        z: Math.sin(time * 0.62),
-      }),
-      (time) => ({
-        x: Math.cos(time * 0.54 + 0.8),
-        y: 0.46 * Math.sin(time * 0.68),
-        z: Math.sin(time * 0.54 + 0.8),
-      }),
-      (time) => ({
-        x: 0.88 * Math.cos(time * 0.49),
-        y: 0.58 * Math.sin(time * 0.42 + 0.6),
-        z: Math.sin(time * 0.49 + 0.35),
-      }),
-      (time) => ({
-        x: Math.cos(time * 0.57 - 0.35),
-        y: 0.42 * Math.sin(time * 0.86),
-        z: Math.sin(time * 0.57 - 0.35),
-      }),
-      (time) => ({
-        x: 0.9 * Math.cos(time * 0.52 + 1.2),
-        y: 0.5 * Math.sin(time * 0.38 + 1.4),
-        z: Math.sin(time * 0.52 + 1.2),
-      }),
-      (time) => ({
-        x: Math.cos(time * 0.47 - 1.1),
-        y: 0.6 * Math.sin(time * 0.34 + 0.3),
-        z: Math.sin(time * 0.47 - 1.1),
-      }),
-    ];
-
-    const patternDurations = [18.2, 19.7, 21.1, 20.4, 22.0, 18.8];
-    const cycleDuration = patternDurations.reduce((sum, duration) => sum + duration, 0);
-
-    const getOrbitVector = (elapsedS: number): Vec3 => {
-      let cursor = ((elapsedS % cycleDuration) + cycleDuration) % cycleDuration;
-      let index = 0;
-
-      while (index < patternDurations.length - 1 && cursor > patternDurations[index]) {
-        cursor -= patternDurations[index];
-        index += 1;
-      }
-
-      const segmentDuration = patternDurations[index];
-      const segmentProgress = cursor / segmentDuration;
-      const nextIndex = (index + 1) % orbitPatterns.length;
-
-      const current = orbitPatterns[index](elapsedS);
-      const next = orbitPatterns[nextIndex](elapsedS);
-      const blend = smoothStep(0.82, 1, segmentProgress);
-      const blended = mixVec(current, next, blend);
-
-      const wx = blended.x;
-      let wy = blended.y;
-      const wz = blended.z;
-
-      wy = Math.max(-0.9, Math.min(0.9, wy));
-      return normalize({ x: wx, y: wy, z: wz });
-    };
-
-    const project = (world: Vec3) => {
-      const { radius, center, offset } = sceneRef.current;
-
-      const phi = phiRef.current;
-      const theta = thetaRef.current;
-
-      const cosP = Math.cos(phi);
-      const sinP = Math.sin(phi);
-      const x1 = world.x * cosP + world.z * sinP;
-      const y1 = world.y;
-      const z1 = -world.x * sinP + world.z * cosP;
-
-      const cosT = Math.cos(theta);
-      const sinT = Math.sin(theta);
-      const rx = x1;
-      const ry = y1 * cosT - z1 * sinT;
-      const rz = y1 * sinT + z1 * cosT;
-
-      return {
-        sx: offset + center + rx * radius,
-        sy: offset + center - ry * radius,
-        rotated: { x: rx, y: ry, z: rz },
-      };
-    };
-
-    const clampToCircle = (x: number, y: number) => {
-      const { radius, center, offset } = sceneRef.current;
-      const centerX = offset + center;
-      const centerY = offset + center;
-      const dx = x - centerX;
-      const dy = y - centerY;
-      const distance = Math.hypot(dx, dy);
-      if (distance <= radius || distance === 0) return { x, y };
-      return {
-        x: centerX + (dx / distance) * radius,
-        y: centerY + (dy / distance) * radius,
-      };
-    };
-
-    const drawTrailAndFx = (now: number) => {
-      const { outerSize, radius, center, offset, dpr: sceneDpr } = sceneRef.current;
-      const points = trailPointsRef.current;
-      const centerX = offset + center;
-      const centerY = offset + center;
-
-      trailCtx.save();
-      trailCtx.setTransform(sceneDpr, 0, 0, sceneDpr, 0, 0);
-      trailCtx.clearRect(0, 0, outerSize, outerSize);
-
-      trailCtx.beginPath();
-      trailCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      trailCtx.clip();
-
-      if (points.length > 1) {
-        for (let index = 1; index < points.length; index++) {
-          const prev = points[index - 1];
-          const cur = points[index];
-          const lead = points[Math.max(0, index - 2)];
-          const prog = index / (points.length - 1);
-          const age = Math.max(0, 1 - (now - cur.t) / TRAIL_DECAY);
-          const alpha = Math.pow(age, 1.4) * (0.4 + prog * 0.8);
-
-          const red = Math.round(230 - prog * 96);
-          const green = Math.round(64 + prog * 58);
-          const blue = Math.round(158 + prog * 94);
-
-          const cpX = prev.x + (cur.x - lead.x) * 0.25;
-          const cpY = prev.y + (cur.y - lead.y) * 0.25;
-
-          trailCtx.beginPath();
-          trailCtx.moveTo(prev.x, prev.y);
-          trailCtx.quadraticCurveTo(cpX, cpY, cur.x, cur.y);
-          trailCtx.lineCap = "round";
-          trailCtx.lineJoin = "round";
-          trailCtx.lineWidth = 4 + prog * 10;
-          trailCtx.strokeStyle = `rgba(${red},${green},${blue},${alpha})`;
-          trailCtx.shadowBlur = 40;
-          trailCtx.shadowColor = `rgba(${red},${green},${blue},${alpha * 0.9})`;
-          trailCtx.stroke();
-        }
-      }
-
-      const recentTrail = points.slice(-26);
-      for (const dot of continentVectors) {
-        const projectedDot = project(dot);
-        if (projectedDot.rotated.z <= 0) continue;
-
-        let glow = 0;
-        for (const trailPoint of recentTrail) {
-          const distance = Math.hypot(trailPoint.x - projectedDot.sx, trailPoint.y - projectedDot.sy);
-          const age = Math.max(0, 1 - (now - trailPoint.t) / TRAIL_DECAY);
-          const influence = Math.exp(-(distance * distance) / (2 * 20 * 20)) * Math.pow(age, 1.2);
-          glow = Math.max(glow, influence);
-        }
-
-        const glowClamped = clamp(glow, 0, 1);
-        const baseAlpha = 0.12 + glowClamped * 0.24;
-
-        if (glowClamped > 0.03) {
-          const gradient = trailCtx.createRadialGradient(
-            projectedDot.sx,
-            projectedDot.sy,
-            0,
-            projectedDot.sx,
-            projectedDot.sy,
-            12 + glowClamped * 12
-          );
-          gradient.addColorStop(0, `rgba(168,85,247,${0.26 * glowClamped})`);
-          gradient.addColorStop(0.58, `rgba(59,130,246,${0.2 * glowClamped})`);
-          gradient.addColorStop(1, "rgba(59,130,246,0)");
-          trailCtx.fillStyle = gradient;
-          trailCtx.beginPath();
-          trailCtx.arc(projectedDot.sx, projectedDot.sy, 12 + glowClamped * 12, 0, Math.PI * 2);
-          trailCtx.fill();
-        }
-
-        trailCtx.beginPath();
-        trailCtx.arc(projectedDot.sx, projectedDot.sy, 1.8 + glowClamped * 1.6, 0, Math.PI * 2);
-        trailCtx.fillStyle = `rgba(168,176,196,${baseAlpha})`;
-        trailCtx.fill();
-      }
-
-      trailCtx.restore();
-
-      trailCtx.save();
-      trailCtx.setTransform(sceneDpr, 0, 0, sceneDpr, 0, 0);
-      drawRim(trailCtx, now, centerX, centerY, radius);
-      trailCtx.restore();
-    };
+    const fxCtx = fxCanvas.getContext("2d");
+    if (!fxCtx) return;
 
     const syncSize = () => {
-      const container = containerRef.current;
-      if (!container) return;
+      const w = container.clientWidth || 720;
 
-      const containerWidth = container.clientWidth;
-      const size = Math.min(containerWidth, 820);
-      const radius = size * 0.44;
+      // Keep it big but not full screen
+      const size = Math.min(w, 820);
+
+      const dpr = 2;
       const center = size / 2;
-      const offset = (containerWidth - size) / 2;
-      sceneRef.current = {
-        outerSize: containerWidth,
-        size,
-        radius,
-        center,
-        offset,
-        dpr,
-      };
+      const radius = size * 0.44;
 
-      const pixelSize = Math.round(containerWidth * dpr);
-      globeCanvas.width = pixelSize;
-      globeCanvas.height = pixelSize;
-      globeCanvas.style.width = `${containerWidth}px`;
-      globeCanvas.style.height = `${containerWidth}px`;
+      sceneRef.current = { size, center, radius, dpr };
 
-      trailCanvas.width = pixelSize;
-      trailCanvas.height = pixelSize;
-      trailCanvas.style.width = `${containerWidth}px`;
-      trailCanvas.style.height = `${containerWidth}px`;
+      const px = Math.round(size * dpr);
 
-      if (logoRef.current) {
-        const centerX = offset + center;
-        const centerY = offset + center;
-        logoRef.current.style.transform = `translate(${centerX - LOGO_HALF}px, ${centerY - LOGO_HALF}px)`;
-      }
+      globeCanvas.width = px;
+      globeCanvas.height = px;
+      globeCanvas.style.width = `${size}px`;
+      globeCanvas.style.height = `${size}px`;
+
+      fxCanvas.width = px;
+      fxCanvas.height = px;
+      fxCanvas.style.width = `${size}px`;
+      fxCanvas.style.height = `${size}px`;
     };
 
     syncSize();
 
     resizeObserverRef.current = new ResizeObserver(syncSize);
-    if (containerRef.current) {
-      resizeObserverRef.current.observe(containerRef.current);
-    }
+    resizeObserverRef.current.observe(container);
 
     orbitStartRef.current = performance.now();
 
     const globe = createGlobe(globeCanvas, {
-      devicePixelRatio: dpr,
-      width: sceneRef.current.outerSize * dpr,
-      height: sceneRef.current.outerSize * dpr,
+      devicePixelRatio: sceneRef.current.dpr,
+      width: sceneRef.current.size * sceneRef.current.dpr,
+      height: sceneRef.current.size * sceneRef.current.dpr,
       phi: 0,
       theta: 0,
       dark: 1,
@@ -386,58 +229,188 @@ export const Globe = ({ className }: { className?: string }) => {
       mapBrightness: 5.2,
       baseColor: [0.25, 0.25, 0.25],
       markerColor: [0.66, 0.24, 1],
-      glowColor: [0.22, 0.22, 0.22],
-      markers: markers.map((marker) => ({
-        location: [marker.lat, marker.lon] as [number, number],
-        size: marker.name.includes("Newark") ? 0.075 : 0.06,
+      glowColor: [0.5, 0.35, 1],
+      markers: markers.map((m) => ({
+        location: [m.lat, m.lon] as [number, number],
+        size: m.name.includes("Newark") ? 0.075 : 0.06,
       })),
       onRender: (state) => {
+        // continuous, no resets
+        phiRef.current += AUTO_PHI_SPEED;
+
         const now = performance.now();
         const elapsedS = (now - orbitStartRef.current) / 1000;
 
-        phiRef.current += AUTO_PHI_SPEED;
-        const thetaTarget = Math.sin(elapsedS * 0.28) * 0.18;
+        const thetaTarget = Math.sin(elapsedS * 0.28) * 0.16;
         thetaRef.current += (thetaTarget - thetaRef.current) * 0.04;
 
         state.phi = phiRef.current;
         state.theta = thetaRef.current;
-        state.width = sceneRef.current.outerSize * sceneRef.current.dpr;
-        state.height = sceneRef.current.outerSize * sceneRef.current.dpr;
+
+        // keep cobe in sync with current scene each frame
+        state.width = sceneRef.current.size * sceneRef.current.dpr;
+        state.height = sceneRef.current.size * sceneRef.current.dpr;
         state.devicePixelRatio = sceneRef.current.dpr;
       },
     });
 
+    const continentVecs = continentDots.map(([lat, lon]) => latLonToWorld(lat, lon));
+
+    // 6 smooth patterns, blended at end of each segment
+    const orbitPatterns: Array<(t: number) => Vec3> = [
+      (t) => ({ x: Math.cos(t * 0.62), y: 0.38 * Math.sin(t * 0.44), z: Math.sin(t * 0.62) }),
+      (t) => ({ x: Math.cos(t * 0.54 + 0.8), y: 0.34 * Math.sin(t * 0.68), z: Math.sin(t * 0.54 + 0.8) }),
+      (t) => ({ x: 0.9 * Math.cos(t * 0.49), y: 0.44 * Math.sin(t * 0.42 + 0.6), z: Math.sin(t * 0.49 + 0.35) }),
+      (t) => ({ x: Math.cos(t * 0.57 - 0.35), y: 0.3 * Math.sin(t * 0.86), z: Math.sin(t * 0.57 - 0.35) }),
+      (t) => ({ x: 0.92 * Math.cos(t * 0.52 + 1.2), y: 0.36 * Math.sin(t * 0.38 + 1.4), z: Math.sin(t * 0.52 + 1.2) }),
+      (t) => ({ x: Math.cos(t * 0.47 - 1.1), y: 0.46 * Math.sin(t * 0.34 + 0.3), z: Math.sin(t * 0.47 - 1.1) }),
+    ];
+    const patternDurations = [18.2, 19.7, 21.1, 20.4, 22.0, 18.8];
+    const cycleDuration = patternDurations.reduce((a, b) => a + b, 0);
+
+    const getOrbitWorld = (elapsedS: number): Vec3 => {
+      let cursor = ((elapsedS % cycleDuration) + cycleDuration) % cycleDuration;
+      let index = 0;
+
+      while (index < patternDurations.length - 1 && cursor > patternDurations[index]) {
+        cursor -= patternDurations[index];
+        index += 1;
+      }
+
+      const segDur = patternDurations[index];
+      const segProgress = cursor / segDur;
+      const nextIndex = (index + 1) % orbitPatterns.length;
+
+      const current = orbitPatterns[index](elapsedS);
+      const next = orbitPatterns[nextIndex](elapsedS);
+
+      const blend = smoothStep(0.82, 1, segProgress);
+      const blended = mixVec(current, next, blend);
+
+      const wy = clamp(blended.y, -0.9, 0.9);
+      return normalize({ x: blended.x, y: wy, z: blended.z });
+    };
+
+    const project = (world: Vec3) => {
+      // rotate by current globe phi and theta to match the globe rendering
+      const afterY = rotateY(world, phiRef.current);
+      const afterX = rotateX(afterY, thetaRef.current);
+
+      const { radius, center } = sceneRef.current;
+      const sx = center + afterX.x * radius;
+      const sy = center - afterX.y * radius;
+
+      return { sx, sy, rotated: afterX };
+    };
+
+    const drawFx = (now: number) => {
+      const { size, dpr, radius, center } = sceneRef.current;
+
+      fxCtx.save();
+      fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      fxCtx.clearRect(0, 0, size, size);
+
+      // clip to globe
+      fxCtx.beginPath();
+      fxCtx.arc(center, center, radius, 0, Math.PI * 2);
+      fxCtx.clip();
+
+      // trail
+      const pts = trailRef.current;
+      if (pts.length > 1) {
+        for (let i = 1; i < pts.length; i += 1) {
+          const prev = pts[i - 1];
+          const cur = pts[i];
+          const prog = i / (pts.length - 1);
+          const age = Math.max(0, 1 - (now - cur.t) / TRAIL_DECAY);
+          if (age <= 0) continue;
+
+          const alpha = Math.pow(age, 1.35) * (0.38 + prog * 0.85);
+
+          // thicker, more visible
+          fxCtx.beginPath();
+          fxCtx.moveTo(prev.x, prev.y);
+          fxCtx.lineTo(cur.x, cur.y);
+          fxCtx.lineCap = "round";
+          fxCtx.lineJoin = "round";
+          fxCtx.lineWidth = 5 + prog * 10;
+          fxCtx.strokeStyle = `rgba(168,85,247,${alpha})`;
+          fxCtx.shadowBlur = 44;
+          fxCtx.shadowColor = `rgba(59,130,246,${alpha * 0.85})`;
+          fxCtx.stroke();
+        }
+      }
+
+      // dot glow as trail passes
+      const recent = pts.slice(-28);
+      for (const dot of continentVecs) {
+        const projected = project(dot);
+        if (projected.rotated.z <= 0) continue;
+
+        let glow = 0;
+        for (const tp of recent) {
+          const dist = Math.hypot(tp.x - projected.sx, tp.y - projected.sy);
+          const age = Math.max(0, 1 - (now - tp.t) / TRAIL_DECAY);
+          const influence = Math.exp(-(dist * dist) / (2 * 22 * 22)) * Math.pow(age, 1.2);
+          glow = Math.max(glow, influence);
+        }
+
+        const g = clamp(glow, 0, 1);
+        const baseAlpha = 0.14 + g * 0.28;
+
+        if (g > 0.04) {
+          const grad = fxCtx.createRadialGradient(projected.sx, projected.sy, 0, projected.sx, projected.sy, 18 + g * 18);
+          grad.addColorStop(0, `rgba(168,85,247,${0.34 * g})`);
+          grad.addColorStop(0.55, `rgba(59,130,246,${0.26 * g})`);
+          grad.addColorStop(1, "rgba(59,130,246,0)");
+          fxCtx.fillStyle = grad;
+          fxCtx.beginPath();
+          fxCtx.arc(projected.sx, projected.sy, 18 + g * 18, 0, Math.PI * 2);
+          fxCtx.fill();
+        }
+
+        fxCtx.beginPath();
+        fxCtx.arc(projected.sx, projected.sy, 1.9 + g * 2.0, 0, Math.PI * 2);
+        fxCtx.fillStyle = `rgba(205,214,230,${baseAlpha})`;
+        fxCtx.fill();
+      }
+
+      fxCtx.restore();
+
+      // rim on top (not clipped)
+      fxCtx.save();
+      fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawRim(fxCtx, now, center, center, radius);
+      fxCtx.restore();
+    };
+
     const animate = (now: number) => {
-      const logo = logoRef.current;
       const elapsedS = (now - orbitStartRef.current) / 1000;
-      const world = getOrbitVector(elapsedS);
+
+      // orbit point in world space
+      const world = getOrbitWorld(elapsedS);
       const projected = project(world);
-      const clampedProjected = clampToCircle(projected.sx, projected.sy);
+
+      // show sooner after behind
       const visible = projected.rotated.z > -0.35;
 
-      if (logo) {
-        logo.style.opacity = visible ? "1" : "0";
-        logo.style.transform = `translate(${clampedProjected.x - LOGO_HALF}px, ${clampedProjected.y - LOGO_HALF}px)`;
+      // trail keeps running and stays cinematic
+      trailRef.current.push({ x: projected.sx, y: projected.sy, t: now });
+      while (trailRef.current.length && now - trailRef.current[0].t > TRAIL_DECAY) {
+        trailRef.current.shift();
+      }
+      if (trailRef.current.length > TRAIL_MAX_POINTS) {
+        trailRef.current.splice(0, trailRef.current.length - TRAIL_MAX_POINTS);
       }
 
-      trailPointsRef.current.push({
-        x: clampedProjected.x,
-        y: clampedProjected.y,
-        t: now,
-      });
-
-      while (
-        trailPointsRef.current.length &&
-        now - trailPointsRef.current[0].t > TRAIL_DECAY
-      ) {
-        trailPointsRef.current.shift();
+      // logo follows same projected point
+      const logoEl = logoRef.current;
+      if (logoEl) {
+        logoEl.style.opacity = visible ? "1" : "0";
+        logoEl.style.transform = `translate(${projected.sx - LOGO_HALF}px, ${projected.sy - LOGO_HALF}px)`;
       }
 
-      if (trailPointsRef.current.length > 240) {
-        trailPointsRef.current.splice(0, trailPointsRef.current.length - 240);
-      }
-
-      drawTrailAndFx(now);
+      drawFx(now);
       rafRef.current = requestAnimationFrame(animate);
     };
 
@@ -448,12 +421,10 @@ export const Globe = ({ className }: { className?: string }) => {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-
       if (resizeObserverRef.current) {
         resizeObserverRef.current.disconnect();
         resizeObserverRef.current = null;
       }
-
       globe.destroy();
     };
   }, [continentDots, markers]);
@@ -471,10 +442,7 @@ export const Globe = ({ className }: { className?: string }) => {
   );
 
   return (
-    <div
-      ref={containerRef}
-      className={`relative aspect-square w-full max-w-[900px] mx-auto ${className || ""}`}
-    >
+    <div ref={containerRef} className={`relative aspect-square w-full max-w-[900px] mx-auto ${className || ""}`}>
       <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
         {stars.map((star) => (
           <span
@@ -491,8 +459,13 @@ export const Globe = ({ className }: { className?: string }) => {
         ))}
       </div>
 
-      <canvas ref={trailCanvasRef} className="absolute inset-0 pointer-events-none" />
+      {/* Globe at the bottom */}
+      <canvas ref={globeCanvasRef} className="absolute inset-0" style={{ zIndex: 0 }} />
 
+      {/* FX above globe */}
+      <canvas ref={fxCanvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 10 }} />
+
+      {/* Logo above everything */}
       <div
         ref={logoRef}
         className="absolute pointer-events-none"
@@ -500,6 +473,7 @@ export const Globe = ({ className }: { className?: string }) => {
           width: LOGO_SIZE,
           height: LOGO_SIZE,
           willChange: "transform, opacity",
+          zIndex: 20,
         }}
       >
         <div
@@ -516,13 +490,10 @@ export const Globe = ({ className }: { className?: string }) => {
             backgroundImage: "url('/justlogowithoutwordsACAI.jpeg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            boxShadow:
-              "0 0 20px rgba(168,85,247,0.9), 0 0 40px rgba(59,130,246,0.5), 0 0 60px rgba(239,68,68,0.2)",
+            boxShadow: "0 0 20px rgba(168,85,247,0.9), 0 0 40px rgba(59,130,246,0.5), 0 0 60px rgba(239,68,68,0.2)",
           }}
         />
       </div>
-
-      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
     </div>
   );
 };
