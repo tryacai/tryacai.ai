@@ -5,235 +5,20 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./button";
 import { Link } from "next-view-transitions";
-
-type Tier = {
-  name: string;
-  monthlyRange: string;
-  onboardingRange: string;
-  features: string[];
-  note?: string;
-};
-
-type TierRange = {
-  monthlyRange: string;
-  onboardingRange: string;
-};
-
-type IndustryPricing = {
-  tier1: TierRange;
-  tier2Multiplier: number;
-  tier3: TierRange | null;
-};
-
-type IndustryPricingResult = {
-  tier1: Tier;
-  tier2: Tier;
-  tier3: Tier | null;
-};
-
-const industries = [
-  "Plumbing",
-  "HVAC",
-  "Barbers",
-  "Roofing",
-  "Mechanics",
-  "Detailing",
-  "Cleaning",
-  "Electricians",
-  "Landscaping",
-  "Pest Control",
-  "Med Spa",
-  "Chiropractor",
-];
-
-// Industry-based pricing structure
-const getPricingForIndustry = (industry: string): IndustryPricingResult => {
-  const pricingData: Record<string, IndustryPricing> = {
-    Barbers: {
-      tier1: {
-        monthlyRange: "$79 - $149",
-        onboardingRange: "$199 - $399",
-      },
-      tier2Multiplier: 1.5,
-      tier3: null, // hidden for barbers
-    },
-    Detailing: {
-      tier1: {
-        monthlyRange: "$149 - $299",
-        onboardingRange: "$399 - $699",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$599 - $1,200",
-        onboardingRange: "$1,000 - $2,000",
-      },
-    },
-    Cleaning: {
-      tier1: {
-        monthlyRange: "$149 - $299",
-        onboardingRange: "$399 - $699",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$599 - $1,200",
-        onboardingRange: "$1,000 - $2,000",
-      },
-    },
-    Roofing: {
-      tier1: {
-        monthlyRange: "$199 - $399",
-        onboardingRange: "$750 - $1,250",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$1,500 - $3,000",
-        onboardingRange: "$2,000 - $4,000",
-      },
-    },
-    Plumbing: {
-      tier1: {
-        monthlyRange: "$299 - $599",
-        onboardingRange: "$750 - $1,500",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$1,500 - $4,000",
-        onboardingRange: "$2,000 - $5,000",
-      },
-    },
-    HVAC: {
-      tier1: {
-        monthlyRange: "$299 - $599",
-        onboardingRange: "$750 - $1,500",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$1,500 - $4,000",
-        onboardingRange: "$2,000 - $5,000",
-      },
-    },
-    Electricians: {
-      tier1: {
-        monthlyRange: "$299 - $599",
-        onboardingRange: "$750 - $1,500",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$1,500 - $4,000",
-        onboardingRange: "$2,000 - $5,000",
-      },
-    },
-    "Pest Control": {
-      tier1: {
-        monthlyRange: "$249 - $499",
-        onboardingRange: "$750 - $1,250",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$1,200 - $2,500",
-        onboardingRange: "$1,500 - $3,000",
-      },
-    },
-    Landscaping: {
-      tier1: {
-        monthlyRange: "$249 - $499",
-        onboardingRange: "$750 - $1,250",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$1,200 - $2,500",
-        onboardingRange: "$1,500 - $3,000",
-      },
-    },
-    Chiropractor: {
-      tier1: {
-        monthlyRange: "$399 - $799",
-        onboardingRange: "$1,000 - $2,000",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$1,800 - $3,500",
-        onboardingRange: "$2,500 - $4,500",
-      },
-    },
-    "Med Spa": {
-      tier1: {
-        monthlyRange: "$499 - $1,000",
-        onboardingRange: "$1,500 - $3,000",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$2,000 - $6,000",
-        onboardingRange: "$3,000 - $7,000",
-      },
-    },
-    Mechanics: {
-      tier1: {
-        monthlyRange: "$199 - $399",
-        onboardingRange: "$500 - $1,000",
-      },
-      tier2Multiplier: 1.5,
-      tier3: {
-        monthlyRange: "$999 - $2,000",
-        onboardingRange: "$1,500 - $3,000",
-      },
-    },
-  };
-
-  const data = pricingData[industry] || pricingData["Plumbing"];
-
-  return {
-    tier1: {
-      name: "AI Receptionist",
-      monthlyRange: data.tier1.monthlyRange,
-      onboardingRange: data.tier1.onboardingRange,
-      features: [
-        "24/7 AI call answering",
-        "Instant appointment scheduling",
-        "Natural conversation AI",
-        "Call summaries and logging",
-        "Calendar integration",
-      ],
-    },
-    tier2: {
-      name: "Growth Automation",
-      monthlyRange: data.tier1.monthlyRange,
-      onboardingRange: data.tier1.onboardingRange,
-      features: [
-        "Everything in AI Receptionist",
-        "Automated follow-up sequences",
-        "Review generation automation",
-        "Missed call text-back",
-        "Customer re-engagement campaigns",
-      ],
-      note: "Price = Tier 1 + 40-60%",
-    },
-    tier3: data.tier3
-      ? {
-          name: "Full AI Infrastructure",
-          monthlyRange: data.tier3.monthlyRange,
-          onboardingRange: data.tier3.onboardingRange,
-          features: [
-            "Everything in previous tiers",
-            "Intelligent quote routing",
-            "Multi-location support",
-            "Advanced CRM integration",
-            "Custom workflow automation",
-            "Priority support & strategy",
-          ],
-        }
-      : null,
-  };
-};
+import { getIndustryPricing, pricingConfig, tierMeta, tierOrder } from "@/constants/pricing-config";
 
 export function Pricing() {
-  const [selectedIndustry, setSelectedIndustry] = useState("Plumbing");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
-  const pricing = getPricingForIndustry(selectedIndustry);
-  const tiers: Tier[] = [pricing.tier1, pricing.tier2, pricing.tier3].filter(
-    (tier): tier is Tier => Boolean(tier)
+  const [selectedIndustry, setSelectedIndustry] = useState(
+    pricingConfig.defaultIndustryKey
   );
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const industry = getIndustryPricing(selectedIndustry);
+  const tiers = tierOrder.map((tierKey) => ({
+    tierKey,
+    tier: industry.tiers[tierKey],
+    meta: tierMeta[tierKey],
+  }));
 
   return (
     <div className="relative">
@@ -244,7 +29,7 @@ export function Pricing() {
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-3 px-6 py-3 rounded-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white font-semibold hover:border-neutral-500 transition-all duration-200 min-w-[280px] justify-between"
           >
-            <span>{selectedIndustry}</span>
+            <span>{industry.label}</span>
             <IconChevronDown className={`h-5 w-5 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
           
@@ -257,19 +42,19 @@ export function Pricing() {
                 transition={{ duration: 0.2 }}
                 className="absolute top-full mt-2 w-full bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-2xl shadow-xl overflow-hidden z-50 max-h-80 overflow-y-auto"
               >
-                {industries.map((industry) => (
+                {pricingConfig.industries.map((item) => (
                   <button
-                    key={industry}
+                    key={item.key}
                     onClick={() => {
-                      setSelectedIndustry(industry);
+                      setSelectedIndustry(item.key);
                       setIsDropdownOpen(false);
                     }}
                     className={cn(
                       "w-full px-6 py-3 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors",
-                      selectedIndustry === industry ? "bg-neutral-100 dark:bg-neutral-800 font-semibold" : ""
+                      selectedIndustry === item.key ? "bg-neutral-100 dark:bg-neutral-800 font-semibold" : ""
                     )}
                   >
-                    {industry}
+                    {item.label}
                   </button>
                 ))}
               </motion.div>
@@ -278,7 +63,7 @@ export function Pricing() {
         </div>
 
         <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center max-w-2xl mb-2">
-          Showing pricing for <span className="font-semibold text-neutral-900 dark:text-white">{selectedIndustry}</span>
+          Showing pricing for <span className="font-semibold text-neutral-900 dark:text-white">{industry.label}</span>
         </p>
         
         <p className="text-xs text-neutral-500 dark:text-neutral-500 text-center italic max-w-2xl">
@@ -286,11 +71,22 @@ export function Pricing() {
         </p>
       </div>
 
+      <div className="mx-auto max-w-6xl mb-6">
+        <div className="rounded-2xl border border-amber-200/70 dark:border-amber-300/20 bg-amber-50/80 dark:bg-amber-500/10 px-5 py-4 text-center">
+          <p className="text-sm md:text-base font-semibold text-amber-900 dark:text-amber-100">
+            All plans include a 14-day Proof of Value Pilot. No card required.
+          </p>
+          <p className="mt-1 text-xs md:text-sm text-amber-800/90 dark:text-amber-100/80">
+            We set it up, run it live, and show results before you commit.
+          </p>
+        </div>
+      </div>
+
       <div className="mx-auto mt-8 grid relative z-20 grid-cols-1 gap-6 items-stretch md:grid-cols-3 max-w-6xl">
-        {tiers.map((tier, tierIdx) => {
+        {tiers.map(({ tier, meta }, tierIdx) => {
           return (
             <motion.div
-              key={tier.name}
+              key={meta.label}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: tierIdx * 0.1 }}
@@ -311,7 +107,7 @@ export function Pricing() {
                       "text-xl font-bold"
                     )}
                   >
-                    {tier.name}
+                    {meta.label}
                   </h3>
                   {tierIdx === 1 && (
                     <span className="text-xs bg-white/20 text-white px-3 py-1 rounded-full font-semibold uppercase tracking-wider">
@@ -326,22 +122,14 @@ export function Pricing() {
                       tierIdx === 1 ? "text-neutral-400" : "text-neutral-600 dark:text-neutral-400",
                       "text-sm font-semibold mb-1"
                     )}>
-                      Monthly Investment
+                      Price per month
                     </p>
                     <p className={cn(
                       tierIdx === 1 ? "text-white" : "text-neutral-900 dark:text-white",
                       "text-2xl font-bold"
                     )}>
-                      {tier.monthlyRange}
+                      ${tier.price}
                     </p>
-                    {tier.note && (
-                      <p className={cn(
-                        tierIdx === 1 ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
-                        "text-xs italic mt-1"
-                      )}>
-                        {tier.note}
-                      </p>
-                    )}
                   </div>
                   
                   <div className="mb-6">
@@ -349,13 +137,19 @@ export function Pricing() {
                       tierIdx === 1 ? "text-neutral-400" : "text-neutral-600 dark:text-neutral-400",
                       "text-sm font-semibold mb-1"
                     )}>
-                      Onboarding
+                      Included calls per month
                     </p>
                     <p className={cn(
                       tierIdx === 1 ? "text-neutral-300" : "text-neutral-700 dark:text-neutral-300",
                       "text-lg font-semibold"
                     )}>
-                      {tier.onboardingRange}
+                      {tier.calls} ({tier.minutesRange})
+                    </p>
+                    <p className={cn(
+                      tierIdx === 1 ? "text-neutral-400" : "text-neutral-500 dark:text-neutral-500",
+                      "text-xs italic mt-1"
+                    )}>
+                      Overage per additional AI minute: ${tier.overagePerMin}
                     </p>
                   </div>
                 </div>
@@ -365,10 +159,10 @@ export function Pricing() {
                     tierIdx === 1 ? "text-white" : "text-neutral-900 dark:text-white",
                     "font-semibold mb-4"
                   )}>
-                    What's Included
+                    What&apos;s Included
                   </p>
                   <ul className="space-y-3">
-                    {tier.features.map((feature) => (
+                    {tier.bullets.map((feature) => (
                       <li key={feature} className="flex gap-x-3 items-start">
                         <IconCircleCheckFilled
                           className={cn(

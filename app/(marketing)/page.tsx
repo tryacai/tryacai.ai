@@ -17,7 +17,7 @@ export default function Home() {
         <Background />
       </div>
 
-      <Container className="flex min-h-screen flex-col items-center justify-between">
+      <Container className="flex min-h-screen flex-col items-center justify-between w-full max-w-[90rem]">
         <Hero />
 
         <MissedCallStats />
