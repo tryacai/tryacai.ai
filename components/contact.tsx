@@ -46,6 +46,9 @@ const formSchema = z.object({
     .string()
     .max(300, "Message must be 300 characters or fewer")
     .optional(),
+  smsConsent: z.boolean().refine((value) => value === true, {
+    message: "You must agree to receive SMS messages before submitting.",
+  }),
   company_website: z.string().optional(),
 });
 
@@ -62,6 +65,7 @@ export function ContactForm() {
       industry: "",
       monthlyCallVolume: "",
       message: "",
+      smsConsent: false,
       company_website: "",
     },
   });
@@ -303,6 +307,46 @@ export function ContactForm() {
                         />
                       </FormControl>
                       <p className="text-xs text-neutral-500">Max 300 characters.</p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="smsConsent"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="space-y-3 rounded-lg border border-white/10 bg-neutral-950 p-4">
+                        <label htmlFor="smsConsent" className="flex items-start gap-3 text-sm text-neutral-200">
+                          <FormControl>
+                            <input
+                              id="smsConsent"
+                              type="checkbox"
+                              className="mt-1 h-4 w-4 rounded border border-white/20 bg-neutral-950"
+                              checked={Boolean(field.value)}
+                              onChange={(event) => field.onChange(event.target.checked)}
+                            />
+                          </FormControl>
+                          <span>
+                            I agree to receive SMS messages from ACAI Enterprises LLC regarding demo scheduling and product updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.
+                          </span>
+                        </label>
+
+                        <p className="text-xs text-neutral-400">
+                          <Link href="/privacy-policy" className="underline hover:text-white">
+                            Privacy Policy
+                          </Link>{" "}
+                          •{" "}
+                          <Link href="/terms" className="underline hover:text-white">
+                            Terms
+                          </Link>{" "}
+                          •{" "}
+                          <Link href="/sms-consent" className="underline hover:text-white">
+                            SMS Disclosure
+                          </Link>
+                        </p>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
