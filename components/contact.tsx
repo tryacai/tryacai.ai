@@ -1,106 +1,93 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState, useEffect } from "react";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Button } from "@/components/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import {
-  IconBrandLinkedin,
-  IconBrandX,
-  IconBrandInstagram,
-} from "@tabler/icons-react";
-import Password from "./password";
-import { Button } from "./button";
-import { Logo } from "./Logo";
+const industryOptions = ["Plumbing", "HVAC", "Barber", "Detailing", "Roofing", "Other"] as const;
+const monthlyCallVolumeOptions = ["0-50", "50-150", "150-300", "300+"] as const;
+const freeEmailDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com"];
 
 const formSchema = z.object({
-  name: z
-    .string({
-      required_error: "Please enter your name",
-    })
-    .min(1, "Please enter email"),
+  name: z.string({ required_error: "Please enter your full name" }).min(1, "Please enter your full name"),
   email: z
-    .string({
-      required_error: "Please enter email",
-    })
-    .email("Please enter valid email")
-    .min(1, "Please enter email"),
+    .string({ required_error: "Please enter your business email" })
+    .min(1, "Please enter your business email")
+    .email("Please enter a valid email")
+    .refine((value) => {
+      const domain = value.split("@")[1]?.toLowerCase();
+      if (!domain) {
+        return false;
+      }
+      return !freeEmailDomains.includes(domain);
+    }, "Please use a business email (no free email domains)."),
   phone: z
-    .string({
-      required_error: "Please enter your phone number",
-    })
-    .min(1, "Please enter your phone number"),
-  company: z
-    .string({
-      required_error: "Please enter your company's name",
-    })
-    .min(1, "Please enter your company's name"),
-  referred: z
-    .enum(["yes", "no"], {
-      required_error: "Please select if you were referred",
-    }),
-  referralSource: z
-    .string()
-    .optional(),
+    .string({ required_error: "Please enter your phone number" })
+    .min(10, "Phone number must be at least 10 digits")
+    .regex(/^\d+$/, "Phone number must contain numbers only"),
+  company: z.string({ required_error: "Please enter your company name" }).min(1, "Please enter your company name"),
+  industry: z
+    .string({ required_error: "Please select your industry" })
+    .min(1, "Please select your industry")
+    .refine((value) => industryOptions.includes(value as (typeof industryOptions)[number]), "Please select a valid industry"),
+  monthlyCallVolume: z
+    .string({ required_error: "Please select estimated monthly call volume" })
+    .min(1, "Please select estimated monthly call volume")
+    .refine(
+      (value) => monthlyCallVolumeOptions.includes(value as (typeof monthlyCallVolumeOptions)[number]),
+      "Please select a valid monthly call volume",
+    ),
   message: z
-    .string({
-      required_error: "Please enter your message",
-    })
-    .min(1, "Please enter your message"),
+    .string()
+    .max(300, "Message must be 300 characters or fewer")
+    .optional(),
+  company_website: z.string().optional(),
 });
 
-export type LoginUser = z.infer<typeof formSchema>;
+type ContactFormValues = z.infer<typeof formSchema>;
 
 export function ContactForm() {
-  const form = useForm<LoginUser>({
+  const form = useForm<ContactFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
       phone: "",
       company: "",
-      referred: "no",
-      referralSource: "",
+      industry: "",
+      monthlyCallVolume: "",
       message: "",
+      company_website: "",
     },
   });
 
-  const [referred, setReferred] = useState<"yes" | "no">("no");
-  const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("success") === "true") {
-      setSubmitted(true);
-      window.history.replaceState({}, document.title, window.location.pathname);
+  async function onSubmit(values: ContactFormValues) {
+    if (values.company_website && values.company_website.trim().length > 0) {
+      return;
     }
-  }, []);
 
-  async function onSubmit(values: LoginUser) {
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
       const formData = new FormData();
-      
-      // Append all form fields to FormData
-      Object.entries(values).forEach(([key, value]) => {
-        formData.append(key, String(value || ""));
-      });
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("phone", values.phone);
+      formData.append("company", values.company);
+      formData.append("industry", values.industry);
+      formData.append("monthlyCallVolume", values.monthlyCallVolume);
+      formData.append("message", values.message || "");
+      formData.append("company_website", values.company_website || "");
 
       const response = await fetch("https://formspree.io/f/maqyarlv", {
         method: "POST",
@@ -110,189 +97,109 @@ export function ContactForm() {
         body: formData,
       });
 
-      if (response.ok) {
-        // Success: show message and reset form
-        setSubmitted(true);
-        form.reset();
-      } else {
-        // Log detailed error information for debugging
-        console.error("Form submission failed with status:", response.status);
-        const errorData = await response.json();
-        console.error("Error response body:", errorData);
-        
-        setSubmitError("Failed to submit form. Please try again.");
+      if (!response.ok) {
+        throw new Error("Failed to submit form. Please try again.");
       }
+
+      setSubmitted(true);
+      form.reset();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "An error occurred. Please try again.";
+      const errorMessage = error instanceof Error ? error.message : "An error occurred. Please try again.";
       setSubmitError(errorMessage);
-      console.error("Form submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  const socials = [
-    {
-      title: "twitter",
-      href: "https://twitter.com/mannupaaji",
-      icon: (
-        <IconBrandX className="h-5 w-5 text-muted dark:text-muted-dark hover:text-black" />
-      ),
-    },
-    {
-      title: "linkedin",
-      href: "https://www.linkedin.com/company/acai-ai",
-      icon: (
-        <IconBrandLinkedin className="h-5 w-5 text-muted dark:text-muted-dark hover:text-black" />
-      ),
-    },
-    {
-      title: "instagram",
-      href: "https://www.instagram.com/tryacai.ai/?next=%2F&hl=en",
-      icon: (
-        <IconBrandInstagram className="h-5 w-5 text-muted dark:text-muted-dark hover:text-black" />
-      ),
-    },
-  ];
-
   return (
-    <Form {...form}>
-      <div className="flex relative z-20 items-center w-full justify-center px-4 py-4 lg:py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-md">
+    <div className="relative">
+      <div className="pointer-events-none absolute -inset-8 bg-gradient-to-r from-red-500/20 via-purple-500/20 to-blue-500/20 blur-3xl opacity-20" />
+      <div className="group relative rounded-2xl p-[1px] transition-all duration-300">
+        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 opacity-35 transition-opacity duration-300 group-hover:opacity-70" />
+        <div className="relative rounded-2xl border border-white/10 bg-black/40 p-6 sm:p-8 backdrop-blur-md shadow-lg">
           {submitted ? (
-            <div className="flex flex-col items-center justify-center text-center py-12">
-              <div className="mb-4 text-4xl">✓</div>
-              <h1 className="text-2xl font-bold leading-9 tracking-tight text-black dark:text-white mb-4">
-                Message Sent!
-              </h1>
-              <p className="text-muted dark:text-muted-dark text-base max-w-sm">
-                We'll get back to you at <strong>team@tryacai.ai</strong> soon.
+            <div className="space-y-4 py-4 text-center">
+              <h2 className="text-2xl font-semibold text-white">Thanks — we got your details.</h2>
+              <p className="text-sm text-neutral-300">
+                Our team will review your business information and follow up if there’s a fit.
               </p>
               <button
                 onClick={() => {
                   setSubmitted(false);
                   form.reset();
                 }}
-                className="mt-6 px-6 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                className="mx-auto text-sm text-neutral-300 hover:text-white transition-colors"
               >
-                Send another message
+                Submit another response
               </button>
             </div>
           ) : (
-            <>
-              <div>
-                <h1 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-black dark:text-white">
-                  Contact Us
-                </h1>
-                <p className="mt-4 text-muted dark:text-muted-dark  text-sm max-w-sm">
-                  Get started with ACAI. We're here to help.
-                </p>
-                <p className="mt-2 text-muted dark:text-muted-dark  text-sm max-w-sm">
-                  Have questions or need assistance? Our team is ready to help you with any inquiries you may have. Fill out the form below, and we'll get back to you as soon as possible.
-                </p>
-                <div className="mt-6 flex flex-col gap-2">
-                  <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                    Or call us directly:
-                  </p>
-                  <div className="flex flex-col gap-1.5">
-                    <a 
-                      href="tel:7328957895" 
-                      className="text-sm font-semibold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
-                    >
-                      Call (732) 895-7895
-                    </a>
-                    <a 
-                      href="tel:8482539552" 
-                      className="text-sm font-semibold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
-                    >
-                      Call (848) 253-9552
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="py-10">
-                <div>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
-                  >
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <label
-                        htmlFor="name"
-                        className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
-                      >
+                      <label htmlFor="name" className="block text-sm font-medium text-neutral-200">
                         Full Name
                       </label>
                       <FormControl>
-                        <div className="mt-2">
-                          <input
-                            id="name"
-                            type="text"
-                            placeholder=""
-                            className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
-                            {...field}
-                          />
-                        </div>
+                        <input
+                          id="name"
+                          type="text"
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
-                      >
-                        Email address
+                      <label htmlFor="email" className="block text-sm font-medium text-neutral-200">
+                        Business Email
                       </label>
                       <FormControl>
-                        <div className="mt-2">
-                          <input
-                            id="email"
-                            type="email"
-                            placeholder=""
-                            className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
-                            {...field}
-                          />
-                        </div>
+                        <input
+                          id="email"
+                          type="email"
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <label
-                        htmlFor="phone"
-                        className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
-                      >
+                      <label htmlFor="phone" className="block text-sm font-medium text-neutral-200">
                         Phone Number
                       </label>
                       <FormControl>
-                        <div className="mt-2">
-                          <input
-                            id="phone"
-                            type="tel"
-                            placeholder=""
-                            className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
-                            {...field}
-                          />
-                        </div>
+                        <input
+                          id="phone"
+                          type="tel"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          minLength={10}
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          value={field.value}
+                          onChange={(event) => {
+                            const digitsOnly = event.target.value.replace(/\D/g, "");
+                            field.onChange(digitsOnly);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -304,22 +211,16 @@ export function ContactForm() {
                   name="company"
                   render={({ field }) => (
                     <FormItem>
-                      <label
-                        htmlFor="company"
-                        className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
-                      >
-                        Company
+                      <label htmlFor="company" className="block text-sm font-medium text-neutral-200">
+                        Company Name
                       </label>
                       <FormControl>
-                        <div className="mt-2">
-                          <input
-                            id="company"
-                            type="text"
-                            placeholder=""
-                            className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
-                            {...field}
-                          />
-                        </div>
+                        <input
+                          id="company"
+                          type="text"
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -328,153 +229,141 @@ export function ContactForm() {
 
                 <FormField
                   control={form.control}
-                  name="referred"
+                  name="industry"
                   render={({ field }) => (
                     <FormItem>
-                      <label className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark mb-3">
-                        Did someone refer you to us?
+                      <label htmlFor="industry" className="block text-sm font-medium text-neutral-200">
+                        Industry
                       </label>
                       <FormControl>
-                        <div className="flex items-center space-x-6">
-                          <div className="flex items-center">
-                            <input
-                              id="referred-yes"
-                              type="radio"
-                              name="referred"
-                              value="yes"
-                              checked={field.value === "yes"}
-                              onChange={(e) => {
-                                field.onChange(e.target.value as "yes" | "no");
-                                setReferred("yes");
-                              }}
-                              className="w-4 h-4 text-blue-600 bg-white dark:bg-neutral-900 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-600 cursor-pointer"
-                            />
-                            <label htmlFor="referred-yes" className="ml-2 text-sm text-neutral-700 dark:text-muted-dark cursor-pointer">
-                              Yes
-                            </label>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              id="referred-no"
-                              type="radio"
-                              name="referred"
-                              value="no"
-                              checked={field.value === "no"}
-                              onChange={(e) => {
-                                field.onChange(e.target.value as "yes" | "no");
-                                setReferred("no");
-                              }}
-                              className="w-4 h-4 text-blue-600 bg-white dark:bg-neutral-900 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-600 cursor-pointer"
-                            />
-                            <label htmlFor="referred-no" className="ml-2 text-sm text-neutral-700 dark:text-muted-dark cursor-pointer">
-                              No
-                            </label>
-                          </div>
-                        </div>
+                        <select
+                          id="industry"
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          {...field}
+                        >
+                          <option value="" className="bg-neutral-950 text-neutral-400">
+                            Select your industry
+                          </option>
+                          {industryOptions.map((option) => (
+                            <option key={option} value={option} className="bg-neutral-950 text-white">
+                              {option}
+                            </option>
+                          ))}
+                        </select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                {referred === "no" && (
-                  <FormField
-                    control={form.control}
-                    name="referralSource"
-                    render={({ field }) => (
-                      <FormItem>
-                        <label
-                          htmlFor="referralSource"
-                          className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
+                <FormField
+                  control={form.control}
+                  name="monthlyCallVolume"
+                  render={({ field }) => (
+                    <FormItem>
+                      <label htmlFor="monthlyCallVolume" className="block text-sm font-medium text-neutral-200">
+                        Estimated Monthly Call Volume
+                      </label>
+                      <FormControl>
+                        <select
+                          id="monthlyCallVolume"
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          {...field}
                         >
-                          Where did you find us?
-                        </label>
-                        <FormControl>
-                          <div className="mt-2">
-                            <input
-                              id="referralSource"
-                              type="text"
-                              placeholder="Ex: Google, LinkedIn, word of mouth, etc."
-                              className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
+                          <option value="" className="bg-neutral-950 text-neutral-400">
+                            Select call volume
+                          </option>
+                          {monthlyCallVolumeOptions.map((option) => (
+                            <option key={option} value={option} className="bg-neutral-950 text-white">
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <label
-                        htmlFor="message"
-                        className="block text-sm font-medium leading-6 text-neutral-700 dark:text-muted-dark"
-                      >
-                        Brief reason for message
+                      <label htmlFor="message" className="block text-sm font-medium text-neutral-200">
+                        Message (Optional)
                       </label>
                       <FormControl>
-                        <div className="mt-2">
-                          <textarea
-                            rows={5}
-                            id="message"
-                            placeholder="Ex: interested in yearly plan, want to discuss more"
-                            className="block w-full bg-white dark:bg-neutral-900 px-4 rounded-md border-0 py-1.5  shadow-aceternity text-black placeholder:text-gray-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 dark:text-white"
-                            {...field}
-                          />
-                        </div>
+                        <textarea
+                          id="message"
+                          maxLength={300}
+                          rows={4}
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          {...field}
+                        />
                       </FormControl>
+                      <p className="text-xs text-neutral-500">Max 300 characters.</p>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div>
-                  <button
+                <FormField
+                  control={form.control}
+                  name="company_website"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <input
+                          type="text"
+                          id="company_website"
+                          style={{ display: "none" }}
+                          tabIndex={-1}
+                          autoComplete="off"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-4 pt-2">
+                  <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100"
+                    className="w-full rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20"
                   >
-                    {isSubmitting ? "Submitting..." : "Submit"}
-                  </button>
-                </div>
+                    {isSubmitting ? "Submitting..." : "Submit Official Contact Form"}
+                  </Button>
 
-                {submitError && (
-                  <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-4">
-                    <p className="text-sm font-medium text-red-800 dark:text-red-300">
+                  {submitError && (
+                    <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm text-red-300">
                       {submitError}
                     </p>
-                  </div>
-                )}
+                  )}
+                </div>
               </form>
-              
-              <div className="mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-800">
-                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">
-                  Looking to see how ACAI works?
-                </p>
-                <Link href="/schedule-demo">
-                  <Button variant="simple" className="w-full">
-                    Schedule a Demo
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-            </>
+            </Form>
           )}
-          <div className="flex items-center justify-center space-x-4 py-4">
-            {socials.map((social) => (
-              <Link href={social.href} key={social.title}>
-                {social.icon}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
-    </Form>
+
+      <div className="mt-8 text-center space-y-3">
+        <h3 className="text-xl font-semibold text-white">Not Ready to Contact Us?</h3>
+        <p className="text-sm text-neutral-300">Explore pricing tailored to your industry.</p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+          <Link href="/pricing?industry=plumbing" className="w-full sm:w-auto">
+            <Button className="w-full rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-300 hover:scale-105">
+              Check Plumbing Pricing
+            </Button>
+          </Link>
+          <Link href="/pricing?industry=barber" className="w-full sm:w-auto">
+            <Button className="w-full rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-300 hover:scale-105">
+              Check Barber Pricing
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
