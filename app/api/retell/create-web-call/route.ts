@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_BARBER;
         break;
       default:
-        RETELL_AGENT_ID = process.env.RETELL_AGENT_ID_ACAI;
+        RETELL_AGENT_ID = undefined;
     }
 
     console.log("[API] Selected agent ID for scenario:", scenario, "- Agent ID exists:", !!RETELL_AGENT_ID);

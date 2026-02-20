@@ -321,9 +321,6 @@ const useIsolatedDemo = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           scenario: config.scenario,
-          agentId: config.agentId,
-          voiceId: config.voiceId,
-          promptConfig: config.promptConfig,
         }),
       });
 
@@ -338,7 +335,7 @@ const useIsolatedDemo = ({
     } catch {
       return;
     }
-  }, [config.agentId, config.promptConfig, config.scenario, config.voiceId]);
+  }, [config.scenario]);
 
   const ensureClient = useCallback(() => {
     if (clientRef.current) return clientRef.current;
@@ -423,9 +420,6 @@ const useIsolatedDemo = ({
           signal: abortController.signal,
           body: JSON.stringify({
             scenario: config.scenario,
-            agentId: config.agentId,
-            voiceId: config.voiceId,
-            promptConfig: config.promptConfig,
           }),
         });
 
@@ -456,10 +450,7 @@ const useIsolatedDemo = ({
     }
   }, [
     activeDemo,
-    config.agentId,
-    config.promptConfig,
     config.scenario,
-    config.voiceId,
     demoId,
     ensureClient,
     isConnecting,
