@@ -180,7 +180,7 @@ export default function PlumbingPage() {
               Get Started
             </Button>
           </div>
-        </div>
+        </section>
       </Container>
     </div>
   );
