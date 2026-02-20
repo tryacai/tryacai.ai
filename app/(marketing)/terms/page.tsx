@@ -101,7 +101,7 @@ export default function TermsOfServicePage() {
               The Services may include service-related SMS communications such as appointment confirmations, scheduling updates, reminders, and two-way customer messaging.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              Customers must provide explicit consent before receiving recurring SMS messages. For phone-booked services, customers are informed they will receive a consent text message and must reply YES before appointment confirmations or reminders are sent.
+              Customers must provide explicit consent before receiving recurring SMS messages.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
               Message frequency may vary. Message and data rates may apply.
