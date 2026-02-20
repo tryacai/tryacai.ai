@@ -23,7 +23,7 @@ export default function SMSConsentPage() {
             </p>
 
             <p className="text-base leading-relaxed text-neutral-200 md:text-lg">
-              By submitting a form on tryacai.ai and selecting the SMS consent checkbox, or by texting <strong className="text-white">START</strong> to <strong className="text-white">(813) 535-4103</strong>, you agree to receive SMS messages from ACAI Enterprises LLC.
+              By submitting a form on tryacai.ai and selecting the SMS consent checkbox, or by texting <strong className="text-white">START</strong> to <strong className="text-white">(813) 535-4103</strong>, you consent to receive SMS messages from ACAI Enterprises LLC.
             </p>
 
             <ul className="list-disc space-y-2 pl-6 text-left text-neutral-200">
