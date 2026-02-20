@@ -349,17 +349,11 @@ export function ContactForm() {
       </div>
 
       <div className="mt-8 text-center space-y-3">
-        <h3 className="text-xl font-semibold text-white">Not Ready to Contact Us?</h3>
-        <p className="text-sm text-neutral-300">Explore pricing tailored to your industry.</p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
-          <Link href="/pricing?industry=plumbing" className="w-full sm:w-auto">
+        <h3 className="text-xl font-semibold text-white">Want to See Pricing First?</h3>
+        <div className="flex items-center justify-center pt-1">
+          <Link href="/pricing" className="w-full sm:w-auto">
             <Button className="w-full rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-300 hover:scale-105">
-              Check Plumbing Pricing
-            </Button>
-          </Link>
-          <Link href="/pricing?industry=barber" className="w-full sm:w-auto">
-            <Button className="w-full rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-300 hover:scale-105">
-              Check Barber Pricing
+              Check Your Industry&apos;s Pricing &amp; Packages
             </Button>
           </Link>
         </div>
