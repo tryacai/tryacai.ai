@@ -68,6 +68,30 @@ export default function TermsOfServicePage() {
             </ul>
           </section>
 
+          <section>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
+              ACAI Enterprises SMS Notifications Program
+            </h2>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              ACAI Enterprises LLC may send service-related SMS messages including demo confirmations, scheduling updates, onboarding notifications, and account support communications.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              Message frequency varies.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              Message and data rates may apply.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              Customers may opt out at any time by replying STOP.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              Customers may reply HELP for assistance.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
+              For support, contact support@tryacai.ai.
+            </p>
+          </section>
+
           {/* SMS Messaging Terms */}
           <section>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
@@ -218,8 +242,8 @@ export default function TermsOfServicePage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">Phone</p>
-                <a href="tel:8482539552" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
-                  848-253-9552
+                <a href="tel:8135354103" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
+                  (813) 535-4103
                 </a>
               </div>
             </div>

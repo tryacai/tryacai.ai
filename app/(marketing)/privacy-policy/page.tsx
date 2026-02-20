@@ -84,40 +84,16 @@ export default function PrivacyPolicyPage() {
               Our platform enables service-related SMS communications including appointment confirmations, scheduling updates, reminders, missed-call follow-ups, and limited post-service communications such as customer satisfaction or review requests.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              When a customer books service by phone, they are informed they will receive a text message requesting consent to receive appointment confirmations and reminders.
-            </p>
-            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              The first SMS message requires the customer to reply YES before receiving any recurring messages.
-            </p>
-            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              No recurring SMS messages are sent unless the customer replies YES to the opt-in request.
-            </p>
-            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
               Message frequency may vary. Message and data rates may apply.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
               Customers may opt out at any time by replying STOP. Customers may reply HELP for assistance.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              We do not sell, rent, or share phone numbers for third-party marketing purposes.
+              We do not sell or share personal information, including phone numbers, with third parties for marketing or promotional purposes.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
               If promotional or re-engagement messaging is introduced in the future (such as service reminders, seasonal offers, or lead revival campaigns), customers will be required to provide separate, explicit opt-in consent before receiving those messages.
-            </p>
-
-            <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-3 mt-8">
-              Verbal Consent Script
-            </h3>
-            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              When a customer books service by phone, the following disclosure is read:
-            </p>
-            <div className="bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 mt-4 mb-4">
-              <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed italic">
-                "Before we finish booking, you will receive a text message asking you to confirm you'd like to receive appointment confirmations and reminders from [Business Name]. Message frequency may vary. Message and data rates may apply. Reply YES to confirm or STOP to opt out."
-              </p>
-            </div>
-            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              Customers must reply YES before receiving any recurring appointment confirmations or reminders.
             </p>
           </section>
 
