@@ -49,37 +49,45 @@ export const MobileNavbar = ({ navItems }: any) => {
             </div>
           </div>
           <div className="flex flex-col items-start justify-start gap-[14px] px-8">
-            {navItems.map((navItem: any, idx: number) => (
-              <>
-                {navItem.children && navItem.children.length > 0 ? (
-                  <>
-                    {navItem.children.map((childNavItem: any, idx: number) => (
+            {navItems.map((navItem: any, idx: number) => {
+              if (navItem.children && navItem.children.length > 0) {
+                return (
+                  <div key={`group-${idx}`} className="flex flex-col items-start gap-2">
+                    <span className="text-base text-neutral-500 dark:text-neutral-400">
+                      {navItem.title}
+                    </span>
+                    {navItem.children.map((childNavItem: any, childIdx: number) => (
                       <Link
-                        key={`link=${idx}`}
+                        key={`child=${idx}-${childIdx}`}
                         href={childNavItem.link}
                         onClick={() => setOpen(false)}
-                        className="relative max-w-[15rem] text-left text-2xl"
+                        className={cn(
+                          "relative max-w-[15rem] text-left text-2xl",
+                          childNavItem.highlight && "mt-1 border-t border-neutral-300 pt-3 text-neutral-500"
+                        )}
                       >
-                        <span className="block text-black">
+                        <span className="block text-black dark:text-white">
                           {childNavItem.title}
                         </span>
                       </Link>
                     ))}
-                  </>
-                ) : (
-                  <Link
-                    key={`link=${idx}`}
-                    href={navItem.link}
-                    onClick={() => setOpen(false)}
-                    className="relative"
-                  >
-                    <span className="block text-[26px] text-black dark:text-white">
-                      {navItem.title}
-                    </span>
-                  </Link>
-                )}
-              </>
-            ))}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={`link=${idx}`}
+                  href={navItem.link}
+                  onClick={() => setOpen(false)}
+                  className="relative"
+                >
+                  <span className="block text-[26px] text-black dark:text-white">
+                    {navItem.title}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
           <div className="flex flex-row w-full items-start gap-2.5  px-8 py-4 ">
             <Button 

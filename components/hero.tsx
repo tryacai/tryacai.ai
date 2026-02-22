@@ -593,7 +593,7 @@ const PrimaryDemoCard = ({
             )}
           </div>
           <p className="text-base md:text-lg text-neutral-300 dark:text-neutral-400 mb-8">
-            This is our live AI receptionist handling real-time conversations. No scripts. Books directly into our calendar.
+            This live AI receptionist demonstrates all three pain points in one call flow: instant call pickup, emergency intent routing, and high-value lead capture with immediate booking.
           </p>
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
@@ -692,6 +692,11 @@ export const Hero = () => {
   const router = useRouter();
   const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
   const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
+  const painPoints = [
+    "Stop Running to the Phone",
+    "Stop Losing Emergency Calls",
+    "Stop Missing High-Value Leads",
+  ];
 
   const registerTerminator = useCallback((demo: DemoId, terminateFn: (() => Promise<void>) | null) => {
     if (terminateFn) {
@@ -757,6 +762,36 @@ export const Hero = () => {
           Reliable AI-powered solutions for service businesses.
         </Balancer>
       </motion.p>
+
+      <div className="mt-10 relative z-10 w-full max-w-5xl px-4 mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {painPoints.map((problem, index) => (
+            <motion.div
+              key={problem}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.18 + index * 0.12, ease: "easeOut" }}
+              className="relative rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm px-5 py-4 text-center"
+            >
+              <div className="text-sm md:text-base font-semibold text-white">{problem}</div>
+              <motion.div
+                initial={{ opacity: 0, scaleY: 0.4 }}
+                animate={{ opacity: 1, scaleY: 1 }}
+                transition={{ duration: 0.35, delay: 0.35 + index * 0.12, ease: "easeOut" }}
+                className="hidden md:block absolute left-1/2 -bottom-6 h-6 w-px -translate-x-1/2 bg-gradient-to-b from-purple-400/80 to-blue-400/0 origin-top"
+              />
+            </motion.div>
+          ))}
+        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.72 }}
+          className="mx-auto mt-7 w-fit rounded-full border border-white/10 bg-black/35 px-4 py-2 text-xs md:text-sm text-neutral-300"
+        >
+          Problems flow directly into the live ACAI demo below
+        </motion.div>
+      </div>
 
       {/* Primary Demo - Centered and Large */}
       <div className="mt-12 relative z-10 w-full">

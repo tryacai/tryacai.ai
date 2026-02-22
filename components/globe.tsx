@@ -1,10 +1,19 @@
 "use client";
 
 import createGlobe from "cobe";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Vec3 = { x: number; y: number; z: number };
 type TrailPoint = { x: number; y: number; t: number };
+type ClientPin = {
+  id: string;
+  businessName: string;
+  industry: string;
+  lat: number;
+  lon: number;
+  quote: string;
+  metrics: string[];
+};
 
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 
@@ -108,9 +117,18 @@ export const Globe = ({ className }: { className?: string }) => {
   const globeCanvasRef = useRef<HTMLCanvasElement>(null);
   const fxCanvasRef = useRef<HTMLCanvasElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const pinRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const rafRef = useRef<number | null>(null);
+  const logoParticleRef = useRef({
+    persistent: true,
+    priority: 999,
+    invalidFrameCount: 0,
+    lastValid: { x: 0, y: 0 },
+  });
+  const [hoveredPinId, setHoveredPinId] = useState<string | null>(null);
+  const [selectedPinId, setSelectedPinId] = useState<string | null>(null);
 
   const sceneRef = useRef({
     size: 720,
@@ -133,6 +151,80 @@ export const Globe = ({ className }: { className?: string }) => {
 
   // Slower, smoother
   const AUTO_PHI_SPEED = 0.0034;
+
+  const clientPins = useMemo<ClientPin[]>(
+    () => [
+      {
+        id: "atl-plumbing",
+        businessName: "Peachtree Plumbing Co.",
+        industry: "Plumbing",
+        lat: 33.749,
+        lon: -84.388,
+        quote: "ACAI captures every emergency call overnight and books priority dispatch before competitors call back.",
+        metrics: ["612 calls handled/month", "148 bookings/month", "31% faster dispatch response"],
+      },
+      {
+        id: "chi-hvac",
+        businessName: "Lakefront HVAC",
+        industry: "HVAC",
+        lat: 41.8781,
+        lon: -87.6298,
+        quote: "Missed-call recovery alone paid for ACAI in our first two weeks.",
+        metrics: ["487 calls handled/month", "122 recovered missed calls", "24% lift in booked estimates"],
+      },
+      {
+        id: "lon-medspa",
+        businessName: "Harbor Med Spa",
+        industry: "Med Spa",
+        lat: 51.5072,
+        lon: -0.1276,
+        quote: "Our front desk stays focused while ACAI books consultations around the clock.",
+        metrics: ["355 calls handled/month", "96 consult bookings/month", "18% reactivation rate uplift"],
+      },
+      {
+        id: "sao-roofing",
+        businessName: "Prime Peak Roofing",
+        industry: "Roofing",
+        lat: -23.5505,
+        lon: -46.6333,
+        quote: "Storm spikes no longer overwhelm us—ACAI triages every inbound lead instantly.",
+        metrics: ["740 calls handled/month", "201 inspections booked", "43% fewer abandoned calls"],
+      },
+      {
+        id: "jhb-pest",
+        businessName: "Urban Shield Pest",
+        industry: "Pest Control",
+        lat: -26.2041,
+        lon: 28.0473,
+        quote: "We stopped losing high-intent callers after hours and now convert them automatically.",
+        metrics: ["298 calls handled/month", "89 service bookings/month", "27% conversion lift"],
+      },
+      {
+        id: "sin-barber",
+        businessName: "Crownline Barbers",
+        industry: "Barbers",
+        lat: 1.3521,
+        lon: 103.8198,
+        quote: "Walk-ins are great, but ACAI keeps our chairs full with always-on phone booking.",
+        metrics: ["264 calls handled/month", "173 appointments booked", "22% fewer no-shows"],
+      },
+      {
+        id: "syd-detailing",
+        businessName: "Harbor Auto Detailing",
+        industry: "Detailing",
+        lat: -33.8688,
+        lon: 151.2093,
+        quote: "Our estimate follow-up runs itself now, so our team can stay in the bay.",
+        metrics: ["221 calls handled/month", "72 estimate follow-ups automated", "19% booking increase"],
+      },
+    ],
+    []
+  );
+
+  const selectedPin = useMemo(
+    () => clientPins.find((pin) => pin.id === selectedPinId) ?? null,
+    [clientPins, selectedPinId]
+  );
 
   const markers = useMemo(
     () => [
@@ -255,6 +347,10 @@ export const Globe = ({ className }: { className?: string }) => {
     });
 
     const continentVecs = continentDots.map(([lat, lon]) => latLonToWorld(lat, lon));
+    const pinVectors = clientPins.map((pin) => ({
+      id: pin.id,
+      world: latLonToWorld(pin.lat, pin.lon),
+    }));
 
     // 6 smooth patterns, blended at end of each segment
     const orbitPatterns: Array<(t: number) => Vec3> = [
@@ -391,8 +487,37 @@ export const Globe = ({ className }: { className?: string }) => {
       const world = getOrbitWorld(elapsedS);
       const projected = project(world);
 
-      // show sooner after behind
-      const visible = projected.rotated.z > -0.35;
+      const logoParticle = logoParticleRef.current;
+      const isInvalidLogoPoint =
+        !Number.isFinite(projected.sx) ||
+        !Number.isFinite(projected.sy) ||
+        projected.sx < -sceneRef.current.size ||
+        projected.sx > sceneRef.current.size * 2 ||
+        projected.sy < -sceneRef.current.size ||
+        projected.sy > sceneRef.current.size * 2;
+
+      let logoScreenX = projected.sx;
+      let logoScreenY = projected.sy;
+
+      if (isInvalidLogoPoint) {
+        logoParticle.invalidFrameCount += 1;
+        if (logoParticle.invalidFrameCount > 2) {
+          const fallbackProjected = project(latLonToWorld(20, -30));
+          logoScreenX = Number.isFinite(fallbackProjected.sx)
+            ? fallbackProjected.sx
+            : sceneRef.current.center;
+          logoScreenY = Number.isFinite(fallbackProjected.sy)
+            ? fallbackProjected.sy
+            : sceneRef.current.center;
+          logoParticle.invalidFrameCount = 0;
+        } else {
+          logoScreenX = logoParticle.lastValid.x || sceneRef.current.center;
+          logoScreenY = logoParticle.lastValid.y || sceneRef.current.center;
+        }
+      } else {
+        logoParticle.lastValid = { x: projected.sx, y: projected.sy };
+        logoParticle.invalidFrameCount = 0;
+      }
 
       // trail keeps running and stays cinematic
       trailRef.current.push({ x: projected.sx, y: projected.sy, t: now });
@@ -406,8 +531,21 @@ export const Globe = ({ className }: { className?: string }) => {
       // logo follows same projected point
       const logoEl = logoRef.current;
       if (logoEl) {
-        logoEl.style.opacity = visible ? "1" : "0";
-        logoEl.style.transform = `translate(${projected.sx - LOGO_HALF}px, ${projected.sy - LOGO_HALF}px)`;
+        logoEl.dataset.persistent = String(logoParticle.persistent);
+        logoEl.dataset.priority = String(logoParticle.priority);
+        logoEl.style.opacity = "1";
+        logoEl.style.transform = `translate(${logoScreenX - LOGO_HALF}px, ${logoScreenY - LOGO_HALF}px)`;
+      }
+
+      for (const pin of pinVectors) {
+        const pinEl = pinRefs.current[pin.id];
+        if (!pinEl) continue;
+        const pinProjected = project(pin.world);
+        const pinVisible = pinProjected.rotated.z > 0.08;
+
+        pinEl.style.opacity = pinVisible ? "1" : "0";
+        pinEl.style.pointerEvents = pinVisible ? "auto" : "none";
+        pinEl.style.transform = `translate(${pinProjected.sx - 9}px, ${pinProjected.sy - 9}px)`;
       }
 
       drawFx(now);
@@ -465,6 +603,34 @@ export const Globe = ({ className }: { className?: string }) => {
       {/* FX above globe */}
       <canvas ref={fxCanvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 10 }} />
 
+      {clientPins.map((pin) => {
+        const isHovered = hoveredPinId === pin.id;
+        return (
+          <button
+            key={pin.id}
+            ref={(el) => {
+              pinRefs.current[pin.id] = el;
+            }}
+            onMouseEnter={() => setHoveredPinId(pin.id)}
+            onMouseLeave={() => setHoveredPinId((current) => (current === pin.id ? null : current))}
+            onFocus={() => setHoveredPinId(pin.id)}
+            onBlur={() => setHoveredPinId((current) => (current === pin.id ? null : current))}
+            onClick={() => setSelectedPinId(pin.id)}
+            className="absolute h-[18px] w-[18px] rounded-full border border-purple-300/80 bg-gradient-to-r from-purple-500 to-blue-500 shadow-[0_0_18px_rgba(168,85,247,0.8)] transition-transform duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-purple-400"
+            style={{ zIndex: 30, opacity: 0, transform: "translate(-9999px,-9999px)" }}
+            aria-label={`${pin.businessName} testimonial pin`}
+          >
+            <span className="absolute inset-0 rounded-full bg-purple-400/50 animate-ping" />
+            <span className="absolute inset-[3px] rounded-full bg-white/90" />
+            {isHovered && (
+              <span className="absolute left-1/2 top-[-10px] -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md border border-white/10 bg-neutral-950/95 px-3 py-1 text-[11px] text-neutral-100 shadow-lg">
+                {pin.businessName} · {pin.industry}
+              </span>
+            )}
+          </button>
+        );
+      })}
+
       {/* Logo above everything */}
       <div
         ref={logoRef}
@@ -473,7 +639,7 @@ export const Globe = ({ className }: { className?: string }) => {
           width: LOGO_SIZE,
           height: LOGO_SIZE,
           willChange: "transform, opacity",
-          zIndex: 20,
+          zIndex: 50,
         }}
       >
         <div
@@ -494,6 +660,49 @@ export const Globe = ({ className }: { className?: string }) => {
           }}
         />
       </div>
+
+      {selectedPin && (
+        <div
+          className="absolute inset-0 z-[60] flex items-center justify-center bg-black/55 px-4"
+          onClick={() => setSelectedPinId(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-white/10 bg-neutral-950/95 p-6 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-purple-300">{selectedPin.industry}</p>
+                <h3 className="text-lg font-semibold text-white">{selectedPin.businessName}</h3>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-sm font-semibold text-white flex items-center justify-center">
+                {selectedPin.businessName
+                  .split(" ")
+                  .slice(0, 2)
+                  .map((part) => part[0])
+                  .join("")}
+              </div>
+            </div>
+
+            <p className="mt-4 text-sm text-neutral-300">“{selectedPin.quote}”</p>
+
+            <div className="mt-4 space-y-2">
+              {selectedPin.metrics.map((metric) => (
+                <p key={metric} className="text-sm text-neutral-200">
+                  • {metric}
+                </p>
+              ))}
+            </div>
+
+            <button
+              className="mt-6 inline-flex rounded-full border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/10"
+              onClick={() => setSelectedPinId(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

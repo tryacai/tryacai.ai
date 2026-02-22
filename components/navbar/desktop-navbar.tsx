@@ -3,6 +3,7 @@ import { Logo } from "../Logo";
 import { Button } from "../button";
 import { NavBarItem } from "./navbar-item";
 import { Phone } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   useMotionValueEvent,
   useScroll,
@@ -12,17 +13,20 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "next-view-transitions";
+import { usePathname } from "next/navigation";
 
 type Props = {
   navItems: {
     link: string;
     title: string;
     target?: "_blank";
+    children?: { link: string; title: string; highlight?: boolean }[];
   }[];
 };
 
 export const DesktopNavbar = ({ navItems }: Props) => {
   const { scrollY } = useScroll();
+  const pathname = usePathname();
 
   const [showBackground, setShowBackground] = useState(false);
 
@@ -57,11 +61,50 @@ export const DesktopNavbar = ({ navItems }: Props) => {
       <div className="flex flex-row gap-2 items-center">
         <Logo />
         <div className="flex items-center gap-2 ml-4">
-          {navItems.map((item) => (
-            <NavBarItem href={item.link} key={item.title} target={item.target}>
-              {item.title}
-            </NavBarItem>
-          ))}
+          {navItems.map((item) => {
+            if (item.children?.length) {
+              return (
+                <div key={item.title} className="relative group">
+                  <button
+                    type="button"
+                    className="flex items-center justify-center text-sm leading-[110%] px-4 py-2 rounded-md hover:bg-[#F5F5F5] dark:hover:bg-neutral-800 hover:text-black text-muted dark:text-muted-dark"
+                  >
+                    {item.title}
+                    <ChevronDown className="ml-1 h-3.5 w-3.5" />
+                  </button>
+                  <div className="pointer-events-none absolute left-0 top-full z-50 pt-2 opacity-0 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100">
+                    <div className="w-64 rounded-xl border border-white/10 bg-neutral-950/95 p-2 shadow-2xl">
+                      {item.children.map((child) => {
+                        const isActive = pathname === child.link;
+                        const isPricingLink = !!child.highlight;
+                        return (
+                          <Link
+                            key={child.title}
+                            href={child.link}
+                            className={cn(
+                              "block rounded-md px-3 py-2 text-sm transition-colors",
+                              isPricingLink
+                                ? "mt-1 border-t border-white/10 pt-3 text-neutral-400 hover:text-white"
+                                : "text-neutral-200 hover:bg-white/10 hover:text-white",
+                              isActive && "bg-white/10 text-white"
+                            )}
+                          >
+                            {child.title}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <NavBarItem href={item.link} key={item.title} target={item.target}>
+                {item.title}
+              </NavBarItem>
+            );
+          })}
         </div>
       </div>
       <div className="flex space-x-2 items-center">
