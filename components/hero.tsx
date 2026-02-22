@@ -222,39 +222,66 @@ const TypewriterHeadline = () => {
         ease: "easeOut",
         duration: 0.5,
       }}
-      className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10 whitespace-nowrap"
+      className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10 whitespace-nowrap min-h-[1.2em]"
     >
       {/* Render prefix in solid white and suffix with one continuous gradient span */}
       {(() => {
         const base = "Never Miss a ";
         const baseLen = base.length;
+        const fixedPhrase = "Never Miss a Call Again";
         const prefix = text.slice(0, Math.min(text.length, baseLen)).replace(/ /g, "\u00A0");
         const suffix = text.length > baseLen ? text.slice(baseLen).replace(/ /g, "\u00A0") : "";
         return (
-          <span>
-            <span className="text-white inline-block">{prefix}</span>
-            {suffix && (
-              <span
-                className="inline-block bg-gradient-to-r from-red-500 via-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
-                style={{
-                  filter:
-                    "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
-                }}
+          <span className="relative inline-block">
+            <span className="invisible inline-block">{fixedPhrase.replace(/ /g, "\u00A0")}</span>
+            <span className="absolute left-0 top-0">
+              <span className="text-white inline-block">{prefix}</span>
+              {suffix && (
+                <span
+                  className="inline-block bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+                  style={{
+                    filter:
+                      "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+                  }}
+                >
+                  {suffix}
+                </span>
+              )}
+              <motion.span
+                className="inline-block ml-1 align-baseline"
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
               >
-                {suffix}
-              </span>
-            )}
-            <motion.span
-              className="inline-block ml-1 align-baseline"
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
-            >
-              |
-            </motion.span>
+                |
+              </motion.span>
+            </span>
           </span>
         );
       })()}
     </motion.h1>
+  );
+};
+
+type EnergyPathProps = {
+  d: string;
+  active: boolean;
+};
+
+const EnergyPath = ({ d, active }: EnergyPathProps) => {
+  return (
+    <>
+      <motion.path
+        d={d}
+        fill="none"
+        stroke="url(#energyGradient)"
+        strokeWidth={active ? 2.8 : 2}
+        strokeLinecap="round"
+        strokeDasharray="7 11"
+        animate={{ strokeDashoffset: [0, -30], opacity: active ? 1 : 0.65 }}
+        transition={{ duration: active ? 1 : 1.8, repeat: Infinity, ease: "linear" }}
+      />
+      <path d={d} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={1.2} strokeLinecap="round" />
+    </>
   );
 };
 
@@ -691,6 +718,7 @@ const SecondaryDemoCard = ({
 export const Hero = () => {
   const router = useRouter();
   const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
+  const [hoveredPainPoint, setHoveredPainPoint] = useState<number | null>(null);
   const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
   const painPoints = [
     "Stop Running to the Phone",
@@ -771,18 +799,37 @@ export const Hero = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.18 + index * 0.12, ease: "easeOut" }}
-              className="relative rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm px-5 py-4 text-center"
+              onMouseEnter={() => setHoveredPainPoint(index)}
+              onMouseLeave={() => setHoveredPainPoint(null)}
+              className="relative rounded-2xl border border-white/20 bg-black/55 backdrop-blur-sm px-5 py-4 text-center shadow-[0_0_12px_rgba(59,130,246,0.18)]"
             >
-              <div className="text-sm md:text-base font-semibold text-white">{problem}</div>
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 via-purple-500/10 to-blue-500/10" />
+              <div className="relative z-10 text-sm md:text-base font-semibold text-white">{problem}</div>
               <motion.div
                 initial={{ opacity: 0, scaleY: 0.4 }}
-                animate={{ opacity: 1, scaleY: 1 }}
+                animate={{ opacity: hoveredPainPoint === index ? 1 : 0.8, scaleY: 1 }}
                 transition={{ duration: 0.35, delay: 0.35 + index * 0.12, ease: "easeOut" }}
-                className="hidden md:block absolute left-1/2 -bottom-6 h-6 w-px -translate-x-1/2 bg-gradient-to-b from-purple-400/80 to-blue-400/0 origin-top"
+                className="hidden md:block absolute left-1/2 -bottom-6 h-6 w-px -translate-x-1/2 bg-gradient-to-b from-red-400/80 via-purple-400/80 to-blue-400/0 origin-top"
               />
             </motion.div>
           ))}
         </div>
+
+        <div className="hidden md:block relative mt-1 h-24 pointer-events-none">
+          <svg viewBox="0 0 100 100" className="h-full w-full">
+            <defs>
+              <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#ef4444" />
+                <stop offset="52%" stopColor="#7b00ff" />
+                <stop offset="100%" stopColor="#2563eb" />
+              </linearGradient>
+            </defs>
+            <EnergyPath d="M16 2 C16 30, 28 52, 50 95" active={hoveredPainPoint === 0} />
+            <EnergyPath d="M50 2 C50 36, 50 62, 50 95" active={hoveredPainPoint === 1} />
+            <EnergyPath d="M84 2 C84 30, 72 52, 50 95" active={hoveredPainPoint === 2} />
+          </svg>
+        </div>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

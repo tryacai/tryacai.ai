@@ -5,7 +5,6 @@ import { CTA } from "@/components/cta";
 import { SectionDivider } from "@/components/section-divider";
 import { SupportedIndustries } from "@/components/supported-industries";
 import { SolutionSection } from "@/components/solution-section";
-import { CoreProblem } from "@/components/core-problem";
 import { ScalingLadder } from "@/components/scaling-ladder";
 import { InfrastructureSection } from "@/components/infrastructure-section";
 
@@ -21,10 +20,6 @@ export default function Home() {
         <Hero />
 
         <SolutionSection />
-        
-        <SectionDivider />
-        
-        <CoreProblem />
         
         <SectionDivider />
         

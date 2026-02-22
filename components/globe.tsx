@@ -155,67 +155,22 @@ export const Globe = ({ className }: { className?: string }) => {
   const clientPins = useMemo<ClientPin[]>(
     () => [
       {
-        id: "atl-plumbing",
-        businessName: "Peachtree Plumbing Co.",
+        id: "nj-plumbing",
+        businessName: "Joe's Plumbing",
         industry: "Plumbing",
-        lat: 33.749,
-        lon: -84.388,
-        quote: "ACAI captures every emergency call overnight and books priority dispatch before competitors call back.",
-        metrics: ["612 calls handled/month", "148 bookings/month", "31% faster dispatch response"],
+        lat: 40.7357,
+        lon: -74.1724,
+        quote: "ACAI made after-hours emergency calls a non-issue for our team. We book jobs while we're still on-site.",
+        metrics: ["281 calls handled/month", "73 emergency bookings/month", "29% faster first-response"],
       },
       {
-        id: "chi-hvac",
-        businessName: "Lakefront HVAC",
-        industry: "HVAC",
-        lat: 41.8781,
-        lon: -87.6298,
-        quote: "Missed-call recovery alone paid for ACAI in our first two weeks.",
-        metrics: ["487 calls handled/month", "122 recovered missed calls", "24% lift in booked estimates"],
-      },
-      {
-        id: "lon-medspa",
-        businessName: "Harbor Med Spa",
-        industry: "Med Spa",
-        lat: 51.5072,
-        lon: -0.1276,
-        quote: "Our front desk stays focused while ACAI books consultations around the clock.",
-        metrics: ["355 calls handled/month", "96 consult bookings/month", "18% reactivation rate uplift"],
-      },
-      {
-        id: "sao-roofing",
-        businessName: "Prime Peak Roofing",
-        industry: "Roofing",
-        lat: -23.5505,
-        lon: -46.6333,
-        quote: "Storm spikes no longer overwhelm us—ACAI triages every inbound lead instantly.",
-        metrics: ["740 calls handled/month", "201 inspections booked", "43% fewer abandoned calls"],
-      },
-      {
-        id: "jhb-pest",
-        businessName: "Urban Shield Pest",
-        industry: "Pest Control",
-        lat: -26.2041,
-        lon: 28.0473,
-        quote: "We stopped losing high-intent callers after hours and now convert them automatically.",
-        metrics: ["298 calls handled/month", "89 service bookings/month", "27% conversion lift"],
-      },
-      {
-        id: "sin-barber",
-        businessName: "Crownline Barbers",
+        id: "midwest-barber",
+        businessName: "Main Street Barbers",
         industry: "Barbers",
-        lat: 1.3521,
-        lon: 103.8198,
-        quote: "Walk-ins are great, but ACAI keeps our chairs full with always-on phone booking.",
-        metrics: ["264 calls handled/month", "173 appointments booked", "22% fewer no-shows"],
-      },
-      {
-        id: "syd-detailing",
-        businessName: "Harbor Auto Detailing",
-        industry: "Detailing",
-        lat: -33.8688,
-        lon: 151.2093,
-        quote: "Our estimate follow-up runs itself now, so our team can stay in the bay.",
-        metrics: ["221 calls handled/month", "72 estimate follow-ups automated", "19% booking increase"],
+        lat: 39.0997,
+        lon: -94.5786,
+        quote: "Our missed-call text-backs and instant booking flow now run automatically, even during rush windows.",
+        metrics: ["198 calls handled/month", "112 appointments booked/month", "21% fewer lost callers"],
       },
     ],
     []
@@ -224,48 +179,6 @@ export const Globe = ({ className }: { className?: string }) => {
   const selectedPin = useMemo(
     () => clientPins.find((pin) => pin.id === selectedPinId) ?? null,
     [clientPins, selectedPinId]
-  );
-
-  const markers = useMemo(
-    () => [
-      { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
-      { name: "Newark, NJ", lat: 40.7357, lon: -74.1724 },
-      { name: "London", lat: 51.5072, lon: -0.1276 },
-      { name: "Tokyo", lat: 35.6764, lon: 139.65 },
-      { name: "Sydney", lat: -33.8688, lon: 151.2093 },
-    ],
-    []
-  );
-
-  const continentDots = useMemo(
-    () =>
-      [
-        [49, -123],
-        [39, -98],
-        [28, -82],
-        [19, -99],
-        [-23, -46],
-        [-34, -58],
-        [52, 10],
-        [46, 2],
-        [41, 29],
-        [31, 35],
-        [30, 31],
-        [6, 3],
-        [-1, 36],
-        [-26, 28],
-        [55, 37],
-        [23, 78],
-        [35, 104],
-        [1, 104],
-        [36, 139],
-        [14, 121],
-        [-6, 107],
-        [-33, 151],
-        [64, -20],
-        [-41, 174],
-      ] as Array<[number, number]>,
-    []
   );
 
   useEffect(() => {
@@ -322,10 +235,7 @@ export const Globe = ({ className }: { className?: string }) => {
       baseColor: [0.25, 0.25, 0.25],
       markerColor: [0.66, 0.24, 1],
       glowColor: [0.5, 0.35, 1],
-      markers: markers.map((m) => ({
-        location: [m.lat, m.lon] as [number, number],
-        size: m.name.includes("Newark") ? 0.075 : 0.06,
-      })),
+      markers: [],
       onRender: (state) => {
         // continuous, no resets
         phiRef.current += AUTO_PHI_SPEED;
@@ -346,7 +256,6 @@ export const Globe = ({ className }: { className?: string }) => {
       },
     });
 
-    const continentVecs = continentDots.map(([lat, lon]) => latLonToWorld(lat, lon));
     const pinVectors = clientPins.map((pin) => ({
       id: pin.id,
       world: latLonToWorld(pin.lat, pin.lon),
@@ -435,40 +344,6 @@ export const Globe = ({ className }: { className?: string }) => {
           fxCtx.shadowColor = `rgba(59,130,246,${alpha * 0.85})`;
           fxCtx.stroke();
         }
-      }
-
-      // dot glow as trail passes
-      const recent = pts.slice(-28);
-      for (const dot of continentVecs) {
-        const projected = project(dot);
-        if (projected.rotated.z <= 0) continue;
-
-        let glow = 0;
-        for (const tp of recent) {
-          const dist = Math.hypot(tp.x - projected.sx, tp.y - projected.sy);
-          const age = Math.max(0, 1 - (now - tp.t) / TRAIL_DECAY);
-          const influence = Math.exp(-(dist * dist) / (2 * 22 * 22)) * Math.pow(age, 1.2);
-          glow = Math.max(glow, influence);
-        }
-
-        const g = clamp(glow, 0, 1);
-        const baseAlpha = 0.14 + g * 0.28;
-
-        if (g > 0.04) {
-          const grad = fxCtx.createRadialGradient(projected.sx, projected.sy, 0, projected.sx, projected.sy, 18 + g * 18);
-          grad.addColorStop(0, `rgba(168,85,247,${0.34 * g})`);
-          grad.addColorStop(0.55, `rgba(59,130,246,${0.26 * g})`);
-          grad.addColorStop(1, "rgba(59,130,246,0)");
-          fxCtx.fillStyle = grad;
-          fxCtx.beginPath();
-          fxCtx.arc(projected.sx, projected.sy, 18 + g * 18, 0, Math.PI * 2);
-          fxCtx.fill();
-        }
-
-        fxCtx.beginPath();
-        fxCtx.arc(projected.sx, projected.sy, 1.9 + g * 2.0, 0, Math.PI * 2);
-        fxCtx.fillStyle = `rgba(205,214,230,${baseAlpha})`;
-        fxCtx.fill();
       }
 
       fxCtx.restore();
@@ -565,38 +440,10 @@ export const Globe = ({ className }: { className?: string }) => {
       }
       globe.destroy();
     };
-  }, [continentDots, markers]);
-
-  const stars = useMemo(
-    () =>
-      Array.from({ length: 26 }).map((_, index) => ({
-        id: `star-${index}`,
-        top: (index * 29) % 100,
-        left: (index * 53) % 100,
-        size: (index % 3) + 1,
-        opacity: 0.18 + (index % 5) * 0.04,
-      })),
-    []
-  );
+  }, [clientPins]);
 
   return (
     <div ref={containerRef} className={`relative aspect-square w-full max-w-[900px] mx-auto ${className || ""}`}>
-      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
-        {stars.map((star) => (
-          <span
-            key={star.id}
-            className="absolute rounded-full bg-white/60"
-            style={{
-              top: `${star.top}%`,
-              left: `${star.left}%`,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              opacity: star.opacity,
-            }}
-          />
-        ))}
-      </div>
-
       {/* Globe at the bottom */}
       <canvas ref={globeCanvasRef} className="absolute inset-0" style={{ zIndex: 0 }} />
 
@@ -616,12 +463,13 @@ export const Globe = ({ className }: { className?: string }) => {
             onFocus={() => setHoveredPinId(pin.id)}
             onBlur={() => setHoveredPinId((current) => (current === pin.id ? null : current))}
             onClick={() => setSelectedPinId(pin.id)}
-            className="absolute h-[18px] w-[18px] rounded-full border border-purple-300/80 bg-gradient-to-r from-purple-500 to-blue-500 shadow-[0_0_18px_rgba(168,85,247,0.8)] transition-transform duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="group absolute h-6 w-6 transition-all duration-200 ease-out focus:outline-none"
             style={{ zIndex: 30, opacity: 0, transform: "translate(-9999px,-9999px)" }}
             aria-label={`${pin.businessName} testimonial pin`}
           >
-            <span className="absolute inset-0 rounded-full bg-purple-400/50 animate-ping" />
-            <span className="absolute inset-[3px] rounded-full bg-white/90" />
+            <span className="absolute inset-0 rounded-full bg-white/30 blur-[2px] animate-pulse group-hover:bg-white/50" />
+            <span className="absolute left-1/2 top-[2px] h-[14px] w-[14px] -translate-x-1/2 rounded-full border border-white/90 bg-white/95 shadow-[0_0_18px_rgba(255,255,255,0.85)] group-hover:shadow-[0_0_24px_rgba(255,255,255,1)] group-hover:scale-110 transition-all duration-200" />
+            <span className="absolute left-1/2 top-[13px] h-[8px] w-[8px] -translate-x-1/2 rotate-45 border-r border-b border-white/90 bg-white/95" />
             {isHovered && (
               <span className="absolute left-1/2 top-[-10px] -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md border border-white/10 bg-neutral-950/95 px-3 py-1 text-[11px] text-neutral-100 shadow-lg">
                 {pin.businessName} · {pin.industry}
