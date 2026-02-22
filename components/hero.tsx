@@ -265,22 +265,47 @@ const TypewriterHeadline = () => {
 type EnergyPathProps = {
   d: string;
   active: boolean;
+  pulseDuration: number;
 };
 
-const EnergyPath = ({ d, active }: EnergyPathProps) => {
+const EnergyPath = ({ d, active, pulseDuration }: EnergyPathProps) => {
   return (
     <>
+      <path
+        d={d}
+        fill="none"
+        stroke="rgba(37,99,235,0.16)"
+        strokeWidth={active ? 9 : 7}
+        strokeLinecap="round"
+        className="transition-all duration-300"
+      />
       <motion.path
         d={d}
         fill="none"
         stroke="url(#energyGradient)"
-        strokeWidth={active ? 2.8 : 2}
+        strokeWidth={active ? 4.2 : 3.2}
         strokeLinecap="round"
-        strokeDasharray="7 11"
-        animate={{ strokeDashoffset: [0, -30], opacity: active ? 1 : 0.65 }}
-        transition={{ duration: active ? 1 : 1.8, repeat: Infinity, ease: "linear" }}
+        animate={{ opacity: active ? [0.85, 1, 0.85] : [0.62, 0.82, 0.62] }}
+        transition={{ duration: active ? 1.1 : 1.8, repeat: Infinity, ease: "easeInOut" }}
       />
-      <path d={d} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={1.2} strokeLinecap="round" />
+      <motion.path
+        d={d}
+        fill="none"
+        stroke="rgba(255,255,255,0.72)"
+        strokeWidth={active ? 1.9 : 1.2}
+        strokeLinecap="round"
+        animate={{ opacity: active ? [0.2, 0.65, 0.2] : [0.06, 0.25, 0.06] }}
+        transition={{ duration: active ? 0.9 : 1.4, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <g>
+        <circle r={active ? 2.8 : 2.2} fill="#ffffff" opacity={active ? 0.95 : 0.75}>
+          <animateMotion dur={`${pulseDuration}s`} repeatCount="indefinite" path={d} />
+        </circle>
+        <circle r={active ? 6.6 : 5.1} fill="url(#energyGradient)" opacity={active ? 0.28 : 0.18}>
+          <animateMotion dur={`${pulseDuration}s`} repeatCount="indefinite" path={d} />
+        </circle>
+      </g>
     </>
   );
 };
@@ -824,9 +849,9 @@ export const Hero = () => {
                 <stop offset="100%" stopColor="#2563eb" />
               </linearGradient>
             </defs>
-            <EnergyPath d="M16 2 C16 30, 28 52, 50 95" active={hoveredPainPoint === 0} />
-            <EnergyPath d="M50 2 C50 36, 50 62, 50 95" active={hoveredPainPoint === 1} />
-            <EnergyPath d="M84 2 C84 30, 72 52, 50 95" active={hoveredPainPoint === 2} />
+            <EnergyPath d="M16 2 C16 30, 28 52, 50 95" active={hoveredPainPoint === 0} pulseDuration={2.3} />
+            <EnergyPath d="M50 2 C50 36, 50 62, 50 95" active={hoveredPainPoint === 1} pulseDuration={2.45} />
+            <EnergyPath d="M84 2 C84 30, 72 52, 50 95" active={hoveredPainPoint === 2} pulseDuration={2.6} />
           </svg>
         </div>
 
