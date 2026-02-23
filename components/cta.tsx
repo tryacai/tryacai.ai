@@ -30,7 +30,7 @@ export const CTA = () => {
               </h2>
 
               <div className="relative z-10 mx-auto flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
-                <Link href="/schedule-demo">
+                <Link href="/contact">
                   <button className="group relative px-8 py-4 text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50">
                     {/* Gradient background */}
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-red-600 transition-all duration-300 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-red-500"></div>
@@ -40,7 +40,7 @@ export const CTA = () => {
                     
                     {/* Button text */}
                     <span className="relative z-10 flex items-center gap-2">
-                      Schedule Demo
+                      Book Demo
                       <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>

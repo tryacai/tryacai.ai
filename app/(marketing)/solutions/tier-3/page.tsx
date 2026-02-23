@@ -81,7 +81,7 @@ export default function TierThreePage() {
         >
           <p className="text-sm uppercase tracking-[0.14em] text-amber-100">Premium • Controlled • Confident</p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button as={Link} href="/schedule-demo" className="rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff]">
+            <Button as={Link} href="/contact" className="rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff]">
               Request Priority Consultation
             </Button>
             <Button as={Link} href="/pricing" variant="simple" className="rounded-full border-neutral-600 text-white hover:border-neutral-300">

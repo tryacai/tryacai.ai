@@ -81,7 +81,7 @@ export const ScalingLadder = () => {
                   Learn More
                 </Link>
                 <Link
-                  href="/schedule-demo"
+                  href="/contact"
                   className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#ff1a1a] via-[#a100ff] to-[#004cff] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-all duration-150 ease-out hover:shadow-lg hover:scale-105"
                 >
                   Get Started

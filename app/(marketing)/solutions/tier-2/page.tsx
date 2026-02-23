@@ -81,7 +81,7 @@ export default function TierTwoPage() {
             <Button as={Link} href="/pricing" variant="simple" className="rounded-full">
               See Industry Pricing
             </Button>
-            <Button as={Link} href="/schedule-demo" className="rounded-full">
+            <Button as={Link} href="/contact" className="rounded-full">
               Schedule Demo
             </Button>
           </div>

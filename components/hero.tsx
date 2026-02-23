@@ -45,7 +45,7 @@ const demoConfigs: Record<DemoId, DemoConfig> = {
   },
 };
 
-const TypewriterText = () => {
+const TypewriterText = ({ startTyping }: { startTyping: boolean }) => {
   const [text, setText] = useState("");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const phrases = [
@@ -56,13 +56,25 @@ const TypewriterText = () => {
   ];
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const hasStartedRef = useRef(false);
 
   useEffect(() => {
+    if (!startTyping) {
+      return;
+    }
+
+    if (!hasStartedRef.current) {
+      hasStartedRef.current = true;
+      setCurrentPhraseIndex(0);
+      setText("");
+      setIsDeleting(false);
+    }
+
     const currentPhrase = phrases[currentPhraseIndex];
-    const typingSpeed = 250; // Slightly faster typing speed for better readability
-    const deletingSpeed = 100; // Faster deletion
-    const pauseAfterTyping = 2000; // Pause for 2 seconds after typing completes
-    const pauseAfterDeleting = 500; // Brief pause after deletion before next phrase
+    const typingSpeed = 140;
+    const deletingSpeed = 85;
+    const pauseAfterTyping = 1100;
+    const pauseAfterDeleting = 220;
 
     const typeOrDelete = () => {
       if (!isDeleting) {
@@ -94,13 +106,13 @@ const TypewriterText = () => {
 
     const timer = setTimeout(
       typeOrDelete,
-      currentPhraseIndex === 0 && text === "" ? 1000 : (isDeleting ? deletingSpeed : typingSpeed)
+      currentPhraseIndex === 0 && text === "" ? 140 : (isDeleting ? deletingSpeed : typingSpeed)
     );
 
     return () => {
       clearTimeout(timer);
     };
-  }, [text, isDeleting, currentPhraseIndex]);
+  }, [text, isDeleting, currentPhraseIndex, startTyping]);
 
   return (
     <motion.div
@@ -144,15 +156,27 @@ const TypewriterText = () => {
   );
 };
 
-const TypewriterHeadline = () => {
+const TypewriterHeadline = ({
+  onFirstWordComplete,
+}: {
+  onFirstWordComplete: () => void;
+}) => {
   const [text, setText] = useState("");
-  const [phase, setPhase] = useState<"typing-call" | "pause-call" | "deleting" | "typing-job" | "pause-job">("typing-call");
+  const [phase, setPhase] = useState<
+    "typing-call" |
+    "pause-call" |
+    "deleting-call" |
+    "typing-job" |
+    "pause-job" |
+    "deleting-job"
+  >("typing-call");
+  const notifiedFirstWordRef = useRef(false);
 
   useEffect(() => {
-    const typingSpeed = 250; // Match existing typewriter speed
-    const deletingSpeed = 100; // Match existing deletion speed
-    const pauseAfterTyping = 2000; // Pause for 2 seconds after typing completes
-    const pauseBeforeDeleting = 500; // Brief pause before starting to delete
+    const typingSpeed = 120;
+    const deletingSpeed = 65;
+    const pauseAfterTyping = 420;
+    const pauseBeforeDeleting = 200;
 
     const fullPhraseCall = "Never Miss a Call Again";
     const fullPhraseJob = "Never Miss a Job Again";
@@ -164,16 +188,20 @@ const TypewriterHeadline = () => {
           if (text.length < fullPhraseCall.length) {
             setText(fullPhraseCall.slice(0, text.length + 1));
           } else {
+            if (!notifiedFirstWordRef.current) {
+              notifiedFirstWordRef.current = true;
+              onFirstWordComplete();
+            }
             setTimeout(() => setPhase("pause-call"), pauseAfterTyping);
             return;
           }
           break;
 
         case "pause-call":
-          setTimeout(() => setPhase("deleting"), pauseBeforeDeleting);
+          setTimeout(() => setPhase("deleting-call"), pauseBeforeDeleting);
           return;
 
-        case "deleting":
+        case "deleting-call":
           if (text.length > basePhrase.length) {
             setText(text.slice(0, -1));
           } else {
@@ -192,21 +220,29 @@ const TypewriterHeadline = () => {
           break;
 
         case "pause-job":
-          setTimeout(() => {
-            setText(basePhrase);
+          setTimeout(() => setPhase("deleting-job"), pauseBeforeDeleting);
+          return;
+
+        case "deleting-job":
+          if (text.length > basePhrase.length) {
+            setText(text.slice(0, -1));
+          } else {
             setPhase("typing-call");
-          }, pauseAfterTyping);
+            return;
+          }
           return;
       }
     };
 
     const timer = setTimeout(
       animate,
-      phase === "deleting" ? deletingSpeed : typingSpeed
+      phase === "deleting-call" || phase === "deleting-job"
+        ? deletingSpeed
+        : typingSpeed
     );
 
     return () => clearTimeout(timer);
-  }, [text, phase]);
+  }, [text, phase, onFirstWordComplete]);
 
   return (
     <motion.h1
@@ -744,6 +780,7 @@ export const Hero = () => {
   const router = useRouter();
   const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
   const [hoveredPainPoint, setHoveredPainPoint] = useState<number | null>(null);
+  const [startSublineTyping, setStartSublineTyping] = useState(false);
   const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
   const painPoints = [
     "Stop Running to the Phone",
@@ -793,8 +830,8 @@ export const Hero = () => {
           </span>
         </Badge>
       </motion.div>
-      <TypewriterHeadline />
-      <TypewriterText />
+      <TypewriterHeadline onFirstWordComplete={() => setStartSublineTyping(true)} />
+      <TypewriterText startTyping={startSublineTyping} />
       <motion.p
         initial={{
           y: 40,

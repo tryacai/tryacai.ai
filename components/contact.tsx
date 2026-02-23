@@ -156,6 +156,7 @@ export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [booking, setBooking] = useState<BookingDetails | null>(null);
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
 
   const readyToBook = form.watch("readyToBook");
   const tierPreference = form.watch("tierPreference");
@@ -173,6 +174,7 @@ export function ContactForm() {
       }
 
       setBooking(parsed);
+      setIsCalendarModalOpen(false);
       setSubmitError(null);
     }
 
@@ -183,8 +185,11 @@ export function ContactForm() {
   useEffect(() => {
     if (!readyToBook) {
       setBooking(null);
+      setIsCalendarModalOpen(false);
+    } else if (!booking?.eventId) {
+      setIsCalendarModalOpen(true);
     }
-  }, [readyToBook]);
+  }, [readyToBook, booking?.eventId]);
 
   const submitDisabled = isSubmitting || (readyToBook && !booking?.eventId);
   const messageCount = useMemo(() => watchedMessage.length, [watchedMessage]);
@@ -232,6 +237,7 @@ export function ContactForm() {
 
       setSubmitted(true);
       setBooking(null);
+      setIsCalendarModalOpen(false);
       form.reset({
         name: "",
         email: "",
@@ -278,48 +284,6 @@ export function ContactForm() {
           ) : (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit as (values: ContactFormValues) => Promise<void>)} className="space-y-6">
-                <section className="space-y-3 rounded-xl border border-white/10 bg-black/30 p-4">
-                  <p className="text-sm font-semibold text-white">Choose your tier preference</p>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {tierOptions.map((option) => {
-                      const selected = tierPreference === option.key;
-
-                      return (
-                        <motion.button
-                          key={option.key}
-                          type="button"
-                          onClick={() => form.setValue("tierPreference", option.key)}
-                          animate={{ y: selected ? 4 : 0 }}
-                          transition={{ duration: 0.2, ease: "easeOut" }}
-                          className={`text-left rounded-lg border px-4 py-3 transition-all duration-200 ${
-                            selected
-                              ? "border-transparent bg-gradient-to-r from-red-500/30 via-purple-500/30 to-blue-500/30 shadow-[0_0_14px_rgba(168,85,247,0.45)]"
-                              : "border-white/15 bg-neutral-950 hover:border-white/30"
-                          }`}
-                        >
-                          <span className="text-sm font-semibold text-white">{option.label}</span>
-                          <AnimatePresence initial={false}>
-                            {selected && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="overflow-hidden"
-                              >
-                                <p className="mt-2 text-xs text-neutral-200">{option.description}</p>
-                                <Link href={option.href} className="mt-2 inline-block text-xs text-purple-300 underline underline-offset-4 hover:text-white">
-                                  See more about this tier
-                                </Link>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </section>
-
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <FormField
                     control={form.control}
@@ -471,6 +435,74 @@ export function ContactForm() {
                   />
                 </div>
 
+                <section className="space-y-3 rounded-xl border border-white/10 bg-black/30 p-4">
+                  <p className="text-sm font-semibold text-white">Choose your tier preference</p>
+
+                  <div className="mx-auto grid max-w-xl grid-cols-3 gap-3">
+                    {tierOptions
+                      .filter((option) => option.key !== "unsure")
+                      .map((option) => {
+                        const selected = tierPreference === option.key;
+
+                        return (
+                          <motion.button
+                            key={option.key}
+                            type="button"
+                            onClick={() => form.setValue("tierPreference", option.key)}
+                            whileTap={{ scale: 0.98 }}
+                            animate={{ y: selected ? -3 : 0 }}
+                            transition={{ duration: 0.18, ease: "easeOut" }}
+                            className={`rounded-lg border px-3 py-2 text-center text-sm font-semibold transition-all duration-200 ${
+                              selected
+                                ? "border-transparent bg-gradient-to-r from-red-500/35 via-purple-500/35 to-blue-500/35 text-white shadow-[0_0_12px_rgba(168,85,247,0.35)]"
+                                : "border-white/15 bg-neutral-950 text-neutral-200 hover:border-white/30"
+                            }`}
+                          >
+                            {option.label}
+                          </motion.button>
+                        );
+                      })}
+                  </div>
+
+                  {(() => {
+                    const unsure = tierOptions.find((option) => option.key === "unsure")!;
+                    const selected = tierPreference === unsure.key;
+
+                    return (
+                      <div className="flex justify-center">
+                        <motion.button
+                          type="button"
+                          onClick={() => form.setValue("tierPreference", unsure.key)}
+                          whileTap={{ scale: 0.98 }}
+                          animate={{ y: selected ? -2 : 0 }}
+                          transition={{ duration: 0.18, ease: "easeOut" }}
+                          className={`rounded-md border px-4 py-1.5 text-xs font-medium transition-all duration-200 ${
+                            selected
+                              ? "border-transparent bg-gradient-to-r from-red-500/25 via-purple-500/25 to-blue-500/25 text-white shadow-[0_0_10px_rgba(168,85,247,0.28)]"
+                              : "border-white/20 bg-neutral-950 text-neutral-300 hover:border-white/35"
+                          }`}
+                        >
+                          {unsure.label}
+                        </motion.button>
+                      </div>
+                    );
+                  })()}
+
+                  <div className="rounded-lg border border-white/10 bg-black/25 px-3 py-2 text-center">
+                    <p className="text-xs text-neutral-200">
+                      {tierOptions.find((option) => option.key === tierPreference)?.key === "unsure"
+                        ? "I'll help you choose the right level based on your team and call volume."
+                        : tierOptions.find((option) => option.key === tierPreference)?.description}
+                    </p>
+                    <Link
+                      href={tierOptions.find((option) => option.key === tierPreference)?.href || "/solutions"}
+                      className="mt-1 inline-block text-xs text-purple-300 underline underline-offset-4 hover:text-white"
+                    >
+                      See more about this tier
+                    </Link>
+                  </div>
+                </section>
+
                 <FormField
                   control={form.control}
                   name="message"
@@ -559,14 +591,13 @@ export function ContactForm() {
 
                 {readyToBook && (
                   <div className="space-y-3 rounded-xl border border-white/10 bg-black/30 p-4">
-                    <div className="overflow-hidden rounded-lg border border-white/10">
-                      <iframe
-                        src="https://cal.com/tryacai.ai/30min?embed=true"
-                        title="Book your ACAI live demo"
-                        className="w-full"
-                        style={{ minHeight: "640px" }}
-                      />
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsCalendarModalOpen(true)}
+                      className="w-full rounded-lg border border-white/20 bg-neutral-950 px-4 py-2 text-sm font-medium text-white transition hover:border-white/40"
+                    >
+                      {booking?.eventId ? "Review booking" : "Open calendar"}
+                    </button>
                     {!booking?.eventId ? (
                       <p className="text-xs text-amber-300">Complete your booking to enable submission.</p>
                     ) : (
@@ -616,6 +647,40 @@ export function ContactForm() {
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {isCalendarModalOpen && readyToBook && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/75 p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="relative w-full max-w-4xl overflow-hidden rounded-2xl border border-white/15 bg-neutral-950 shadow-2xl"
+            >
+              <button
+                type="button"
+                aria-label="Close calendar"
+                onClick={() => setIsCalendarModalOpen(false)}
+                className="absolute right-3 top-3 z-10 rounded-full border border-white/20 bg-black/50 px-2.5 py-1 text-sm text-white hover:border-white/40"
+              >
+                ✕
+              </button>
+              <iframe
+                src="https://cal.com/tryacai.ai/30min?embed=true"
+                title="Book your ACAI live demo"
+                className="w-full"
+                style={{ minHeight: "700px" }}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

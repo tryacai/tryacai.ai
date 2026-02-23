@@ -16,7 +16,6 @@ export default function ContactPage() {
   return (
     <div className="relative overflow-hidden bg-gray-50 dark:bg-black">
       <Background />
-      <HorizontalGradient className="top-20" />
       <HorizontalGradient className="bottom-20" />
       <div className="relative z-20 mx-auto max-w-2xl px-6 py-24">
         <div className="text-center mb-10 space-y-4">

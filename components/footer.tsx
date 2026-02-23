@@ -9,8 +9,8 @@ export const Footer = () => {
       href: "/pricing",
     },
     {
-      name: "Schedule Demo",
-      href: "/schedule-demo",
+      name: "Book Demo",
+      href: "/contact",
     },
     {
       name: "Blog",
