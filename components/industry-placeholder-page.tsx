@@ -3,6 +3,7 @@ import { Button } from "@/components/button";
 import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { Subheading } from "@/components/subheading";
+import { getIndustryPricing, tierOrder } from "@/constants/pricing-config";
 import { Link } from "next-view-transitions";
 import { CalendarCheck2, MessageSquareReply, PhoneCall, Star } from "lucide-react";
 
@@ -207,23 +208,40 @@ const industryContentMap: Record<string, IndustryContent> = {
   },
 };
 
-const pricingTiers = [
+const fallbackPricingTiers = [
   {
     name: "Basic",
     price: "$299",
+    bestFor: "Best for smaller teams",
     features: ["24/7 call answering", "Missed-call text back", "Calendar booking"],
   },
   {
-    name: "Pro",
+    name: "Growth",
     price: "$599",
+    bestFor: "Best for growing operations",
     features: ["Everything in Basic", "Estimate follow-up automation", "Review request automation"],
   },
   {
     name: "Enterprise",
     price: "$1199",
+    bestFor: "Best for high-volume teams",
     features: ["Everything in Pro", "Advanced routing logic", "Priority support + scaling"],
   },
 ];
+
+function getIndustryKeyFromName(industryName: string): string | null {
+  const normalized = industryName.toLowerCase();
+
+  if (normalized === "barbers") return "barbers";
+  if (normalized === "plumbing" || normalized === "hvac") return "plumbing-hvac";
+  if (normalized === "roofing") return "roofing";
+  if (normalized === "mechanics") return "mechanics";
+  if (normalized === "detailing") return "detailing";
+  if (normalized === "cleaning") return "cleaning";
+  if (normalized === "electricians") return "electricians";
+
+  return null;
+}
 
 const solutionCards = [
   {
@@ -253,6 +271,12 @@ const solutionCards = [
 ];
 
 export function IndustryPlaceholderPage({ industryName }: IndustryPlaceholderPageProps) {
+  const industryKey = getIndustryKeyFromName(industryName);
+  const mappedPricing = industryKey ? getIndustryPricing(industryKey) : null;
+  const pricingTiers = mappedPricing
+    ? tierOrder.map((tierKey) => mappedPricing.tiers[tierKey])
+    : fallbackPricingTiers;
+
   const content = industryContentMap[industryName] ?? {
     hero: `AI Receptionist Built for ${industryName} Teams`,
     valueProp:
@@ -329,12 +353,20 @@ export function IndustryPlaceholderPage({ industryName }: IndustryPlaceholderPag
           <h2 className="bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] bg-clip-text text-2xl font-semibold text-transparent md:text-3xl">
             Tier Breakdown for {industryName} Teams
           </h2>
+          {mappedPricing?.positioningText && (
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-neutral-300">
+              {mappedPricing.positioningText}
+            </p>
+          )}
           <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
             {pricingTiers.map((tier) => (
               <div key={tier.name} className="rounded-2xl border border-white/10 bg-black/40 p-5 text-left">
                 <h3 className="text-lg font-semibold text-white">
                   {tier.name} <span className="text-neutral-300">({tier.price})</span>
                 </h3>
+                {"bestFor" in tier && tier.bestFor ? (
+                  <p className="mt-2 text-sm font-medium text-neutral-300">{tier.bestFor}</p>
+                ) : null}
                 <ul className="mt-3 space-y-2 text-sm text-neutral-300">
                   {tier.features.map((feature) => (
                     <li key={feature}>• {feature}</li>
