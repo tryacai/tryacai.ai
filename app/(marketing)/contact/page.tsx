@@ -1,7 +1,7 @@
 import { Background } from "@/components/background";
 import { Metadata } from "next";
 import { HorizontalGradient } from "@/components/horizontal-gradient";
-import { ContactForm } from "@/components/contact";
+import { ContactForm } from "../../../components/contact";
 
 export const metadata: Metadata = {
   title: "Contact Us - ACAI AI",
@@ -21,13 +21,10 @@ export default function ContactPage() {
       <div className="relative z-20 mx-auto max-w-2xl px-6 py-24">
         <div className="text-center mb-10 space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
-            Let’s See If ACAI Is a Fit For You
+            Book or Connect with ACAI
           </h1>
           <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-300">
-            Fill this out so we can evaluate your business.
-          </p>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            To move forward, you’ll need to fill out the official contact form on our website.
+            Not ready to book? Submit your details and we’ll reach out. Ready now? Choose a time below.
           </p>
         </div>
         <div id="contact-form" className="scroll-mt-24">
