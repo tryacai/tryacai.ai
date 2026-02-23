@@ -7,30 +7,27 @@ import { Link } from "next-view-transitions";
 const levels = [
   {
     level: "TIER 1",
-    title: "AI Receptionist",
-    headline: "Never Miss Another Call.",
+    title: "Capture",
+    headline: "Never Miss Another Opportunity.",
     shortDescription:
-      "24/7 AI receptionist that answers calls instantly, qualifies leads, and routes bookings so you never lose revenue to voicemail.",
-    bestFit: "Solo operators & small teams (1–3 people)",
-    learnMoreLink: "/solutions/tier-1",
+      "Instant pickup, basic qualification, and booking handoff that keeps your pipeline full.",
+    learnMoreLink: "/solutions",
   },
   {
     level: "TIER 2",
-    title: "Follow-Ups + Review Automation",
-    headline: "Recover Revenue Automatically.",
+    title: "Recover",
+    headline: "Revenue Doesn&apos;t Slip Through Cracks.",
     shortDescription:
-      "Missed-call text recovery, automated estimate follow-ups, and review generation that turns one-time customers into repeat business.",
-    bestFit: "Growing teams (4–10 people)",
-    learnMoreLink: "/solutions/tier-2",
+      "Recover missed calls, automate follow-ups, and build reputation without manual effort.",
+    learnMoreLink: "/solutions",
   },
   {
     level: "TIER 3",
-    title: "Full AI Infrastructure + Quote Routing",
+    title: "Optimize",
     headline: "White-Glove Infrastructure.",
     shortDescription:
-      "Advanced routing, multi-location orchestration, quote logic, and dedicated optimization support for serious operators.",
-    bestFit: "Established & multi-location companies",
-    learnMoreLink: "/solutions/tier-3",
+      "Custom routing, multi-location orchestration, and dedicated optimization for serious operators.",
+    learnMoreLink: "/solutions",
   },
 ];
 
@@ -38,8 +35,11 @@ export const ScalingLadder = () => {
   return (
     <section className="relative z-20 py-10 lg:py-20 w-full">
       <Heading as="h2" size="md">
-        The ACAI Growth Ladder
+        The ACAI System
       </Heading>
+      <p className="mt-3 text-center text-sm text-neutral-600 dark:text-neutral-400 md:text-base">
+        One infrastructure. Three levels of capability.
+      </p>
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         {levels.map((item, index) => (
@@ -71,9 +71,6 @@ export const ScalingLadder = () => {
               </div>
               <div className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 min-h-[6rem]">
                 {item.shortDescription}
-              </div>
-              <div className="mt-3 text-xs uppercase tracking-[0.12em] text-neutral-500 dark:text-neutral-400">
-                Best Fit: {item.bestFit}
               </div>
 
               <div className="mt-6 flex flex-col gap-3">

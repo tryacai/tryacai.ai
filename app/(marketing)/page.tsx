@@ -19,12 +19,12 @@ export default function Home() {
       <Container className="flex min-h-screen flex-col items-center justify-between">
         <Hero />
 
-        <SolutionSection />
-        
-        <SectionDivider />
-        
         <ScalingLadder />
-        
+
+        <SectionDivider />
+
+        <SolutionSection />
+
         <SectionDivider />
         
         <SupportedIndustries />

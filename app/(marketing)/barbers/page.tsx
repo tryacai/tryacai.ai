@@ -73,6 +73,19 @@ export default function BarbersPage() {
             </Button>
           </div>
         </section>
+
+        <section className="relative z-20 mx-auto mt-10 w-full max-w-5xl rounded-2xl border border-white/10 bg-black/35 p-7 text-center">
+          <h2 className="text-2xl font-semibold text-white">Powered by the ACAI System</h2>
+          <p className="mx-auto mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Capture every inbound booking chance, recover missed callers with smart follow-up,
+            and optimize routing as your shop scales.
+          </p>
+          <div className="mt-6 flex justify-center">
+            <Button as={Link} href="/solutions" variant="simple" className="rounded-full">
+              Explore Capture → Recover → Optimize
+            </Button>
+          </div>
+        </section>
       </Container>
     </div>
   );

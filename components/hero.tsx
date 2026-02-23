@@ -274,8 +274,8 @@ const EnergyPath = ({ d, active, pulseDuration }: EnergyPathProps) => {
       <path
         d={d}
         fill="none"
-        stroke="rgba(37,99,235,0.16)"
-        strokeWidth={active ? 9 : 7}
+        stroke="rgba(37,99,235,0.26)"
+        strokeWidth={active ? 11 : 9}
         strokeLinecap="round"
         className="transition-all duration-300"
       />
@@ -283,7 +283,7 @@ const EnergyPath = ({ d, active, pulseDuration }: EnergyPathProps) => {
         d={d}
         fill="none"
         stroke="url(#energyGradient)"
-        strokeWidth={active ? 4.2 : 3.2}
+        strokeWidth={active ? 5.4 : 4.2}
         strokeLinecap="round"
         animate={{ opacity: active ? [0.85, 1, 0.85] : [0.62, 0.82, 0.62] }}
         transition={{ duration: active ? 1.1 : 1.8, repeat: Infinity, ease: "easeInOut" }}
@@ -826,15 +826,15 @@ export const Hero = () => {
               transition={{ duration: 0.35, delay: 0.18 + index * 0.12, ease: "easeOut" }}
               onMouseEnter={() => setHoveredPainPoint(index)}
               onMouseLeave={() => setHoveredPainPoint(null)}
-              className="relative rounded-2xl border border-white/20 bg-black/55 backdrop-blur-sm px-5 py-4 text-center shadow-[0_0_12px_rgba(59,130,246,0.18)]"
+              className="relative rounded-2xl border border-white/25 bg-black/55 backdrop-blur-sm px-6 py-5 text-center shadow-[0_0_16px_rgba(59,130,246,0.22)]"
             >
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 via-purple-500/10 to-blue-500/10" />
-              <div className="relative z-10 text-sm md:text-base font-semibold text-white">{problem}</div>
+              <div className="relative z-10 text-base md:text-lg font-semibold text-white">{problem}</div>
               <motion.div
                 initial={{ opacity: 0, scaleY: 0.4 }}
                 animate={{ opacity: hoveredPainPoint === index ? 1 : 0.8, scaleY: 1 }}
                 transition={{ duration: 0.35, delay: 0.35 + index * 0.12, ease: "easeOut" }}
-                className="hidden md:block absolute left-1/2 -bottom-6 h-6 w-px -translate-x-1/2 bg-gradient-to-b from-red-400/80 via-purple-400/80 to-blue-400/0 origin-top"
+                className="hidden md:block absolute left-1/2 -bottom-8 h-8 w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-red-400/90 via-purple-400/90 to-blue-400/0 origin-top"
               />
             </motion.div>
           ))}
@@ -859,9 +859,30 @@ export const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.72 }}
-          className="mx-auto mt-7 w-fit rounded-full border border-white/10 bg-black/35 px-4 py-2 text-xs md:text-sm text-neutral-300"
+          className="mx-auto mt-7 w-fit rounded-full border border-white/15 bg-black/35 px-5 py-2 text-xs md:text-sm text-neutral-200"
         >
-          Problems flow directly into the live ACAI demo below
+          Watch how ACAI handles it live.
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.82 }}
+          className="mx-auto mt-4 flex w-fit flex-col items-center pointer-events-none"
+        >
+          <div className="h-10 w-[3px] rounded-full bg-gradient-to-b from-purple-400/70 via-blue-400/80 to-transparent" />
+          <motion.div
+            animate={{ y: [0, 4, 0], opacity: [0.65, 1, 0.65], scale: [1, 1.08, 1] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+            className="-mt-1 text-lg text-blue-300"
+          >
+            ↓
+          </motion.div>
+          <motion.div
+            animate={{ opacity: [0.35, 0.65, 0.35] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="h-7 w-28 rounded-full bg-gradient-to-r from-red-500/15 via-purple-500/25 to-blue-500/15 blur-md"
+          />
         </motion.div>
       </div>
 
