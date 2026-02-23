@@ -45,74 +45,108 @@ const demoConfigs: Record<DemoId, DemoConfig> = {
   },
 };
 
-const TypewriterText = ({ startTyping }: { startTyping: boolean }) => {
+const TypewriterText = ({
+  syncCycle,
+  deleteSignal,
+  onWithAcaiHoldComplete,
+}: {
+  syncCycle: number;
+  deleteSignal: number;
+  onWithAcaiHoldComplete: () => void;
+}) => {
   const [text, setText] = useState("");
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const phrases = [
-    "With ACAI",
-    "24/7 AI Call Answering",
-    "Instant Scheduling",
-    "Guaranteed ROI",
-  ];
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const hasStartedRef = useRef(false);
+  const secondaryPhrases = ["24/7 AI Call Answering", "Instant Scheduling", "Guaranteed ROI"];
+  const [phase, setPhase] = useState<
+    | "typing-with-acai"
+    | "holding-with-acai"
+    | "waiting-delete"
+    | "deleting-with-acai"
+    | "typing-secondary"
+    | "holding-secondary"
+    | "deleting-secondary"
+  >("typing-with-acai");
+  const [secondaryPhraseIndex, setSecondaryPhraseIndex] = useState(0);
+  const lastDeleteSignalRef = useRef(deleteSignal);
+  const lastCycleRef = useRef(syncCycle);
 
   useEffect(() => {
-    if (!startTyping) {
-      return;
-    }
-
-    if (!hasStartedRef.current) {
-      hasStartedRef.current = true;
-      setCurrentPhraseIndex(0);
+    if (lastCycleRef.current !== syncCycle) {
+      lastCycleRef.current = syncCycle;
       setText("");
-      setIsDeleting(false);
+      setPhase("typing-with-acai");
+      setSecondaryPhraseIndex(0);
     }
 
-    const currentPhrase = phrases[currentPhraseIndex];
-    const typingSpeed = 140;
-    const deletingSpeed = 85;
-    const pauseAfterTyping = 1100;
-    const pauseAfterDeleting = 220;
+    if (lastDeleteSignalRef.current !== deleteSignal && phase === "waiting-delete") {
+      lastDeleteSignalRef.current = deleteSignal;
+      setPhase("deleting-with-acai");
+    }
+  }, [syncCycle, deleteSignal, phase]);
 
-    const typeOrDelete = () => {
-      if (!isDeleting) {
-        // Typing
-        if (text.length < currentPhrase.length) {
-          setText(currentPhrase.slice(0, text.length + 1));
-        } else {
-          // Finished typing, pause then start deleting
-          setTimeout(() => {
-            setIsDeleting(true);
-          }, pauseAfterTyping);
-          return;
-        }
+  useEffect(() => {
+    const withAcai = "With ACAI";
+    const secondaryPhrase = secondaryPhrases[secondaryPhraseIndex];
+    const withAcaiTypingSpeed = 105;
+    const normalTypingSpeed = 125;
+    const deletingSpeed = 90;
+    const withAcaiHold = 3500;
+    const secondaryHold = 1000;
+
+    let timer: NodeJS.Timeout;
+
+    if (phase === "typing-with-acai") {
+      if (text.length < withAcai.length) {
+        timer = setTimeout(
+          () => setText(withAcai.slice(0, text.length + 1)),
+          withAcaiTypingSpeed
+        );
       } else {
-        // Deleting
-        if (text.length > 0) {
-          setText(text.slice(0, -1));
-        } else {
-          // Finished deleting, move to next phrase
-          setIsDeleting(false);
-          setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
-          setTimeout(() => {
-            // Small pause before typing next phrase
-          }, pauseAfterDeleting);
-          return;
-        }
+        timer = setTimeout(() => {
+          setPhase("holding-with-acai");
+        }, withAcaiHold);
       }
-    };
-
-    const timer = setTimeout(
-      typeOrDelete,
-      currentPhraseIndex === 0 && text === "" ? 140 : (isDeleting ? deletingSpeed : typingSpeed)
-    );
+    } else if (phase === "holding-with-acai") {
+      onWithAcaiHoldComplete();
+      setPhase("waiting-delete");
+    } else if (phase === "deleting-with-acai") {
+      if (text.length > 0) {
+        timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
+      } else {
+        setPhase("typing-secondary");
+      }
+    } else if (phase === "typing-secondary") {
+      if (text.length < secondaryPhrase.length) {
+        timer = setTimeout(
+          () => setText(secondaryPhrase.slice(0, text.length + 1)),
+          normalTypingSpeed
+        );
+      } else {
+        timer = setTimeout(() => setPhase("holding-secondary"), secondaryHold);
+      }
+    } else if (phase === "holding-secondary") {
+      setPhase("deleting-secondary");
+    } else if (phase === "deleting-secondary") {
+      if (text.length > 0) {
+        timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
+      } else {
+        const nextIdx = (secondaryPhraseIndex + 1) % secondaryPhrases.length;
+        setSecondaryPhraseIndex(nextIdx);
+        setPhase("typing-secondary");
+      }
+    }
 
     return () => {
-      clearTimeout(timer);
+      if (timer) {
+        clearTimeout(timer);
+      }
     };
-  }, [text, isDeleting, currentPhraseIndex, startTyping]);
+  }, [
+    phase,
+    secondaryPhraseIndex,
+    text,
+    onWithAcaiHoldComplete,
+    secondaryPhrases,
+  ]);
 
   return (
     <motion.div
@@ -133,8 +167,6 @@ const TypewriterText = ({ startTyping }: { startTyping: boolean }) => {
             style={{
               marginLeft: char === " " ? "0.5em" : undefined,
             }}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
             whileHover={{
               y: -4,
               scale: 1.1,
@@ -157,92 +189,91 @@ const TypewriterText = ({ startTyping }: { startTyping: boolean }) => {
 };
 
 const TypewriterHeadline = ({
-  onFirstWordComplete,
+  canDelete,
+  onWordTyped,
+  onDeleteStarted,
 }: {
-  onFirstWordComplete: () => void;
+  canDelete: boolean;
+  onWordTyped: () => void;
+  onDeleteStarted: () => void;
 }) => {
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<
     "typing-call" |
     "pause-call" |
+    "waiting-delete-call" |
     "deleting-call" |
     "typing-job" |
     "pause-job" |
+    "waiting-delete-job" |
     "deleting-job"
   >("typing-call");
-  const notifiedFirstWordRef = useRef(false);
 
   useEffect(() => {
     const typingSpeed = 120;
-    const deletingSpeed = 65;
-    const pauseAfterTyping = 420;
-    const pauseBeforeDeleting = 200;
+    const deletingSpeed = 95;
+    const pauseAfterTyping = 2500;
 
     const fullPhraseCall = "Never Miss a Call Again";
     const fullPhraseJob = "Never Miss a Job Again";
     const basePhrase = "Never Miss a ";
 
-    const animate = () => {
-      switch (phase) {
-        case "typing-call":
-          if (text.length < fullPhraseCall.length) {
-            setText(fullPhraseCall.slice(0, text.length + 1));
-          } else {
-            if (!notifiedFirstWordRef.current) {
-              notifiedFirstWordRef.current = true;
-              onFirstWordComplete();
-            }
-            setTimeout(() => setPhase("pause-call"), pauseAfterTyping);
-            return;
-          }
-          break;
+    let timer: NodeJS.Timeout;
 
-        case "pause-call":
-          setTimeout(() => setPhase("deleting-call"), pauseBeforeDeleting);
-          return;
-
-        case "deleting-call":
-          if (text.length > basePhrase.length) {
-            setText(text.slice(0, -1));
-          } else {
-            setPhase("typing-job");
-            return;
-          }
-          break;
-
-        case "typing-job":
-          if (text.length < fullPhraseJob.length) {
-            setText(fullPhraseJob.slice(0, text.length + 1));
-          } else {
-            setTimeout(() => setPhase("pause-job"), pauseAfterTyping);
-            return;
-          }
-          break;
-
-        case "pause-job":
-          setTimeout(() => setPhase("deleting-job"), pauseBeforeDeleting);
-          return;
-
-        case "deleting-job":
-          if (text.length > basePhrase.length) {
-            setText(text.slice(0, -1));
-          } else {
-            setPhase("typing-call");
-            return;
-          }
-          return;
+    if (phase === "typing-call") {
+      if (text.length < fullPhraseCall.length) {
+        timer = setTimeout(
+          () => setText(fullPhraseCall.slice(0, text.length + 1)),
+          typingSpeed
+        );
+      } else {
+        onWordTyped();
+        timer = setTimeout(() => setPhase("pause-call"), pauseAfterTyping);
       }
+    } else if (phase === "pause-call") {
+      setPhase("waiting-delete-call");
+    } else if (phase === "waiting-delete-call") {
+      if (canDelete) {
+        onDeleteStarted();
+        setPhase("deleting-call");
+      }
+    } else if (phase === "deleting-call") {
+      if (text.length > basePhrase.length) {
+        timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
+      } else {
+        setPhase("typing-job");
+      }
+    } else if (phase === "typing-job") {
+      if (text.length < fullPhraseJob.length) {
+        timer = setTimeout(
+          () => setText(fullPhraseJob.slice(0, text.length + 1)),
+          typingSpeed
+        );
+      } else {
+        onWordTyped();
+        timer = setTimeout(() => setPhase("pause-job"), pauseAfterTyping);
+      }
+    } else if (phase === "pause-job") {
+      setPhase("waiting-delete-job");
+    } else if (phase === "waiting-delete-job") {
+      if (canDelete) {
+        onDeleteStarted();
+        setPhase("deleting-job");
+      }
+    } else if (phase === "deleting-job") {
+        if (text.length > 0) {
+        if (text.length > basePhrase.length) {
+          timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
+        } else {
+          setPhase("typing-call");
+        }
+      }
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
     };
-
-    const timer = setTimeout(
-      animate,
-      phase === "deleting-call" || phase === "deleting-job"
-        ? deletingSpeed
-        : typingSpeed
-    );
-
-    return () => clearTimeout(timer);
-  }, [text, phase, onFirstWordComplete]);
+  }, [text, phase, canDelete, onWordTyped, onDeleteStarted]);
 
   return (
     <motion.h1
@@ -781,6 +812,9 @@ export const Hero = () => {
   const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
   const [hoveredPainPoint, setHoveredPainPoint] = useState<number | null>(null);
   const [startSublineTyping, setStartSublineTyping] = useState(false);
+  const [typingSyncCycle, setTypingSyncCycle] = useState(0);
+  const [headlineCanDelete, setHeadlineCanDelete] = useState(false);
+  const [headlineDeleteSignal, setHeadlineDeleteSignal] = useState(0);
   const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
   const painPoints = [
     "Stop Running to the Phone",
@@ -807,6 +841,23 @@ export const Hero = () => {
     [activeDemo]
   );
 
+  const handleHeadlineWordTyped = useCallback(() => {
+    setTypingSyncCycle((previous) => previous + 1);
+    setHeadlineCanDelete(false);
+    if (!startSublineTyping) {
+      setStartSublineTyping(true);
+    }
+  }, [startSublineTyping]);
+
+  const handleWithAcaiHoldComplete = useCallback(() => {
+    setHeadlineCanDelete(true);
+  }, []);
+
+  const handleHeadlineDeleteStarted = useCallback(() => {
+    setHeadlineDeleteSignal((previous) => previous + 1);
+    setHeadlineCanDelete(false);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen pt-20 md:pt-40 relative overflow-hidden">
       <motion.div
@@ -830,8 +881,18 @@ export const Hero = () => {
           </span>
         </Badge>
       </motion.div>
-      <TypewriterHeadline onFirstWordComplete={() => setStartSublineTyping(true)} />
-      <TypewriterText startTyping={startSublineTyping} />
+      <TypewriterHeadline
+        canDelete={headlineCanDelete}
+        onWordTyped={handleHeadlineWordTyped}
+        onDeleteStarted={handleHeadlineDeleteStarted}
+      />
+      {startSublineTyping && (
+        <TypewriterText
+          syncCycle={typingSyncCycle}
+          deleteSignal={headlineDeleteSignal}
+          onWithAcaiHoldComplete={handleWithAcaiHoldComplete}
+        />
+      )}
       <motion.p
         initial={{
           y: 40,
@@ -856,24 +917,85 @@ export const Hero = () => {
       <div className="mt-10 relative z-10 w-full max-w-5xl px-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {painPoints.map((problem, index) => (
+            (() => {
+              const cardDelay = 0.18 + index * 0.3;
+              const settleDuration = 0.9;
+              const glowDelay = cardDelay + settleDuration - 0.05;
+              const branchDelay = cardDelay + settleDuration + 0.12;
+
+              return (
             <motion.div
               key={problem}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.18 + index * 0.12, ease: "easeOut" }}
+              initial={{ opacity: 0, x: -260, scale: 0.97 }}
+              animate={{ opacity: [0, 1, 1], x: [-260, 16, 0], scale: [0.97, 1.015, 1] }}
+              transition={{
+                duration: settleDuration,
+                delay: cardDelay,
+                ease: [0.2, 0.9, 0.2, 1],
+              }}
               onMouseEnter={() => setHoveredPainPoint(index)}
               onMouseLeave={() => setHoveredPainPoint(null)}
               className="relative rounded-2xl border border-white/25 bg-black/55 backdrop-blur-sm px-6 py-5 text-center shadow-[0_0_16px_rgba(59,130,246,0.22)]"
             >
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 via-purple-500/10 to-blue-500/10" />
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.93 }}
+                animate={{ opacity: [0, 0.75, 0], scale: [0.93, 1.04, 1.08] }}
+                transition={{ duration: 0.8, delay: glowDelay, ease: "easeOut" }}
+                className="pointer-events-none absolute inset-0 rounded-2xl border border-purple-300/45"
+              />
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.55, 0] }}
+                transition={{ duration: 0.8, delay: glowDelay + 0.04, ease: "easeOut" }}
+                className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/15 via-purple-500/18 to-blue-500/15"
+              />
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: [0, 0.38, 0], scale: [0.96, 1.08, 1.12] }}
+                transition={{ duration: 0.8, delay: glowDelay + 0.02, ease: "easeOut" }}
+                className="pointer-events-none absolute -inset-2 rounded-[1.05rem] bg-gradient-to-r from-red-500/10 via-purple-500/12 to-blue-500/10 blur-[8px]"
+              />
+
+              <motion.span
+                initial={{ opacity: 0, y: 3, x: -6 }}
+                animate={{ opacity: [0, 0.7, 0], y: [3, -2, -5], x: [-6, -2, 0] }}
+                transition={{ duration: 0.7, delay: glowDelay + 0.06, ease: "easeOut" }}
+                className="pointer-events-none absolute left-[24%] top-[42%] h-1 w-1 rounded-full bg-red-300/80"
+              />
+              <motion.span
+                initial={{ opacity: 0, y: 2, x: 0 }}
+                animate={{ opacity: [0, 0.75, 0], y: [2, -3, -7], x: [0, 3, 5] }}
+                transition={{ duration: 0.72, delay: glowDelay + 0.09, ease: "easeOut" }}
+                className="pointer-events-none absolute left-[49%] top-[39%] h-1 w-1 rounded-full bg-purple-300/80"
+              />
+              <motion.span
+                initial={{ opacity: 0, y: 3, x: 5 }}
+                animate={{ opacity: [0, 0.7, 0], y: [3, -2, -6], x: [5, 1, -1] }}
+                transition={{ duration: 0.7, delay: glowDelay + 0.12, ease: "easeOut" }}
+                className="pointer-events-none absolute left-[72%] top-[43%] h-1 w-1 rounded-full bg-blue-300/80"
+              />
+
               <div className="relative z-10 text-base md:text-lg font-semibold text-white">{problem}</div>
               <motion.div
-                initial={{ opacity: 0, scaleY: 0.4 }}
-                animate={{ opacity: hoveredPainPoint === index ? 1 : 0.8, scaleY: 1 }}
-                transition={{ duration: 0.35, delay: 0.35 + index * 0.12, ease: "easeOut" }}
+                initial={{ opacity: 0, scaleY: 0.1, y: -8 }}
+                animate={{ opacity: hoveredPainPoint === index ? 1 : 0.85, scaleY: 1, y: 0 }}
+                transition={{ duration: 0.46, delay: branchDelay, ease: [0.22, 1, 0.36, 1] }}
                 className="hidden md:block absolute left-1/2 -bottom-8 h-8 w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-red-400/90 via-purple-400/90 to-blue-400/0 origin-top"
               />
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.86 }}
+                animate={{ opacity: [0, 0.45, 0], scale: [0.86, 1.05, 1.1] }}
+                transition={{ duration: 0.8, delay: branchDelay + 0.04, ease: "easeOut" }}
+                className="pointer-events-none hidden md:block absolute left-1/2 -bottom-4 h-6 w-6 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-400/30 via-purple-400/40 to-blue-400/30 blur-[4px]"
+              />
             </motion.div>
+              );
+            })()
           ))}
         </div>
 
