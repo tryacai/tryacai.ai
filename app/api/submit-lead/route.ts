@@ -13,6 +13,7 @@ type SubmitLeadPayload = {
   booking_time?: string | null;
   booking_end_time?: string | null;
   event_id?: string | null;
+  tier_preference?: string;
 };
 
 type GhlPipeline = {
@@ -105,6 +106,7 @@ export async function POST(request: Request) {
     const demoRequested = Boolean(body.demo_requested);
     const bookingTime = body.booking_time?.trim() || "";
     const eventId = body.event_id?.trim() || "";
+    const tierPreference = body.tier_preference?.trim() || "Not Sure Yet";
 
     if (
       !fullName ||
@@ -130,34 +132,11 @@ export async function POST(request: Request) {
 
     const apiKey = process.env.GHL_API_KEY;
     const locationId = process.env.GHL_LOCATION_ID;
-    const industryFieldId = process.env.GHL_FIELD_INDUSTRY_ID;
-    const callVolumeFieldId = process.env.GHL_FIELD_CALL_VOLUME_ID;
-    const bookingTimeFieldId = process.env.GHL_FIELD_BOOKING_TIME_ID;
-    const demoRequestedFieldId = process.env.GHL_FIELD_DEMO_REQUESTED_ID;
-    const smsConsentFieldId = process.env.GHL_FIELD_SMS_CONSENT_ID;
-    const messageFieldId = process.env.GHL_FIELD_MESSAGE_ID;
 
     if (!apiKey || !locationId) {
       return NextResponse.json(
         { error: "Missing GoHighLevel credentials." },
         { status: 500 }
-      );
-    }
-
-    const missingFieldIds = [
-      ["GHL_FIELD_INDUSTRY_ID", industryFieldId],
-      ["GHL_FIELD_CALL_VOLUME_ID", callVolumeFieldId],
-      ["GHL_FIELD_BOOKING_TIME_ID", bookingTimeFieldId],
-      ["GHL_FIELD_DEMO_REQUESTED_ID", demoRequestedFieldId],
-      ["GHL_FIELD_SMS_CONSENT_ID", smsConsentFieldId],
-      ["GHL_FIELD_MESSAGE_ID", messageFieldId],
-    ].filter(([, value]) => !value);
-
-    if (missingFieldIds.length > 0) {
-      throw new Error(
-        `Missing required GoHighLevel field ID env vars: ${missingFieldIds
-          .map(([name]) => name)
-          .join(", ")}`
       );
     }
 
@@ -188,6 +167,19 @@ export async function POST(request: Request) {
 
     const stageName = eventId ? "Demo Scheduled" : "Follow Up – No Demo";
 
+    console.log("[submit-lead] Payload:", {
+      fullName,
+      businessEmail,
+      phoneNumber,
+      companyName,
+      industry,
+      callVolume,
+      tierPreference,
+      demoRequested,
+      bookingTime,
+      eventId,
+    });
+
     const contactResponse = await ghlRequest<{ contact?: { id?: string } }>(
       "/contacts/upsert",
       apiKey,
@@ -204,12 +196,38 @@ export async function POST(request: Request) {
           tags,
           source: "website_demo_funnel",
           customFields: [
-            { id: industryFieldId, value: industry },
-            { id: callVolumeFieldId, value: callVolume },
-            { id: bookingTimeFieldId, value: bookingTime || "" },
-            { id: demoRequestedFieldId, value: demoRequested },
-            { id: smsConsentFieldId, value: smsConsent },
-            { id: messageFieldId, value: message || "" },
+            {
+              key: "industry",
+              field_value: industry,
+            },
+            {
+              key: "estimated_monthly_call_volume",
+              field_value: callVolume,
+            },
+            {
+              key: "tier_preference",
+              field_value: tierPreference,
+            },
+            {
+              key: "website_message",
+              field_value: message || "",
+            },
+            {
+              key: "sms_website_consent",
+              field_value: smsConsent,
+            },
+            {
+              key: "demo_requested",
+              field_value: demoRequested,
+            },
+            {
+              key: "demo_booking_time",
+              field_value: bookingTime || "",
+            },
+            {
+              key: "form_source",
+              field_value: "Website Contact Form",
+            },
           ],
         }),
       }
