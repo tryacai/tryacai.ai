@@ -134,6 +134,38 @@ function readBookingFromCalMessage(rawData: unknown): BookingDetails | null {
   };
 }
 
+function isBookingSuccessfulCalEvent(rawData: unknown): boolean {
+  let data: any = rawData;
+
+  if (typeof data === "string") {
+    try {
+      data = JSON.parse(data);
+    } catch {
+      return false;
+    }
+  }
+
+  if (!data || typeof data !== "object") {
+    return false;
+  }
+
+  const candidateTypes = [
+    data.event,
+    data.eventType,
+    data.type,
+    data.payload?.event,
+    data.payload?.eventType,
+    data.payload?.type,
+    data.data?.event,
+    data.data?.eventType,
+    data.data?.type,
+  ]
+    .filter(Boolean)
+    .map((value) => String(value));
+
+  return candidateTypes.some((value) => value === "bookingSuccessful");
+}
+
 export function ContactForm() {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(formSchema),
@@ -168,13 +200,16 @@ export function ContactForm() {
         return;
       }
 
+      if (!isBookingSuccessfulCalEvent(event.data)) {
+        return;
+      }
+
       const parsed = readBookingFromCalMessage(event.data);
       if (!parsed) {
         return;
       }
 
       setBooking(parsed);
-      setIsCalendarModalOpen(false);
       setSubmitError(null);
     }
 
@@ -540,6 +575,7 @@ export function ContactForm() {
                             <input
                               id="smsConsent"
                               type="checkbox"
+                              name="sms_consent"
                               className="mt-1 h-4 w-4 rounded border border-white/20 bg-neutral-950"
                               checked={Boolean(field.value)}
                               onChange={(event) => field.onChange(event.target.checked)}
@@ -602,7 +638,7 @@ export function ContactForm() {
                       <p className="text-xs text-amber-300">Complete your booking to enable submission.</p>
                     ) : (
                       <p className="text-xs text-emerald-300">
-                        Booking confirmed{booking.startTime ? ` for ${new Date(booking.startTime).toLocaleString()}` : ""}.
+                        Demo requested. We will confirm within 24 hours.
                       </p>
                     )}
                   </div>
