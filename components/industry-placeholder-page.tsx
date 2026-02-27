@@ -53,6 +53,91 @@ const industryContentMap: Record<string, IndustryContent> = {
       "Track live outcomes by booked service type.",
     ],
   },
+  "Sewer & Drain": {
+    hero: "AI Receptionist Built for Sewer & Drain Contractors",
+    valueProp:
+      "ACAI handles urgent backup calls fast, qualifies job urgency, and routes dispatch-ready details so your team can respond without delays.",
+    problems: [
+      "Emergency backup calls missed after hours.",
+      "Slow intake causing delayed dispatch.",
+      "Call notes not reaching the right crew fast enough.",
+    ],
+    setup: [
+      "Map emergency backup escalation rules.",
+      "Connect dispatch-ready handoff fields.",
+      "Train intake prompts for sewer and drain scenarios.",
+      "Enable missed-call recovery for urgent callers.",
+      "Track booked jobs and response time improvements.",
+    ],
+  },
+  Septic: {
+    hero: "AI Receptionist Built for Septic Service Teams",
+    valueProp:
+      "Capture every septic service request, separate emergencies from routine jobs, and keep office and field teams aligned with cleaner intake.",
+    problems: [
+      "Urgent septic calls lost outside office hours.",
+      "Manual triage slowing same-day scheduling.",
+      "Inconsistent follow-up on open service requests.",
+    ],
+    setup: [
+      "Define emergency and routine septic call paths.",
+      "Connect booking windows to your service calendar.",
+      "Train ACAI on septic service types and FAQs.",
+      "Activate missed-call recovery and reminders.",
+      "Track conversion lift from faster response.",
+    ],
+  },
+  "Water Heater Services": {
+    hero: "AI Receptionist Built for Water Heater Services",
+    valueProp:
+      "Handle no-hot-water emergencies instantly, qualify repair vs. replacement opportunities, and route details for faster booking.",
+    problems: [
+      "Emergency no-hot-water calls missed during high volume.",
+      "Weak intake on repair vs. replacement jobs.",
+      "Leads dropping when callbacks are delayed.",
+    ],
+    setup: [
+      "Set triage logic for outage urgency.",
+      "Connect dispatch and estimate handoff notes.",
+      "Train qualification prompts for common issues.",
+      "Enable follow-up automation for open estimates.",
+      "Monitor booked jobs and close rates.",
+    ],
+  },
+  "Residential Plumbing": {
+    hero: "AI Receptionist Built for Residential Plumbing",
+    valueProp:
+      "Book more homeowner calls, recover missed leads quickly, and reduce front desk bottlenecks with 24/7 intake support.",
+    problems: [
+      "Missed homeowner calls during busy service windows.",
+      "Office staff overloaded with repetitive intake.",
+      "No consistent recovery for missed callers.",
+    ],
+    setup: [
+      "Map household service categories and urgency.",
+      "Connect schedule preferences and coverage zones.",
+      "Train scripts for common residential requests.",
+      "Turn on missed-call recovery automations.",
+      "Track booked calls and response speed.",
+    ],
+  },
+  "Commercial Plumbing": {
+    hero: "AI Receptionist Built for Commercial Plumbing",
+    valueProp:
+      "Manage higher-volume facility calls with smarter routing, dispatch-ready intake, and consistent CRM logging across teams.",
+    problems: [
+      "High call volume creating intake bottlenecks.",
+      "Emergency facility issues not escalated quickly.",
+      "Service details lost between office and field teams.",
+    ],
+    setup: [
+      "Map escalation rules for commercial emergencies.",
+      "Connect dispatch and account-specific notes.",
+      "Train qualification for common facility requests.",
+      "Enable missed-call recovery at scale.",
+      "Track response, bookings, and account retention.",
+    ],
+  },
   Barbers: {
     hero: "AI Receptionist Built for Barbershops",
     valueProp:
@@ -232,13 +317,13 @@ const fallbackPricingTiers = [
 function getIndustryKeyFromName(industryName: string): string | null {
   const normalized = industryName.toLowerCase();
 
-  if (normalized === "barbers") return "barbers";
-  if (normalized === "plumbing" || normalized === "hvac") return "plumbing-hvac";
-  if (normalized === "roofing") return "roofing";
-  if (normalized === "mechanics") return "mechanics";
-  if (normalized === "detailing") return "detailing";
-  if (normalized === "cleaning") return "cleaning";
-  if (normalized === "electricians") return "electricians";
+  if (normalized === "plumbing") return "plumbing";
+  if (normalized === "hvac") return "hvac";
+  if (normalized === "sewer & drain") return "sewer-drain";
+  if (normalized === "septic") return "septic";
+  if (normalized === "water heater services") return "water-heater";
+  if (normalized === "residential plumbing") return "residential-plumbing";
+  if (normalized === "commercial plumbing") return "commercial-plumbing";
 
   return null;
 }

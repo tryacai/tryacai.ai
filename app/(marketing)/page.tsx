@@ -19,6 +19,8 @@ export default function Home() {
       <Container className="flex min-h-screen flex-col items-center justify-between">
         <Hero />
 
+        <div className="h-20 w-full md:h-32" />
+
         <ScalingLadder />
 
         <SectionDivider />

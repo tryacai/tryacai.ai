@@ -5,18 +5,13 @@ import { motion } from "framer-motion";
 import { Heading } from "./heading";
 import { Link } from "next-view-transitions";
 import {
-  Activity,
-  Bug,
-  Car,
+  Building2,
   Droplets,
-  HeartPulse,
+  Flame,
   Home,
-  Leaf,
-  Scissors,
-  Sparkles,
+  ShowerHead,
   Wind,
-  Wrench,
-  Zap,
+  Waves,
 } from "lucide-react";
 
 const industries = [
@@ -33,64 +28,34 @@ const industries = [
     icon: Wind,
   },
   {
-    title: "Barbers",
-    slug: "/barbers",
-    description: "Reduce missed bookings and after-hours call loss.",
-    icon: Scissors,
+    title: "Sewer & Drain",
+    slug: "/sewer-drain",
+    description: "Route emergency clogs and backups to your dispatch fast.",
+    icon: ShowerHead,
   },
   {
-    title: "Roofing",
-    slug: "/roofing",
-    description: "Respond quickly to storm leads and quote requests.",
+    title: "Septic",
+    slug: "/septic",
+    description: "Capture urgent septic issues and schedule service quickly.",
+    icon: Waves,
+  },
+  {
+    title: "Water Heater Services",
+    slug: "/water-heater",
+    description: "Prioritize no-hot-water calls and book replacements faster.",
+    icon: Flame,
+  },
+  {
+    title: "Residential Plumbing",
+    slug: "/residential-plumbing",
+    description: "Handle home service calls with clear booking and follow-up.",
     icon: Home,
   },
   {
-    title: "Mechanics",
-    slug: "/mechanics",
-    description: "Keep service bays filled with qualified appointments.",
-    icon: Wrench,
-  },
-  {
-    title: "Detailing",
-    slug: "/detailing",
-    description: "Automate bookings for busy seasons and weekends.",
-    icon: Car,
-  },
-  {
-    title: "Cleaning",
-    slug: "/cleaning",
-    description: "Manage recurring clients with consistent scheduling.",
-    icon: Sparkles,
-  },
-  {
-    title: "Electricians",
-    slug: "/electricians",
-    description: "Prioritize urgent electrical calls and dispatch faster.",
-    icon: Zap,
-  },
-  {
-    title: "Landscaping",
-    slug: "/landscaping",
-    description: "Plan seasonal jobs and recurring maintenance reliably.",
-    icon: Leaf,
-  },
-  {
-    title: "Pest Control",
-    slug: "/pest-control",
-    description: "Keep recurring treatment schedules on track automatically.",
-    icon: Bug,
-  },
-  {
-    title: "Med Spa",
-    slug: "/med-spa",
-    description: "Book consultations and follow-ups with less admin work.",
-    icon: HeartPulse,
-  },
-  {
-    title: "Chiropractor",
-    slug: "/chiropractor",
-    description: "Simplify new patient intake and recurring appointments.",
-    icon: Activity,
+    title: "Commercial Plumbing",
+    slug: "/commercial-plumbing",
+    description: "Support higher-volume facilities with reliable call coverage.",
+    icon: Building2,
   },
 ];
 
@@ -99,7 +64,7 @@ export const SupportedIndustries = () => {
     <section className="relative z-20 py-10 lg:py-20 w-full">
       <div className="mx-auto max-w-6xl">
         <Heading as="h2" size="md" className="text-center">
-          Industries We Support
+          Contractor Services We Support
         </Heading>
       </div>
 

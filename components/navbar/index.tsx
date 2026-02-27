@@ -5,21 +5,16 @@ import { motion } from "framer-motion";
 
 const navItems = [
   {
-    title: "Industries We Support",
+    title: "Contractor Services We Support",
     link: "#",
     children: [
       { title: "Plumbing", link: "/plumbing" },
       { title: "HVAC", link: "/hvac" },
-      { title: "Barbers", link: "/barbers" },
-      { title: "Roofing", link: "/roofing" },
-      { title: "Mechanics", link: "/mechanics" },
-      { title: "Detailing", link: "/detailing" },
-      { title: "Electricians", link: "/electricians" },
-      { title: "Landscaping", link: "/landscaping" },
-      { title: "Pest Control", link: "/pest-control" },
-      { title: "Med Spa", link: "/med-spa" },
-      { title: "Chiropractor", link: "/chiropractor" },
-      { title: "See Pricing", link: "/pricing", highlight: true },
+      { title: "Sewer & Drain", link: "/sewer-drain" },
+      { title: "Septic", link: "/septic" },
+      { title: "Water Heater Services", link: "/water-heater" },
+      { title: "Residential Plumbing", link: "/residential-plumbing" },
+      { title: "Commercial Plumbing", link: "/commercial-plumbing" },
     ],
   },
   {

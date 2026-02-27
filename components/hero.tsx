@@ -740,10 +740,14 @@ const PrimaryDemoCard = ({
 
 interface SecondaryDemoCardProps extends BaseDemoCardProps {
   title: string;
+  subtitle?: string;
+  large?: boolean;
 }
 
 const SecondaryDemoCard = ({
   title,
+  subtitle,
+  large = false,
   demoId,
   delay,
   activeDemo,
@@ -781,25 +785,38 @@ const SecondaryDemoCard = ({
       initial={{ y: 40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ ease: "easeOut", duration: 0.5, delay }}
-      className="flex flex-col items-center justify-center"
+      className="flex w-full flex-col items-center justify-center"
     >
-      <div className="relative w-full p-[1.5px] rounded-xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff]">
-        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-xl p-5 transition-all duration-300 ${
+      <div className={`relative w-full p-[1.5px] rounded-xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] ${
+        large ? "max-w-3xl" : "max-w-xl"
+      }`}>
+        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-xl transition-all duration-300 ${
+          large ? "p-7 md:p-8" : "p-5"
+        } ${
           isLive ? "shadow-[0_0_30px_rgba(123,0,255,0.4)]" : "shadow-md"
         }`}>
-          <h4 className="text-base font-semibold text-white mb-3 text-center">{title}</h4>
+          <h4 className={`${large ? "text-xl md:text-2xl" : "text-base"} font-semibold text-white mb-3 text-center`}>
+            {title}
+          </h4>
+          {subtitle && (
+            <p className="mb-5 text-center text-sm text-neutral-300 md:text-base">
+              {subtitle}
+            </p>
+          )}
           <div className="flex flex-col items-center gap-3">
             <div className="relative">
               <button
                 onClick={handleMicClick}
-                className={`w-14 h-14 rounded-full ${micStyle} flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-purple-500/50 active:scale-95 relative z-10`}
+                className={`${large ? "h-20 w-20" : "w-14 h-14"} rounded-full ${micStyle} flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-purple-500/50 active:scale-95 relative z-10`}
                 aria-label={`Start ${title} demo`}
               >
-                <Mic className="w-7 h-7 text-white" />
+                <Mic className={`${large ? "h-10 w-10" : "w-7 h-7"} text-white`} />
               </button>
               {isLive && <div className="absolute inset-0 rounded-full bg-green-500/30 blur-xl scale-150 animate-pulse" />}
             </div>
-            <div className={`text-xs font-medium transition-all duration-150 ease-out ${statusColor}`}>{statusText}</div>
+            <div className={`${large ? "text-sm" : "text-xs"} font-medium transition-all duration-150 ease-out ${statusColor}`}>
+              {statusText}
+            </div>
           </div>
         </div>
       </div>
@@ -907,10 +924,10 @@ export const Hero = () => {
           duration: 0.5,
           delay: 0.2,
         }}
-        className="text-center mt-6 text-base md:text-xl text-muted dark:text-muted-dark max-w-3xl mx-auto relative z-10"
+        className="text-center mt-6 text-lg md:text-2xl text-muted dark:text-muted-dark max-w-4xl mx-auto relative z-10"
       >
         <Balancer>
-          Reliable AI-powered solutions for service businesses.
+          The 24/7 Plumbing Concierge & Front Desk Built for Mechanical Service Contractors.
         </Balancer>
       </motion.p>
 
@@ -1045,34 +1062,14 @@ export const Hero = () => {
         </motion.div>
       </div>
 
-      {/* Primary Demo - Centered and Large */}
-      <div className="mt-12 relative z-10 w-full">
-        <PrimaryDemoCard
-          demoId="main"
-          delay={0.25}
-          activeDemo={activeDemo}
-          setActiveDemo={setActiveDemo}
-          terminateOtherDemo={terminateOtherDemo}
-          registerTerminator={registerTerminator}
-        />
-      </div>
-
-      {/* Secondary Demos - Triangle Layout */}
-      <div className="mt-8 relative z-10 max-w-3xl mx-auto w-full px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mt-12 relative z-10 mx-auto w-full max-w-4xl px-4">
+        <div className="grid grid-cols-1 gap-6">
           <SecondaryDemoCard
             title="Plumbing & HVAC Demo"
+            subtitle="This is a sample plumbing call flow showing emergency handling, job qualification, and booking logic. Every system is fully customized to match your services, dispatch process, and pricing."
             demoId="plumbing"
             delay={0.3}
-            activeDemo={activeDemo}
-            setActiveDemo={setActiveDemo}
-            terminateOtherDemo={terminateOtherDemo}
-            registerTerminator={registerTerminator}
-          />
-          <SecondaryDemoCard
-            title="Barbershop Demo"
-            demoId="barber"
-            delay={0.35}
+            large
             activeDemo={activeDemo}
             setActiveDemo={setActiveDemo}
             terminateOtherDemo={terminateOtherDemo}

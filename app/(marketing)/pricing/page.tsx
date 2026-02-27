@@ -8,7 +8,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Pricing - ACAI AI",
   description:
-    "Industry-specific ACAI pricing plans built to convert calls into booked jobs.",
+    "Contractor-focused ACAI pricing plans built to convert calls into booked jobs.",
   openGraph: {
     images: ["https://tryacai.ai/V2websitepreviewimage.png"],
   },
@@ -20,10 +20,13 @@ export default function PricingPage() {
       <Background />
       <Container className="flex flex-col items-center justify-between pb-20">
         <div className="relative z-20 py-10 md:pt-40">
-          <Heading as="h1">Simple pricing. Tailored by industry.</Heading>
+          <p className="mb-3 text-center text-sm font-medium text-neutral-300 md:text-base">
+            Built specifically for plumbing & mechanical service contractors.
+          </p>
+          <Heading as="h1">Simple pricing. Tailored for contractors.</Heading>
           <Subheading className="text-center">
-            Choose your industry to see tier names, feature ladders, and links
-            built for your business model.
+            Choose your contractor service to see tier details built for call handling,
+            emergency routing, dispatch workflows, and CRM-ready operations.
           </Subheading>
         </div>
         <Pricing />
