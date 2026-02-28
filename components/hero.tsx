@@ -921,7 +921,7 @@ export const Hero = () => {
         </Balancer>
       </motion.p>
 
-      <div className="h-12 md:h-16" />
+      <div className="h-4 md:h-6" />
     </div>
   );
 };

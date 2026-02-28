@@ -28,7 +28,7 @@ const tickerItems = [
 
 export function HomeConciergeShowcase() {
   return (
-    <section className="relative z-10 mt-8 w-full max-w-7xl px-4">
+    <section className="relative z-10 mt-1 w-full max-w-7xl px-4 md:mt-2">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-5 lg:gap-10">
         <div className="lg:col-span-3">
           <div className="group relative min-h-[360px] overflow-hidden rounded-3xl border border-white/10 bg-black/50 md:min-h-[560px]">
@@ -42,6 +42,7 @@ export function HomeConciergeShowcase() {
 
             <div className="pointer-events-none absolute inset-0 acai-premium-glow" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-black/65" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />
             <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_160px_rgba(0,0,0,0.8)]" />
             <div className="pointer-events-none absolute inset-0 acai-vignette-soft" />
 
@@ -97,15 +98,19 @@ export function HomeConciergeShowcase() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.35 }}
         transition={{ duration: 0.65, ease: "easeOut" }}
-        className="mx-auto mt-20 max-w-4xl text-center"
+        className="mx-auto mt-16 max-w-5xl text-center md:mt-20"
       >
-        <h2 className="text-4xl font-semibold leading-[1.45] tracking-[0.16em] text-white md:text-6xl md:leading-[1.6]">
-          <span className="block">Real People.</span>
-          <span className="block">Real Conversations.</span>
-          <span className="block">Real Revenue.</span>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-purple-300/60 md:text-sm">
+          LIVE CONTRACTOR CONCIERGE
+        </p>
+        <h2 className="mt-5 text-4xl font-semibold leading-tight text-white md:text-6xl">
+          Real People Behind Every Call.
         </h2>
-        <p className="mx-auto mt-8 max-w-3xl text-lg font-light leading-9 text-neutral-300 md:text-2xl md:leading-10">
-          Our 24/7 concierge team answers, qualifies, and routes every call so you never lose another job.
+        <h3 className="mt-4 text-2xl font-medium leading-tight text-neutral-200 md:text-4xl">
+          Built to Capture Revenue, Not Just Messages.
+        </h3>
+        <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-neutral-300 md:text-xl">
+          We answer, qualify, and route every plumbing and mechanical call like it’s our own business.
         </p>
       </motion.div>
     </section>
