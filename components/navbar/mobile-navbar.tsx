@@ -82,7 +82,13 @@ export const MobileNavbar = ({ navItems }: any) => {
                   onClick={() => setOpen(false)}
                   className="relative"
                 >
-                  <span className="block text-[26px] text-black dark:text-white">
+                  <span
+                    className={cn(
+                      "block text-[26px] text-black dark:text-white",
+                      navItem.highlightAI &&
+                        "bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent blur-[0.2px] drop-shadow-[0_0_8px_rgba(123,0,255,0.35)]"
+                    )}
+                  >
                     {navItem.title}
                   </span>
                 </Link>

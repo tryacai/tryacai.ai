@@ -6,9 +6,8 @@ import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { Subheading } from "@/components/subheading";
 import { Link } from "next-view-transitions";
-import { useRetellVoiceDemo } from "@/components/RetellVoiceDemo";
 import { motion } from "framer-motion";
-import { Mic, Phone, DollarSign, AlertTriangle } from "lucide-react";
+import { Phone, DollarSign, AlertTriangle } from "lucide-react";
 
 const tiers = [
   {
@@ -44,26 +43,6 @@ const tiers = [
 ];
 
 export default function PlumbingPage() {
-  const { toggleConversation, isConversationActive, isLoading } = useRetellVoiceDemo("plumbing");
-
-  const micStyle = isConversationActive
-    ? "bg-green-500 shadow-[0_0_24px_rgba(34,197,94,0.45)]"
-    : isLoading
-    ? "bg-yellow-500 animate-pulse"
-    : "bg-neutral-600";
-
-  const statusText = isConversationActive
-    ? "LIVE"
-    : isLoading
-    ? "Connecting..."
-    : "Click to start call";
-
-  const statusColor = isConversationActive
-    ? "text-green-400"
-    : isLoading
-    ? "text-yellow-400"
-    : "text-neutral-400";
-
   return (
     <div className="relative overflow-hidden py-20 md:py-0">
       <Background />
@@ -76,62 +55,6 @@ export default function PlumbingPage() {
             Answer every call, route emergencies fast, and keep your dispatch board full without adding front desk overhead.
           </Subheading>
         </div>
-
-        <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ ease: "easeOut", duration: 0.5, delay: 0.2 }}
-          className="relative z-20 mx-auto mt-6 w-full max-w-3xl px-4"
-        >
-          <div className="relative w-full rounded-2xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] p-[2px] animate-gradient-flow">
-            <div
-              className={`w-full rounded-2xl bg-black/70 p-8 backdrop-blur-sm transition-all duration-300 md:p-10 ${
-                isConversationActive ? "shadow-[0_0_60px_rgba(123,0,255,0.6)]" : "shadow-lg"
-              }`}
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="flex items-center gap-2 text-2xl font-bold text-white md:text-3xl">
-                  🔧 Plumbing & HVAC Live Demo
-                </h3>
-                {isConversationActive && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.15, ease: "easeOut" }}
-                    className="flex items-center gap-2 rounded-full bg-green-500 px-4 py-2 text-sm font-bold text-white shadow-[0_0_20px_rgba(34,197,94,0.6)]"
-                  >
-                    <span className="h-3 w-3 rounded-full bg-white animate-pulse"></span>
-                    LIVE
-                  </motion.span>
-                )}
-              </div>
-              <p className="mb-8 text-base text-neutral-300 md:text-lg">
-                This sample call flow shows emergency handling, job qualification, and booking logic for plumbing teams.
-              </p>
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                  <button
-                    onClick={toggleConversation}
-                    disabled={isLoading}
-                    className={`relative z-10 flex h-24 w-24 items-center justify-center rounded-full ${micStyle} shadow-xl transition-all duration-150 ease-out hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50`}
-                    aria-label="Start plumbing voice demo"
-                  >
-                    <Mic className="h-12 w-12 text-white" />
-                  </button>
-                  {isConversationActive && (
-                    <>
-                      <div className="absolute inset-0 scale-125 animate-pulse rounded-full bg-green-500 opacity-30" />
-                      <div className="absolute inset-0 scale-150 animate-pulse rounded-full bg-green-500/30 blur-2xl" />
-                    </>
-                  )}
-                </div>
-                <div className={`text-center font-semibold transition-all duration-150 ease-out ${statusColor}`}>
-                  {statusText}
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
         <section className="relative z-20 mx-auto mt-16 w-full max-w-5xl text-center">
           <h2 className="mb-3 text-3xl font-bold text-white md:text-4xl">Plumbers Lose Revenue Every Day.</h2>

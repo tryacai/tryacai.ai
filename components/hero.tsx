@@ -1,17 +1,13 @@
 "use client";
 
 import Balancer from "react-wrap-balancer";
-import { Button } from "./button";
-import { HiArrowRight } from "react-icons/hi2";
 import { Badge } from "./badge";
 import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { RetellWebClient } from "retell-client-js-sdk";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Link } from "next-view-transitions";
 
 type DemoId = "main" | "plumbing" | "barber";
 
@@ -827,17 +823,11 @@ const SecondaryDemoCard = ({
 export const Hero = () => {
   const router = useRouter();
   const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
-  const [hoveredPainPoint, setHoveredPainPoint] = useState<number | null>(null);
   const [startSublineTyping, setStartSublineTyping] = useState(false);
   const [typingSyncCycle, setTypingSyncCycle] = useState(0);
   const [headlineCanDelete, setHeadlineCanDelete] = useState(false);
   const [headlineDeleteSignal, setHeadlineDeleteSignal] = useState(0);
   const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
-  const painPoints = [
-    "Stop Running to the Phone",
-    "Stop Losing Emergency Calls",
-    "Stop Missing High-Value Leads",
-  ];
 
   const registerTerminator = useCallback((demo: DemoId, terminateFn: (() => Promise<void>) | null) => {
     if (terminateFn) {
@@ -927,187 +917,11 @@ export const Hero = () => {
         className="text-center mt-6 text-lg md:text-2xl text-muted dark:text-muted-dark max-w-4xl mx-auto relative z-10"
       >
         <Balancer>
-          The 24/7 Plumbing Concierge & Front Desk Built for Mechanical Service Contractors.
+          24/7 Live Contractor Concierge Built for Plumbing & Mechanical Companies.
         </Balancer>
       </motion.p>
 
-      <div className="mt-10 relative z-10 w-full max-w-5xl px-4 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {painPoints.map((problem, index) => (
-            (() => {
-              const cardDelay = 0.18 + index * 0.3;
-              const settleDuration = 0.9;
-              const glowDelay = cardDelay + settleDuration - 0.05;
-              const branchDelay = cardDelay + settleDuration + 0.12;
-
-              return (
-            <motion.div
-              key={problem}
-              initial={{ opacity: 0, x: -260, scale: 0.97 }}
-              animate={{ opacity: [0, 1, 1], x: [-260, 16, 0], scale: [0.97, 1.015, 1] }}
-              transition={{
-                duration: settleDuration,
-                delay: cardDelay,
-                ease: [0.2, 0.9, 0.2, 1],
-              }}
-              onMouseEnter={() => setHoveredPainPoint(index)}
-              onMouseLeave={() => setHoveredPainPoint(null)}
-              className="relative rounded-2xl border border-white/25 bg-black/55 backdrop-blur-sm px-6 py-5 text-center shadow-[0_0_16px_rgba(59,130,246,0.22)]"
-            >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/10 via-purple-500/10 to-blue-500/10" />
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.93 }}
-                animate={{ opacity: [0, 0.75, 0], scale: [0.93, 1.04, 1.08] }}
-                transition={{ duration: 0.8, delay: glowDelay, ease: "easeOut" }}
-                className="pointer-events-none absolute inset-0 rounded-2xl border border-purple-300/45"
-              />
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.55, 0] }}
-                transition={{ duration: 0.8, delay: glowDelay + 0.04, ease: "easeOut" }}
-                className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/15 via-purple-500/18 to-blue-500/15"
-              />
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: [0, 0.38, 0], scale: [0.96, 1.08, 1.12] }}
-                transition={{ duration: 0.8, delay: glowDelay + 0.02, ease: "easeOut" }}
-                className="pointer-events-none absolute -inset-2 rounded-[1.05rem] bg-gradient-to-r from-red-500/10 via-purple-500/12 to-blue-500/10 blur-[8px]"
-              />
-
-              <motion.span
-                initial={{ opacity: 0, y: 3, x: -6 }}
-                animate={{ opacity: [0, 0.7, 0], y: [3, -2, -5], x: [-6, -2, 0] }}
-                transition={{ duration: 0.7, delay: glowDelay + 0.06, ease: "easeOut" }}
-                className="pointer-events-none absolute left-[24%] top-[42%] h-1 w-1 rounded-full bg-red-300/80"
-              />
-              <motion.span
-                initial={{ opacity: 0, y: 2, x: 0 }}
-                animate={{ opacity: [0, 0.75, 0], y: [2, -3, -7], x: [0, 3, 5] }}
-                transition={{ duration: 0.72, delay: glowDelay + 0.09, ease: "easeOut" }}
-                className="pointer-events-none absolute left-[49%] top-[39%] h-1 w-1 rounded-full bg-purple-300/80"
-              />
-              <motion.span
-                initial={{ opacity: 0, y: 3, x: 5 }}
-                animate={{ opacity: [0, 0.7, 0], y: [3, -2, -6], x: [5, 1, -1] }}
-                transition={{ duration: 0.7, delay: glowDelay + 0.12, ease: "easeOut" }}
-                className="pointer-events-none absolute left-[72%] top-[43%] h-1 w-1 rounded-full bg-blue-300/80"
-              />
-
-              <div className="relative z-10 text-base md:text-lg font-semibold text-white">{problem}</div>
-              <motion.div
-                initial={{ opacity: 0, scaleY: 0.1, y: -8 }}
-                animate={{ opacity: hoveredPainPoint === index ? 1 : 0.85, scaleY: 1, y: 0 }}
-                transition={{ duration: 0.46, delay: branchDelay, ease: [0.22, 1, 0.36, 1] }}
-                className="hidden md:block absolute left-1/2 -bottom-8 h-8 w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-red-400/90 via-purple-400/90 to-blue-400/0 origin-top"
-              />
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.86 }}
-                animate={{ opacity: [0, 0.45, 0], scale: [0.86, 1.05, 1.1] }}
-                transition={{ duration: 0.8, delay: branchDelay + 0.04, ease: "easeOut" }}
-                className="pointer-events-none hidden md:block absolute left-1/2 -bottom-4 h-6 w-6 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-400/30 via-purple-400/40 to-blue-400/30 blur-[4px]"
-              />
-            </motion.div>
-              );
-            })()
-          ))}
-        </div>
-
-        <div className="hidden md:block relative mt-1 h-24 pointer-events-none">
-          <svg viewBox="0 0 100 100" className="h-full w-full">
-            <defs>
-              <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ef4444" />
-                <stop offset="52%" stopColor="#7b00ff" />
-                <stop offset="100%" stopColor="#2563eb" />
-              </linearGradient>
-            </defs>
-            <EnergyPath d="M16 2 C16 30, 28 52, 50 95" active={hoveredPainPoint === 0} pulseDuration={2.3} />
-            <EnergyPath d="M50 2 C50 36, 50 62, 50 95" active={hoveredPainPoint === 1} pulseDuration={2.45} />
-            <EnergyPath d="M84 2 C84 30, 72 52, 50 95" active={hoveredPainPoint === 2} pulseDuration={2.6} />
-          </svg>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.72 }}
-          className="mx-auto mt-7 w-fit rounded-full border border-white/15 bg-black/35 px-5 py-2 text-xs md:text-sm text-neutral-200"
-        >
-          Watch how ACAI handles it live.
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.82 }}
-          className="mx-auto mt-4 flex w-fit flex-col items-center pointer-events-none"
-        >
-          <div className="h-10 w-[3px] rounded-full bg-gradient-to-b from-purple-400/70 via-blue-400/80 to-transparent" />
-          <motion.div
-            animate={{ y: [0, 4, 0], opacity: [0.65, 1, 0.65], scale: [1, 1.08, 1] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-            className="-mt-1 text-lg text-blue-300"
-          >
-            ↓
-          </motion.div>
-          <motion.div
-            animate={{ opacity: [0.35, 0.65, 0.35] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="h-7 w-28 rounded-full bg-gradient-to-r from-red-500/15 via-purple-500/25 to-blue-500/15 blur-md"
-          />
-        </motion.div>
-      </div>
-
-      <div className="mt-12 relative z-10 mx-auto w-full max-w-4xl px-4">
-        <div className="grid grid-cols-1 gap-6">
-          <SecondaryDemoCard
-            title="Plumbing & HVAC Demo"
-            subtitle="This is a sample plumbing call flow showing emergency handling, job qualification, and booking logic. Every system is fully customized to match your services, dispatch process, and pricing."
-            demoId="plumbing"
-            delay={0.3}
-            large
-            activeDemo={activeDemo}
-            setActiveDemo={setActiveDemo}
-            terminateOtherDemo={terminateOtherDemo}
-            registerTerminator={registerTerminator}
-          />
-        </div>
-        <p className="text-xs text-neutral-500 mt-4 text-center italic">
-          Initial connection may take 3–5 seconds. Only one demo can be active at a time.
-        </p>
-      </div>
-
-      <motion.div
-        initial={{
-          y: 80,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-          delay: 0.4,
-        }}
-        className="flex items-center gap-4 justify-center mt-10 relative z-10"
-      >
-        <Button>Get started</Button>
-        <Button
-          variant="simple"
-          as={Link}
-          href="/contact"
-          className="flex space-x-2 items-center group"
-        >
-          <span>Contact us</span>
-          <HiArrowRight className="text-muted group-hover:translate-x-1 stroke-[1px] h-3 w-3 transition-transform duration-200 dark:text-muted-dark" />
-        </Button>
-      </motion.div>
+      <div className="h-12 md:h-16" />
     </div>
   );
 };

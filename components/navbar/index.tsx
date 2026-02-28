@@ -33,6 +33,11 @@ const navItems = [
     title: "Contact",
     link: "/contact",
   },
+  {
+    title: "Try Our AI",
+    link: "/ai",
+    highlightAI: true,
+  },
 ];
 
 export function NavBar() {

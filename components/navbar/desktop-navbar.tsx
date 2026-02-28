@@ -20,6 +20,7 @@ type Props = {
     link: string;
     title: string;
     target?: "_blank";
+    highlightAI?: boolean;
     children?: { link: string; title: string; highlight?: boolean }[];
   }[];
 };
@@ -100,7 +101,16 @@ export const DesktopNavbar = ({ navItems }: Props) => {
             }
 
             return (
-              <NavBarItem href={item.link} key={item.title} target={item.target}>
+              <NavBarItem
+                href={item.link}
+                key={item.title}
+                target={item.target}
+                className={
+                  item.highlightAI
+                    ? "bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent blur-[0.2px] drop-shadow-[0_0_6px_rgba(123,0,255,0.35)] transition-all duration-200 hover:drop-shadow-[0_0_10px_rgba(59,130,246,0.45)]"
+                    : undefined
+                }
+              >
                 {item.title}
               </NavBarItem>
             );
