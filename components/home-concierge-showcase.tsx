@@ -33,7 +33,7 @@ export function HomeConciergeShowcase() {
         <div className="lg:col-span-3">
           <div className="group relative min-h-[360px] overflow-hidden rounded-3xl border border-white/10 bg-black/50 md:min-h-[560px]">
             <Image
-              src="/images/acai-call-center.png"
+              src="/NEWcallcenter.png"
               alt="ACAI live contractor concierge team"
               fill
               priority
