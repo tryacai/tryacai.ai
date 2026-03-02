@@ -108,6 +108,44 @@ html {
   }
 }
 
+@keyframes acai-scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(220%);
+  }
+}
+
+@keyframes acai-particle-drift {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 0.36;
+  }
+}
+
+@keyframes acai-shine {
+  0% {
+    transform: translateX(-130%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  60% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateX(180%);
+    opacity: 0;
+  }
+}
+
 .acai-premium-glow {
   background: radial-gradient(circle at 20% 18%, rgba(239, 68, 68, 0.18), transparent 45%),
     radial-gradient(circle at 78% 14%, rgba(123, 0, 255, 0.2), transparent 44%),
@@ -165,6 +203,53 @@ html {
 .acai-logo-shimmer {
   animation: acai-logo-shimmer 6s ease-in-out infinite;
   text-shadow: 0 0 24px rgba(123, 0, 255, 0.26);
+}
+
+.acai-scan-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+}
+
+.acai-scan-overlay::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22%;
+  background: linear-gradient(to bottom, rgba(147, 51, 234, 0.14), rgba(59, 130, 246, 0.1), transparent);
+  filter: blur(10px);
+  animation: acai-scan-line 7.8s linear infinite;
+}
+
+.acai-cta-shine::after {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  width: 34%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  transform: translateX(-130%);
+}
+
+.acai-cta-shine:hover::after {
+  animation: acai-shine 0.9s ease;
+}
+
+.acai-cta-particles {
+  background-image:
+    radial-gradient(circle at 16% 24%, rgba(239, 68, 68, 0.24) 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 28%, rgba(168, 85, 247, 0.22) 0 2px, transparent 3px),
+    radial-gradient(circle at 38% 75%, rgba(59, 130, 246, 0.2) 0 2px, transparent 3px),
+    radial-gradient(circle at 68% 70%, rgba(192, 132, 252, 0.22) 0 2px, transparent 3px);
+  animation: acai-particle-drift 7s ease-in-out infinite;
 }
 
 /* Connecting dots animation */
