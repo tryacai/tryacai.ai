@@ -7,7 +7,6 @@ import { useRef, useState } from "react";
 import {
   AlertTriangle,
   BadgeCheck,
-  ChevronDown,
   ClipboardCheck,
   FileText,
   Phone,
@@ -44,24 +43,8 @@ const callFlowItems = [
   { label: "Log", icon: FileText },
 ] as const;
 
-const whyCards = [
-  {
-    title: "Understands Contractor Workflows",
-    description: "We know dispatch, emergencies, estimates, and after-hours calls.",
-  },
-  {
-    title: "No Generic Script Readers",
-    description: "Real agents trained specifically for plumbing & HVAC operations.",
-  },
-  {
-    title: "Revenue-Focused Conversations",
-    description: "We prioritize high-value jobs and urgent service calls.",
-  },
-] as const;
-
 export function ContractorConciergeSection() {
   const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
-  const [openAccordionIndex, setOpenAccordionIndex] = useState(0);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const activeFeature = featureItems[activeFeatureIndex];
@@ -75,7 +58,22 @@ export function ContractorConciergeSection() {
 
   return (
     <section className="relative z-10 mt-0 w-full max-w-7xl px-4 md:mt-1">
-      <div className="grid grid-cols-1 gap-7 lg:grid-cols-2 lg:gap-10">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.45 }}
+        transition={{ duration: 0.48, ease: "easeOut" }}
+        className="relative mx-auto max-w-[780px] text-center"
+      >
+        <div className="pointer-events-none absolute left-1/2 top-3 h-28 w-64 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/10 via-purple-500/18 to-blue-500/10 blur-3xl" />
+        <p className="relative text-xs font-semibold uppercase tracking-[0.24em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
+        <h2 className="relative mt-3 text-3xl font-semibold leading-tight text-white md:text-5xl">Real People. Revenue-Focused.</h2>
+        <p className="relative mx-auto mt-4 max-w-[760px] text-base leading-7 text-neutral-300 md:text-lg">
+          We answer, qualify, and route every plumbing and mechanical call with contractor-trained agents who understand dispatch, emergencies, and high-value jobs.
+        </p>
+      </motion.div>
+
+      <div className="mt-8 grid grid-cols-1 gap-7 lg:grid-cols-2 lg:gap-10 md:mt-10">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -213,79 +211,12 @@ export function ContractorConciergeSection() {
         </motion.div>
       </div>
 
-      <div className="mx-auto mt-10 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-white/25 to-transparent md:mt-12" />
-
-      <motion.div
-        initial={{ opacity: 0, y: 26 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.35 }}
-        transition={{ duration: 0.62, ease: "easeOut" }}
-        className="relative mx-auto mt-10 max-w-3xl text-center md:mt-12"
-      >
-        <div className="pointer-events-none absolute left-1/2 top-6 h-32 w-72 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/10 via-purple-500/20 to-blue-500/12 blur-3xl" />
-        <p className="relative text-xs font-semibold uppercase tracking-[0.28em] text-purple-300/65 md:text-sm">
-          LIVE CONTRACTOR CONCIERGE
-        </p>
-        <h2 className="relative mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl">
-          Real People Behind Every Call.
-        </h2>
-        <h3 className="relative mt-4 text-2xl font-medium leading-tight text-neutral-200 md:text-4xl">
-          Built to Capture Revenue, Not Just Messages.
-        </h3>
-        <p className="relative mx-auto mt-6 max-w-2xl text-lg leading-8 text-neutral-300 md:text-xl">
-          We answer, qualify, and route every plumbing and mechanical call like it’s our own business.
-        </p>
-      </motion.div>
-
-      <div className="mt-10 grid gap-4 md:mt-12">
-        {whyCards.map((card, index) => {
-          const isOpen = openAccordionIndex === index;
-          return (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.45 }}
-              transition={{ duration: 0.45, delay: index * 0.06 }}
-              className="group rounded-2xl bg-gradient-to-r from-red-500/20 via-purple-500/20 to-blue-500/20 p-[1px]"
-            >
-              <div className="rounded-2xl border border-white/12 bg-black/50 backdrop-blur-xl transition-all duration-300 group-hover:border-white/24">
-                <button
-                  type="button"
-                  onClick={() => setOpenAccordionIndex(isOpen ? -1 : index)}
-                  aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
-                >
-                  <span className="text-xl font-semibold text-white md:text-2xl">{card.title}</span>
-                  <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
-                    <ChevronDown className="h-5 w-5 text-neutral-300" />
-                  </motion.span>
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
-                      className="overflow-hidden"
-                    >
-                      <p className="px-5 pb-5 text-lg leading-relaxed text-neutral-300">{card.description}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
-
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.35 }}
         transition={{ duration: 0.55, ease: "easeOut" }}
-        className="relative mx-auto mt-10 max-w-4xl overflow-hidden rounded-3xl border border-white/14 bg-black/55 p-6 text-center shadow-[0_20px_60px_rgba(20,20,40,0.45)] md:mt-12 md:p-8"
+        className="relative mx-auto mt-8 max-w-4xl overflow-hidden rounded-3xl border border-white/14 bg-black/55 p-6 text-center shadow-[0_20px_60px_rgba(20,20,40,0.45)] md:mt-10 md:p-8"
       >
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/10 via-purple-500/16 to-blue-500/10" />
         <div className="pointer-events-none absolute inset-0 acai-cta-particles" />

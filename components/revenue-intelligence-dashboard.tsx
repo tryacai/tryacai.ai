@@ -320,42 +320,45 @@ export function RevenueIntelligenceDashboard() {
           viewport={{ once: true, amount: 0.25 }}
           className="mt-5 rounded-3xl border border-white/12 bg-black/55 p-6 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)]"
         >
-          <h3 className="text-2xl font-semibold text-white">Built to Work With Your Existing System.</h3>
-          <p className="mt-3 max-w-3xl text-neutral-300">
-            ACAI integrates with your existing CRM and dispatch system. Or we provide a structured tracking layer if you don’t have one.
+          <h3 className="text-center text-2xl font-semibold text-white md:text-3xl">Built to Work With Your Systems.</h3>
+          <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-neutral-300 md:text-base">
+            ACAI integrates directly with your CRM and dispatch platform.
           </p>
 
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4">
             {[
               "ServiceTitan",
               "Housecall Pro",
               "Jobber",
               "FieldEdge",
             ].map((logo) => (
-              <div key={logo} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium tracking-wide text-neutral-400 grayscale transition-colors duration-200 hover:text-neutral-200">
+              <div
+                key={logo}
+                className="flex h-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 text-base font-semibold tracking-wide text-neutral-400 grayscale transition-all duration-200 hover:-translate-y-0.5 hover:border-white/25 hover:text-neutral-100 hover:grayscale-0"
+              >
                 {logo}
               </div>
             ))}
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 md:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-neutral-300">
-              <p className="font-semibold text-white">If you use one of these systems:</p>
-              <p className="mt-2">We sync call outcomes and booked jobs directly into your workflow.</p>
+              <p className="font-semibold text-white">If you already use one:</p>
+              <p className="mt-1">We sync calls, bookings, and revenue into your workflow.</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-neutral-300">
               <p className="font-semibold text-white">If you don’t:</p>
-              <p className="mt-2">We provide the ACAI Pipeline — structured, tagged, and revenue-attributed.</p>
+              <p className="mt-1">We provide the ACAI Revenue Tracking Pipeline — structured, tagged, and attributed.</p>
             </div>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-5 flex justify-center">
             <Link
               href="/solutions"
               className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(123,0,255,0.35)]"
             >
               <Activity className="h-4 w-4" />
-              See How ACAI Syncs With Your Workflow
+              See Integration Options
             </Link>
           </div>
         </motion.div>
