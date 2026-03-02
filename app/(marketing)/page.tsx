@@ -5,9 +5,9 @@ import { CTA } from "@/components/cta";
 import { SectionDivider } from "@/components/section-divider";
 import { SupportedIndustries } from "@/components/supported-industries";
 import { SolutionSection } from "@/components/solution-section";
-import { ScalingLadder } from "@/components/scaling-ladder";
 import { InfrastructureSection } from "@/components/infrastructure-section";
 import { ContractorConciergeSection } from "@/components/contractor-concierge-section";
+import { RevenueIntelligenceDashboard } from "@/components/revenue-intelligence-dashboard";
 
 export default function Home() {
   return (
@@ -17,14 +17,12 @@ export default function Home() {
         <Background />
       </div>
 
-      <Container className="flex min-h-screen flex-col items-center justify-between">
+      <Container className="flex min-h-screen flex-col items-center">
         <Hero />
 
         <ContractorConciergeSection />
 
-        <div className="h-12 w-full md:h-16" />
-
-        <ScalingLadder />
+        <RevenueIntelligenceDashboard />
 
         <SectionDivider />
 

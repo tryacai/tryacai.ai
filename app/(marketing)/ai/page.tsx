@@ -9,6 +9,7 @@ import { Link } from "next-view-transitions";
 import { useRetellVoiceDemo } from "@/components/RetellVoiceDemo";
 import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
+import { ScalingLadder } from "@/components/scaling-ladder";
 
 export default function AiPage() {
   const { toggleConversation, isConversationActive, isLoading } = useRetellVoiceDemo("plumbing");
@@ -111,6 +112,7 @@ export default function AiPage() {
         </section>
 
         <section className="relative z-20 mx-auto mt-16 w-full max-w-6xl px-4">
+          <h2 className="mb-6 text-center text-3xl font-bold text-white md:text-4xl">Traditional Call Centers vs ACAI AI</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-red-900/30 bg-gradient-to-br from-red-950/30 to-black/50 p-8 backdrop-blur-sm">
               <h3 className="mb-6 text-center text-2xl font-bold text-red-400">Traditional Call Centers</h3>
@@ -132,6 +134,10 @@ export default function AiPage() {
               </ul>
             </div>
           </div>
+        </section>
+
+        <section className="relative z-20 mx-auto mt-12 w-full max-w-7xl px-4 md:mt-16">
+          <ScalingLadder />
         </section>
 
         <section className="relative z-20 mx-auto mt-16 w-full max-w-4xl text-center">
