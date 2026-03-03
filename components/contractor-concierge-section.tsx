@@ -205,7 +205,6 @@ export function ContractorConciergeSection() {
               </div>
             </div>
           </div>
-        </div>
       </motion.div>
 
       <motion.div
