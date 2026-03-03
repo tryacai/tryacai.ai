@@ -904,20 +904,11 @@ export const Hero = () => {
         <div className="pointer-events-none absolute inset-x-10 -top-6 h-[220px] rounded-full bg-black/45 blur-2xl md:inset-x-20 md:h-[260px]" />
         <div className="pointer-events-none absolute left-1/2 top-8 h-44 w-80 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/14 via-purple-500/22 to-blue-500/14 blur-3xl" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: "easeOut", duration: 0.45, delay: 0.08 }}
-          className="relative text-[11px] font-semibold uppercase tracking-[0.34em] text-purple-300/75 md:text-xs"
-        >
-          LIVE CONTRACTOR CONCIERGE
-        </motion.p>
-
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
-          className="relative mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl"
+          className="relative mt-2 text-4xl font-semibold leading-tight text-white md:text-6xl"
         >
           <span className="acai-247-sweep inline-block">24/7</span>{" "}
           <Balancer>Contractor Call Operations.</Balancer>
@@ -940,9 +931,18 @@ export const Hero = () => {
         >
           Every call answered. Every emergency routed. Every job qualified.
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ease: "easeOut", duration: 0.5, delay: 0.6 }}
+          className="mx-auto mt-8 max-w-6xl md:mt-10"
+        >
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-400/45 to-transparent" />
+        </motion.div>
       </div>
 
-      <div className="h-3 md:h-4" />
+      <div className="h-5 md:h-6" />
     </div>
   );
 };
