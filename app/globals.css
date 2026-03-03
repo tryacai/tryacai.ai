@@ -146,6 +146,28 @@ html {
   }
 }
 
+@keyframes acai-247-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.acai-247-sweep {
+  background-image: linear-gradient(110deg, #ff5a63 0%, #c084fc 48%, #60a5fa 100%);
+  background-size: 230% 230%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 20px rgba(123, 0, 255, 0.2);
+  animation: acai-247-sweep 4.6s ease-in-out infinite;
+}
+
 .acai-premium-glow {
   background: radial-gradient(circle at 20% 18%, rgba(239, 68, 68, 0.18), transparent 45%),
     radial-gradient(circle at 78% 14%, rgba(123, 0, 255, 0.2), transparent 44%),

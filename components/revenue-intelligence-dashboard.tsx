@@ -116,10 +116,15 @@ export function RevenueIntelligenceDashboard() {
   }, []);
 
   return (
-    <section className="relative z-20 w-full py-8 lg:py-12">
+    <section className="relative z-20 w-full pb-10 pt-24 lg:pb-14 lg:pt-32">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-[radial-gradient(circle_at_center,rgba(123,0,255,0.16),transparent_70%)]" />
       <div className="mx-auto max-w-7xl">
+        <div className="mx-auto mb-12 max-w-6xl md:mb-14">
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-400/45 to-transparent" />
+        </div>
+
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70">Revenue Intelligence Report</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-purple-300/75">REVENUE INTELLIGENCE REPORT</p>
           <h2 className="mt-4 text-3xl font-semibold text-white md:text-5xl">ACAI Revenue Intelligence Dashboard™</h2>
           <p className="mt-4 text-xl font-medium text-neutral-100 md:text-2xl">Know Exactly What Every Call Is Worth.</p>
           <p className="mx-auto mt-3 max-w-3xl text-base text-neutral-300 md:text-lg">
@@ -127,29 +132,30 @@ export function RevenueIntelligenceDashboard() {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 xl:grid-cols-12">
+        <div className="mt-16 grid grid-cols-1 gap-6 md:mt-20 md:gap-7 xl:grid-cols-12">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            className="rounded-3xl border border-white/12 bg-black/50 p-5 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] xl:col-span-4"
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="rounded-3xl border border-white/12 bg-black/50 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 xl:col-span-4 md:p-7"
           >
-            <h3 className="mb-4 text-lg font-semibold text-white">Call Performance</h3>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <h3 className="mb-5 text-lg font-semibold text-white">Call Performance</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {callPerformance.map((metric) => {
                 const MetricIcon = metric.icon;
                 const trendUp = !metric.trend.startsWith("-");
                 return (
-                  <div key={metric.label} className="rounded-xl border border-white/10 bg-black/45 p-3 transition-all duration-200 hover:border-purple-400/40 hover:bg-black/60">
+                  <div key={metric.label} className="rounded-xl border border-white/10 bg-black/45 p-4 transition-all duration-200 hover:border-purple-400/40 hover:bg-black/60">
                     <div className="flex items-center justify-between">
                       <MetricIcon className="h-4 w-4 text-purple-300" />
-                      <span className={`inline-flex items-center gap-1 text-xs ${trendUp ? "text-emerald-300" : "text-amber-300"}`}>
+                      <span className={`inline-flex items-center gap-1 text-sm ${trendUp ? "text-emerald-300" : "text-amber-300"}`}>
                         {trendUp ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                         {metric.trend}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-neutral-400">{metric.label}</p>
-                    <p className="mt-1 text-lg font-semibold text-white">
+                    <p className="mt-2 text-sm text-neutral-400">{metric.label}</p>
+                    <p className="mt-1.5 text-xl font-semibold text-white">
                       <CountUp value={metric.value} suffix={"suffix" in metric ? metric.suffix : ""} />
                     </p>
                   </div>
@@ -159,21 +165,21 @@ export function RevenueIntelligenceDashboard() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            transition={{ delay: 0.05 }}
-            className="rounded-3xl border border-white/12 bg-black/50 p-5 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] xl:col-span-5"
+            transition={{ delay: 0.08, duration: 0.5, ease: "easeOut" }}
+            className="rounded-3xl border border-white/12 bg-black/50 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 xl:col-span-5 md:p-7"
           >
-            <h3 className="mb-4 text-lg font-semibold text-white">Revenue Intelligence</h3>
-            <div className="space-y-4">
+            <h3 className="mb-5 text-lg font-semibold text-white">Revenue Intelligence</h3>
+            <div className="divide-y divide-white/10">
               {revenueBars.map((bar) => (
-                <div key={bar.label}>
-                  <div className="mb-1 flex items-center justify-between text-xs text-neutral-300">
+                <div key={bar.label} className="py-3 first:pt-0 last:pb-0">
+                  <div className="mb-2 flex items-center justify-between text-sm text-neutral-300">
                     <span>{bar.label}</span>
                     <span className="font-medium text-white">{bar.amount}</span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${bar.value}%` }}
@@ -185,44 +191,44 @@ export function RevenueIntelligenceDashboard() {
                 </div>
               ))}
             </div>
-            <div className="mt-6 rounded-2xl border border-white/12 bg-black/55 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">Total Influenced Revenue</p>
+            <div className="mt-7 rounded-2xl border border-white/12 bg-black/55 p-5">
+              <p className="text-sm uppercase tracking-[0.16em] text-neutral-400">Total Influenced Revenue</p>
               <p className="mt-2 text-3xl font-semibold text-white">
                 <CountUp value={182000} prefix="$" />
               </p>
-              <p className="mt-1 text-xs text-emerald-300">From booked calls, saved calls, and emergency captures.</p>
+              <p className="mt-1 text-sm text-emerald-300">From booked calls, saved calls, and emergency captures.</p>
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            transition={{ delay: 0.1 }}
-            className="rounded-3xl border border-white/12 bg-black/50 p-5 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] xl:col-span-3"
+            transition={{ delay: 0.16, duration: 0.5, ease: "easeOut" }}
+            className="rounded-3xl border border-white/12 bg-black/50 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 xl:col-span-3 md:p-7"
           >
-            <h3 className="mb-5 text-lg font-semibold text-white">Emergency Visibility</h3>
-            <div className="mx-auto mb-4 flex h-36 w-36 items-center justify-center rounded-full border border-white/12 bg-black/40">
+            <h3 className="mb-6 text-lg font-semibold text-white">Emergency Visibility</h3>
+            <div className="mx-auto mb-5 flex h-40 w-40 items-center justify-center rounded-full border border-white/12 bg-black/40">
               <div
-                className="relative flex h-28 w-28 items-center justify-center rounded-full"
+                className="relative flex h-32 w-32 items-center justify-center rounded-full"
                 style={{ background: `conic-gradient(#ef4444 0 ${emergencyProgress}%, rgba(255,255,255,0.12) ${emergencyProgress}% 100%)` }}
               >
-                <div className="h-20 w-20 rounded-full bg-black/85" />
-                <p className="absolute text-xl font-semibold text-white">
+                <div className="h-24 w-24 rounded-full bg-black/85" />
+                <p className="absolute text-2xl font-semibold text-white">
                   <CountUp value={emergencyProgress} suffix="%" />
                 </p>
               </div>
             </div>
-            <div className="space-y-2 text-sm text-neutral-300">
-              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/35 px-3 py-2">
+            <div className="divide-y divide-white/10 text-sm text-neutral-300">
+              <div className="flex items-center justify-between rounded-t-xl border border-white/10 border-b-0 bg-black/35 px-4 py-3">
                 <span>Emergency Calls This Week</span>
                 <span className="font-semibold text-white"><CountUp value={19} /></span>
               </div>
-              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/35 px-3 py-2">
+              <div className="flex items-center justify-between border-x border-white/10 bg-black/35 px-4 py-3">
                 <span>Emergency Response Time</span>
                 <span className="font-semibold text-white"><CountUp value={2} suffix="m" /></span>
               </div>
-              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/35 px-3 py-2">
+              <div className="flex items-center justify-between rounded-b-xl border border-white/10 border-t-0 bg-black/35 px-4 py-3">
                 <span>After Hours Dispatch Count</span>
                 <span className="font-semibold text-white"><CountUp value={11} /></span>
               </div>
@@ -238,24 +244,25 @@ export function RevenueIntelligenceDashboard() {
           </motion.div>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-12">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:mt-10 md:gap-7 xl:grid-cols-12">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            className="rounded-3xl border border-white/12 bg-black/50 p-5 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] xl:col-span-7"
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.04 }}
+            className="rounded-3xl border border-white/12 bg-black/50 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 xl:col-span-7 md:p-7"
           >
-            <h3 className="mb-4 text-lg font-semibold text-white">Plumbing Operations Funnel</h3>
-            <div className="space-y-3">
+            <h3 className="mb-5 text-lg font-semibold text-white">Plumbing Operations Funnel</h3>
+            <div className="space-y-4">
               {funnelStages.map((item) => {
                 const width = Math.max((item.value / funnelStages[0].value) * 100, 28);
                 return (
                   <div key={item.stage}>
-                    <div className="mb-1 flex items-center justify-between text-sm text-neutral-300">
+                    <div className="mb-1.5 flex items-center justify-between text-sm text-neutral-300">
                       <span>{item.stage}</span>
                       <span className="font-semibold text-white">{item.value}</span>
                     </div>
-                    <div className="h-10 overflow-hidden rounded-xl border border-white/10 bg-black/35 px-2 py-1">
+                    <div className="h-11 overflow-hidden rounded-xl border border-white/10 bg-black/35 px-2 py-1.5">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${width}%` }}
@@ -273,23 +280,23 @@ export function RevenueIntelligenceDashboard() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            transition={{ delay: 0.05 }}
-            className="rounded-3xl border border-white/12 bg-black/50 p-5 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] xl:col-span-5"
+            transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
+            className="rounded-3xl border border-white/12 bg-black/50 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 xl:col-span-5 md:p-7"
           >
-            <h3 className="mb-4 text-lg font-semibold text-white">Stage Distribution</h3>
-            <div className="flex flex-col gap-5 md:flex-row md:items-center">
-              <div className="relative mx-auto flex h-48 w-48 items-center justify-center rounded-full border border-white/12 bg-black/40" style={{ background: donutBackground }}>
-                <div className="h-28 w-28 rounded-full bg-black/85" />
+            <h3 className="mb-5 text-lg font-semibold text-white">Stage Distribution</h3>
+            <div className="flex flex-col gap-6 md:flex-row md:items-center">
+              <div className="relative mx-auto flex h-52 w-52 items-center justify-center rounded-full border border-white/12 bg-black/40" style={{ background: donutBackground }}>
+                <div className="h-32 w-32 rounded-full bg-black/85" />
               </div>
 
-              <div className="grid flex-1 grid-cols-1 gap-2 text-xs text-neutral-300">
+              <div className="grid flex-1 grid-cols-1 gap-2.5 text-sm text-neutral-300">
                 {stageDistribution.map((item) => {
                   const StageIcon = item.icon;
                   return (
-                    <div key={item.label} className="flex items-center justify-between rounded-lg border border-white/10 bg-black/35 px-3 py-2">
+                    <div key={item.label} className="flex items-center justify-between rounded-lg border border-white/10 bg-black/35 px-3.5 py-2.5">
                       <span className="flex items-center gap-2">
                         <span className={`h-2.5 w-2.5 rounded-full bg-gradient-to-r ${item.color}`} />
                         <StageIcon className="h-3.5 w-3.5 text-neutral-400" />
@@ -302,23 +309,24 @@ export function RevenueIntelligenceDashboard() {
               </div>
             </div>
 
-            <div className="mt-5 rounded-2xl border border-white/12 bg-black/45 p-4">
+            <div className="mt-6 rounded-2xl border border-white/12 bg-black/45 p-5">
               <h4 className="text-sm font-semibold text-white">Qualification Metrics</h4>
-              <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-neutral-300 sm:grid-cols-2">
-                <div className="rounded-lg border border-white/10 bg-black/35 px-3 py-2">Qualified vs Unqualified: <span className="text-white">81% / 19%</span></div>
-                <div className="rounded-lg border border-white/10 bg-black/35 px-3 py-2">Commercial vs Residential: <span className="text-white">33% / 67%</span></div>
-                <div className="rounded-lg border border-white/10 bg-black/35 px-3 py-2">Repeat Callers: <span className="text-white">11%</span></div>
-                <div className="rounded-lg border border-white/10 bg-black/35 px-3 py-2">High Value Property Flags: <span className="text-white">14%</span></div>
+              <div className="mt-4 grid grid-cols-1 gap-2.5 text-sm text-neutral-300 sm:grid-cols-2">
+                <div className="rounded-lg border border-white/10 bg-black/35 px-3.5 py-2.5">Qualified vs Unqualified: <span className="text-white">81% / 19%</span></div>
+                <div className="rounded-lg border border-white/10 bg-black/35 px-3.5 py-2.5">Commercial vs Residential: <span className="text-white">33% / 67%</span></div>
+                <div className="rounded-lg border border-white/10 bg-black/35 px-3.5 py-2.5">Repeat Callers: <span className="text-white">11%</span></div>
+                <div className="rounded-lg border border-white/10 bg-black/35 px-3.5 py-2.5">High Value Property Flags: <span className="text-white">14%</span></div>
               </div>
             </div>
           </motion.div>
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
-          className="mt-5 rounded-3xl border border-white/12 bg-black/55 p-6 backdrop-blur-xl shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)]"
+          transition={{ delay: 0.14, duration: 0.5, ease: "easeOut" }}
+          className="mt-8 rounded-3xl border border-white/12 bg-black/55 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 md:mt-10"
         >
           <h3 className="text-center text-2xl font-semibold text-white md:text-3xl">Built to Work With Your Systems.</h3>
           <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-neutral-300 md:text-base">

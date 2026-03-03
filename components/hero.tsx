@@ -866,7 +866,7 @@ export const Hero = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen pt-20 md:pt-40 relative overflow-hidden">
+    <div className="relative flex min-h-[76vh] flex-col overflow-hidden pt-20 md:min-h-[82vh] md:pt-36">
       <motion.div
         initial={{
           y: 40,
@@ -900,28 +900,49 @@ export const Hero = () => {
           onWithAcaiHoldComplete={handleWithAcaiHoldComplete}
         />
       )}
-      <motion.p
-        initial={{
-          y: 40,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-          delay: 0.2,
-        }}
-        className="text-center mt-6 text-lg md:text-2xl text-muted dark:text-muted-dark max-w-4xl mx-auto relative z-10"
-      >
-        <Balancer>
-          24/7 Live Contractor Concierge Built for Plumbing & Mechanical Companies.
-        </Balancer>
-      </motion.p>
+      <div className="relative z-10 mx-auto mt-7 w-full max-w-5xl px-4 text-center md:mt-10">
+        <div className="pointer-events-none absolute inset-x-10 -top-6 h-[220px] rounded-full bg-black/45 blur-2xl md:inset-x-20 md:h-[260px]" />
+        <div className="pointer-events-none absolute left-1/2 top-8 h-44 w-80 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/14 via-purple-500/22 to-blue-500/14 blur-3xl" />
 
-      <div className="h-4 md:h-6" />
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ease: "easeOut", duration: 0.45, delay: 0.08 }}
+          className="relative text-[11px] font-semibold uppercase tracking-[0.34em] text-purple-300/75 md:text-xs"
+        >
+          LIVE CONTRACTOR CONCIERGE
+        </motion.p>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
+          className="relative mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl"
+        >
+          <span className="acai-247-sweep inline-block">24/7</span>{" "}
+          <Balancer>Contractor Call Operations.</Balancer>
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ ease: "easeOut", duration: 0.5, delay: 0.38 }}
+          className="relative mx-auto mt-4 max-w-3xl text-lg font-medium text-neutral-200 md:text-2xl"
+        >
+          <Balancer>Built exclusively for Plumbing &amp; Mechanical Companies.</Balancer>
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ ease: "easeOut", duration: 0.5, delay: 0.5 }}
+          className="relative mx-auto mt-5 max-w-3xl text-sm tracking-[0.01em] text-neutral-300 md:text-base"
+        >
+          Every call answered. Every emergency routed. Every job qualified.
+        </motion.p>
+      </div>
+
+      <div className="h-3 md:h-4" />
     </div>
   );
 };

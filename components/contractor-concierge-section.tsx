@@ -57,36 +57,39 @@ export function ContractorConciergeSection() {
   };
 
   return (
-    <section className="relative z-10 mt-0 w-full max-w-7xl px-4 md:mt-1">
+    <section className="relative z-10 -mt-2 w-full max-w-7xl px-4 md:-mt-3">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.45 }}
         transition={{ duration: 0.48, ease: "easeOut" }}
-        className="relative mx-auto max-w-[780px] text-center"
+        className="relative mx-auto max-w-[760px] text-center"
       >
-        <div className="pointer-events-none absolute left-1/2 top-3 h-28 w-64 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/10 via-purple-500/18 to-blue-500/10 blur-3xl" />
-        <p className="relative text-xs font-semibold uppercase tracking-[0.24em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
-        <h2 className="relative mt-3 text-3xl font-semibold leading-tight text-white md:text-5xl">Real People. Revenue-Focused.</h2>
-        <p className="relative mx-auto mt-4 max-w-[760px] text-base leading-7 text-neutral-300 md:text-lg">
-          We answer, qualify, and route every plumbing and mechanical call with contractor-trained agents who understand dispatch, emergencies, and high-value jobs.
+        <div className="pointer-events-none absolute left-1/2 top-2 h-20 w-56 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/10 via-purple-500/16 to-blue-500/10 blur-3xl" />
+        <p className="relative text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
+        <p className="relative mx-auto mt-3 max-w-[720px] text-sm leading-6 text-neutral-300 md:text-base">
+          Every call answered. Every emergency routed. Every job qualified.
         </p>
       </motion.div>
 
-      <div className="mt-8 grid grid-cols-1 gap-7 lg:grid-cols-2 lg:gap-10 md:mt-10">
+      <div className="mt-5 grid grid-cols-1 gap-6 md:mt-6 lg:grid-cols-2 lg:gap-10">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="order-1"
+          className="order-1 lg:-mt-6"
         >
+          <div className="mb-4 md:mb-5">
+            <h2 className="text-3xl font-semibold leading-tight text-white md:text-5xl">Real People Behind Every Call.</h2>
+            <h3 className="mt-2 text-xl font-medium leading-tight text-neutral-200 md:text-3xl">Built to Capture Revenue, Not Just Messages.</h3>
+          </div>
           <div className="relative">
-            <div className="pointer-events-none absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-red-500/20 via-purple-500/28 to-blue-500/22 blur-2xl animate-pulse" />
+            <div className="pointer-events-none absolute -inset-5 rounded-[2.2rem] bg-gradient-to-r from-red-500/20 via-purple-500/30 to-blue-500/24 blur-2xl animate-pulse" />
             <motion.div
               whileHover={{ rotateX: 1.8, rotateY: -2.4, scale: 1.01 }}
               transition={{ type: "spring", stiffness: 180, damping: 20 }}
-              className="group relative min-h-[320px] overflow-hidden rounded-3xl border border-white/20 bg-black/55 shadow-[0_24px_60px_rgba(20,20,40,0.55)] [transform-style:preserve-3d] md:min-h-[540px]"
+              className="group relative min-h-[340px] overflow-hidden rounded-3xl border border-white/20 bg-black/55 shadow-[0_24px_60px_rgba(20,20,40,0.55)] [transform-style:preserve-3d] md:min-h-[600px]"
             >
               <Image
                 src="/NEWcallcenter.png"
