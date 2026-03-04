@@ -87,6 +87,8 @@ export function ContractorConciergeSection() {
               repeat: Infinity,
               ease: "easeInOut",
               type: "spring",
+            }}
+          >
                 <section className="relative z-10 mt-0 w-full max-w-7xl overflow-hidden px-4 md:mt-1">
                   <motion.div
                     aria-hidden
