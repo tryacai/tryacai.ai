@@ -2,58 +2,47 @@
 
 import Image from "next/image";
 import { Link } from "next-view-transitions";
-import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState } from "react";
-import {
-  AlertTriangle,
-  BadgeCheck,
-  ClipboardCheck,
-  FileText,
-  Phone,
-  PhoneCall,
-  Route,
-} from "lucide-react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-const featureItems = [
+const callJourneyStages = [
   {
-    id: "answering",
-    title: "24/7 Live Call Answering",
-    description: "Real trained agents answering every contractor call.",
-    icon: PhoneCall,
+    label: "Answer",
+    description: "Your call is answered by a real trained concierge.",
   },
   {
-    id: "routing",
-    title: "Emergency Call Routing",
-    description: "After-hours and urgent calls prioritized instantly.",
-    icon: AlertTriangle,
+    label: "Qualify",
+    description: "We qualify the job type, urgency, and location.",
   },
   {
-    id: "qualification",
-    title: "High-Value Job Qualification",
-    description: "Capture bigger jobs, not just missed voicemails.",
-    icon: BadgeCheck,
+    label: "Route",
+    description: "We route it directly to your technician’s calendar.",
   },
-] as const;
-
-const callFlowItems = [
-  { label: "Answer", icon: Phone },
-  { label: "Qualify", icon: ClipboardCheck },
-  { label: "Route", icon: Route },
-  { label: "Log", icon: FileText },
+  {
+    label: "Log",
+    description: "Every call is logged, tagged, and attributed in your CRM.",
+  },
 ] as const;
 
 export function ContractorConciergeSection() {
-  const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [activeStageIndex, setActiveStageIndex] = useState(0);
+  const journeyRef = useRef<HTMLDivElement | null>(null);
+  const isJourneyInView = useInView(journeyRef, { amount: 0.45, once: false });
 
-  const activeFeature = featureItems[activeFeatureIndex];
-  const ActiveFeatureIcon = activeFeature.icon;
+  useEffect(() => {
+    if (!isJourneyInView) {
+      return;
+    }
 
-  const focusTab = (index: number) => {
-    const nextIndex = (index + featureItems.length) % featureItems.length;
-    setActiveFeatureIndex(nextIndex);
-    tabRefs.current[nextIndex]?.focus();
-  };
+    setActiveStageIndex(0);
+    const interval = window.setInterval(() => {
+      setActiveStageIndex((current) => (current + 1) % callJourneyStages.length);
+    }, 1500);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [isJourneyInView]);
 
   return (
     <section className="relative z-10 mt-0 w-full max-w-7xl px-4 md:mt-1">
@@ -76,104 +65,108 @@ export function ContractorConciergeSection() {
             }}
           >
             <section className="relative z-10 mt-0 w-full max-w-7xl overflow-hidden px-4 md:mt-1">
-              <motion.div
-                aria-hidden
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 0.28, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-                className="pointer-events-none absolute -top-8 left-0 right-0 h-28 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:42px_42px]"
-              />
+                <div className="text-center">
+                  <p className="text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">HOW EVERY CALL BECOMES REVENUE</p>
 
-              <div className="mx-auto mb-6 max-w-6xl md:mb-7">
-                <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-400/45 to-transparent" />
-              </div>
-
-              <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
-                <div className="md:col-span-5">
-                  <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.45 }}
-                    transition={{ duration: 0.5, delay: 0.12, ease: "easeOut" }}
-                    className="mt-7 text-left"
+                  <div
+                    ref={journeyRef}
+                    className="relative mt-5 overflow-hidden rounded-2xl border border-white/15 bg-black/60 p-5 text-left shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_0_28px_rgba(96,70,255,0.18)] backdrop-blur-xl md:p-7"
                   >
-                    <p className="text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
-                    <h3 className="mt-3 text-5xl font-semibold leading-[0.95] text-white md:text-7xl">
-                      <span className="block">Real People</span>
-                      <span className="block">Behind</span>
-                      <span className="block">Every Call.</span>
-                    </h3>
-
-                    <h4 className="mt-8 text-2xl font-semibold text-white md:text-3xl">Ready to See Concierge in Action?</h4>
-                    <Link
-                      href="/contact"
-                      className="acai-cta-shine mt-4 inline-flex items-center justify-center rounded-xl border border-white/15 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-7 py-3 text-base font-semibold text-white shadow-[0_0_14px_rgba(120,80,255,0.28)] transition-all duration-200 hover:scale-105 hover:shadow-[0_0_20px_rgba(120,80,255,0.4)]"
-                    >
-                      Book a Strategy Call
-                    </Link>
-                  </motion.div>
-                </div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 26, x: 14, filter: "blur(6px)" }}
-                  whileInView={{ opacity: 1, y: 0, x: 0, filter: "blur(0px)" }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.62, delay: 0.14, ease: "easeOut" }}
-                  className="md:col-span-7 md:pt-4"
-                >
-                  <div className="group relative flex items-center justify-center rounded-3xl border border-white/20 bg-black/55 p-4 shadow-[0_24px_60px_rgba(20,20,40,0.55)] md:p-6">
-                    <Image
-                      src="/NEWcallcenter.png"
-                      alt="ACAI live contractor concierge team"
-                      width={1800}
-                      height={1200}
-                      priority
-                      className="h-auto max-h-[600px] w-full object-contain object-center"
+                    <motion.div
+                      aria-hidden
+                      animate={{ opacity: [0.28, 0.42, 0.28] }}
+                      transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/8 via-purple-500/12 to-blue-500/8"
                     />
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/12 to-black/60" />
-                    <div className="pointer-events-none absolute inset-0 acai-scan-overlay opacity-35" />
+                    <motion.div
+                      aria-hidden
+                      animate={{ x: ["-120%", "120%"] }}
+                      transition={{ duration: 3.6, repeat: Infinity, ease: "linear" }}
+                      className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent blur-md"
+                    />
+
+                    <div className="relative z-10 flex flex-wrap items-center justify-center gap-2 md:flex-nowrap md:gap-3">
+                      {callJourneyStages.map((stage, index) => {
+                        const isActive = index === activeStageIndex;
+                        const isReached = index <= activeStageIndex;
+
+                        return (
+                          <div key={stage.label} className="flex w-full items-center justify-center md:w-auto">
+                            <motion.div
+                              animate={{
+                                opacity: isActive ? 1 : 0.5,
+                                scale: isActive ? 1.07 : 1,
+                                boxShadow: isActive
+                                  ? "0 0 0 1px rgba(255,255,255,0.2), 0 0 22px rgba(123,97,255,0.45), 0 0 35px rgba(59,130,246,0.24)"
+                                  : "0 0 0 1px rgba(255,255,255,0.07)",
+                              }}
+                              transition={{ duration: 0.35, ease: "easeOut" }}
+                              className="relative flex h-14 w-14 items-center justify-center rounded-full bg-black/65"
+                            >
+                              <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-red-500/90 via-purple-500/90 to-blue-500/90 p-[1px]">
+                                <span className="block h-full w-full rounded-full bg-black/85" />
+                              </span>
+                              <motion.span
+                                animate={{ opacity: isActive ? 1 : 0.65 }}
+                                transition={{ duration: 0.28 }}
+                                className="relative z-10 text-xs font-semibold uppercase tracking-[0.2em] text-white"
+                              >
+                                {stage.label}
+                              </motion.span>
+                              {isActive && (
+                                <motion.span
+                                  aria-hidden
+                                  initial={{ opacity: 0.4, scale: 0.8 }}
+                                  animate={{ opacity: [0.25, 0.5, 0.25], scale: [1, 1.16, 1] }}
+                                  transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                                  className="pointer-events-none absolute -inset-2 rounded-full bg-gradient-to-r from-red-500/20 via-purple-500/25 to-blue-500/20 blur-md"
+                                />
+                              )}
+                            </motion.div>
+
+                            {index < callJourneyStages.length - 1 && (
+                              <div className="relative mx-2 hidden h-px w-14 overflow-hidden rounded-full bg-white/15 md:block">
+                                <motion.div
+                                  animate={{ opacity: isReached ? 1 : 0.35 }}
+                                  className="absolute inset-0 bg-gradient-to-r from-red-500/65 via-purple-500/65 to-blue-500/65"
+                                />
+                                {isActive && (
+                                  <motion.span
+                                    aria-hidden
+                                    initial={{ x: "-100%", opacity: 0.5 }}
+                                    animate={{ x: "440%", opacity: [0.35, 1, 0.35] }}
+                                    transition={{ duration: 1.15, repeat: Infinity, ease: "linear" }}
+                                    className="absolute -top-1.5 h-3 w-3 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.7)]"
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="relative z-10 mt-7 rounded-xl border border-white/10 bg-black/45 p-5 md:p-6">
+                      <AnimatePresence mode="wait">
+                        <motion.p
+                          key={callJourneyStages[activeStageIndex].label}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.26, ease: "easeOut" }}
+                          className="text-2xl font-medium leading-tight text-white md:text-3xl"
+                        >
+                          {callJourneyStages[activeStageIndex].description}
+                        </motion.p>
+                      </AnimatePresence>
+                      <p className="mt-4 text-base leading-relaxed text-neutral-300 md:text-lg">
+                        We handle everything from the first ring to the final payment.
+                      </p>
+                    </div>
+
+                    <p className="relative z-10 mt-5 text-center text-sm text-neutral-400">Every call. Every emergency. Fully tracked.</p>
                   </div>
-                </motion.div>
-              </div>
-
-              <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14),inset_0_0_120px_rgba(0,0,0,0.65)]" />
-            </section>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, delay: 0.08, ease: "easeOut" }}
-        className="mx-auto mt-8 max-w-5xl"
-      >
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-4 backdrop-blur-xl md:p-5">
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3" role="tablist" aria-label="Concierge features">
-              {featureItems.map((feature, index) => {
-                const isActive = index === activeFeatureIndex;
-                return (
-                  <button
-                    key={feature.id}
-                    ref={(element) => {
-                      tabRefs.current[index] = element;
-                    }}
-                    role="tab"
-                    aria-selected={isActive}
-                    aria-controls={`feature-panel-${feature.id}`}
-                    id={`feature-tab-${feature.id}`}
-                    tabIndex={isActive ? 0 : -1}
-                    onClick={() => setActiveFeatureIndex(index)}
-                    onMouseEnter={() => setActiveFeatureIndex(index)}
-                    onKeyDown={(event) => {
-                      if (event.key === "ArrowRight") {
-                        event.preventDefault();
-                        focusTab(index + 1);
-                      }
-                      if (event.key === "ArrowLeft") {
-                        event.preventDefault();
+                  </div>
                         focusTab(index - 1);
                       }
                       if (event.key === "Home") {
