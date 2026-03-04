@@ -87,37 +87,102 @@ export function ContractorConciergeSection() {
               repeat: Infinity,
               ease: "easeInOut",
               type: "spring",
-              stiffness: 180,
-              damping: 20,
-            }}
-            whileHover={{ rotateX: 1.8, rotateY: -2.4, scale: 1.01 }}
-            className="group relative min-h-[340px] overflow-hidden rounded-3xl border border-white/20 bg-black/55 shadow-[0_24px_60px_rgba(20,20,40,0.55)] [transform-style:preserve-3d] md:min-h-[620px]"
-          >
-            <Image
-              src="/NEWcallcenter.png"
-              alt="ACAI live contractor concierge team"
-              fill
+                <section className="relative z-10 mt-0 w-full max-w-7xl overflow-hidden px-4 md:mt-1">
+                  <motion.div
+                    aria-hidden
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 0.28, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="pointer-events-none absolute -top-8 left-0 right-0 h-28 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:42px_42px]"
+                  />
+
+                  <div className="mx-auto mb-6 max-w-6xl md:mb-7">
+                    <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-400/45 to-transparent" />
+                  </div>
+
+                  <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
+                    <div className="md:col-span-5">
+                      <div className="space-y-1 md:space-y-2">
+                        {[
+                          { label: "24/7", gradient: true },
+                          { label: "Contractor" },
+                          { label: "Call" },
+                          { label: "Operations" },
+                        ].map((item, index) => (
+                          <motion.h2
+                            key={item.label}
+                            initial={{ opacity: 0, x: -32, filter: "blur(4px)" }}
+                            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                            viewport={{ once: true, amount: 0.45 }}
+                            transition={{ duration: 0.55, delay: 0.08 * index, ease: "easeOut" }}
+                            className={`leading-[0.95] ${
+                              item.gradient
+                                ? "bg-gradient-to-r from-red-400 via-purple-300 to-blue-300 bg-clip-text text-6xl font-bold text-transparent md:text-8xl"
+                                : "text-5xl font-semibold text-white/95 md:text-7xl"
+                            }`}
+                          >
+                            {item.label}
+                          </motion.h2>
+                        ))}
               priority
-              className="object-cover"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/12 to-black/60" />
-            <div className="acai-command-scan pointer-events-none absolute inset-0 opacity-20" />
+                    </div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 26, x: 14, filter: "blur(6px)" }}
+                      whileInView={{ opacity: 1, y: 0, x: 0, filter: "blur(0px)" }}
+                      viewport={{ once: true, amount: 0.35 }}
+                      transition={{ duration: 0.62, delay: 0.14, ease: "easeOut" }}
+                      className="md:col-span-7 md:pt-4"
+                    >
+                      <p className="max-w-2xl text-base leading-relaxed text-neutral-200 md:text-lg">
+                        Built exclusively for Plumbing & Mechanical Companies.
+                      </p>
+                      <p className="mt-3 max-w-2xl text-base leading-relaxed text-neutral-300/85 md:text-lg">
+                        Every call answered. Every emergency routed. Every job qualified.
+                      </p>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ duration: 0.5, delay: 0.24, ease: "easeOut" }}
+                        className="mt-8"
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-[0.32em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
+                        <h3 className="mt-3 max-w-3xl text-3xl font-semibold leading-tight text-white md:text-5xl">Real People Behind Every Call.</h3>
+                      </motion.div>
+                    </motion.div>
+                  </div>
             <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14),inset_0_0_120px_rgba(0,0,0,0.65)]" />
             <div className="acai-command-badge absolute right-4 top-4 rounded-lg border border-white/20 bg-black/55 px-3 py-1.5 text-xs font-medium text-neutral-100 backdrop-blur-md md:right-5 md:top-5">
               Emergency Routed
-            </div>
+                    whileInView={{ opacity: 1, y: 0 }}
           </motion.div>
-        </div>
+                    transition={{ duration: 0.6, ease: "easeOut" }}
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
+                        initial={{ scale: 0.97, opacity: 0.85 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        viewport={{ once: true, amount: 0.45 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6, delay: 0.08, ease: "easeOut" }}
-        className="mx-auto mt-8 max-w-5xl"
-      >
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-4 backdrop-blur-xl md:p-5">
+                          y: {
+                            duration: 7.2,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          },
+                          scale: {
+                            duration: 0.75,
+                            ease: "easeOut",
+                          },
+                          opacity: {
+                            duration: 0.65,
+                            ease: "easeOut",
+                          },
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3" role="tablist" aria-label="Concierge features">
               {featureItems.map((feature, index) => {
                 const isActive = index === activeFeatureIndex;
@@ -160,9 +225,6 @@ export function ContractorConciergeSection() {
                   >
                     {isActive && (
                       <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 p-[1px]">
-                        <span className="block h-full w-full rounded-full bg-black/80" />
-                      </span>
-                    )}
                     <span className="relative z-10">{feature.title}</span>
                   </button>
                 );

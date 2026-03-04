@@ -133,6 +133,7 @@ export function RevenueIntelligenceDashboard({ preview = false }: { preview?: bo
         </div>
 
         <div className="relative mt-16 md:mt-20">
+          {preview && <div className="pointer-events-none absolute inset-0 z-10 rounded-[2rem] bg-black/5" />}
           <div className="grid grid-cols-1 gap-6 md:gap-7 xl:grid-cols-12">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
@@ -246,8 +247,8 @@ export function RevenueIntelligenceDashboard({ preview = false }: { preview?: bo
           </div>
           {preview && (
             <>
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent via-black/75 to-black" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 backdrop-blur-[2px]" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[46%] z-20 bg-gradient-to-b from-transparent via-black/95 to-black" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-14 backdrop-blur-[2.5px]" />
             </>
           )}
         </div>

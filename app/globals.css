@@ -369,11 +369,8 @@ html {
   gap: 1rem;
   will-change: transform;
   transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
   animation: integration-marquee-scroll 30s linear infinite;
-}
-
-.integration-marquee:hover .marquee-track {
-  animation-play-state: paused;
 }
 
 .integration-marquee:hover {
