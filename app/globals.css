@@ -274,6 +274,186 @@ html {
   animation: acai-particle-drift 7s ease-in-out infinite;
 }
 
+@keyframes acai-command-pulse {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.36;
+    transform: scale(1.012);
+  }
+}
+
+@keyframes acai-command-scan-slow {
+  0% {
+    transform: translateY(-115%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.12;
+  }
+  70% {
+    opacity: 0.08;
+  }
+  100% {
+    transform: translateY(185%);
+    opacity: 0;
+  }
+}
+
+@keyframes acai-command-badge-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.acai-command-glow {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(239, 68, 68, 0.16), transparent 48%),
+    radial-gradient(circle at 75% 20%, rgba(123, 0, 255, 0.18), transparent 50%),
+    radial-gradient(circle at 52% 75%, rgba(59, 130, 246, 0.14), transparent 48%);
+  filter: blur(20px);
+  animation: acai-command-pulse 7s ease-in-out infinite;
+}
+
+.acai-command-scan::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 24%;
+  background: linear-gradient(to bottom, rgba(147, 51, 234, 0.12), rgba(59, 130, 246, 0.08), transparent);
+  filter: blur(10px);
+  animation: acai-command-scan-slow 9s linear infinite;
+}
+
+.acai-command-badge {
+  animation: acai-command-badge-pulse 3.4s ease-in-out infinite;
+}
+
+@keyframes integration-marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes integration-pixel-shimmer {
+  0%,
+  100% {
+    opacity: 0.18;
+  }
+  50% {
+    opacity: 0.32;
+  }
+}
+
+.integration-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  gap: 1rem;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: integration-marquee-scroll 30s linear infinite;
+}
+
+.integration-marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.integration-marquee:hover {
+  cursor: pointer;
+}
+
+.integration-logo-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.78);
+  opacity: 0.7;
+  filter: grayscale(100%) blur(0.2px);
+  transition: transform 0.22s ease, filter 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease;
+}
+
+.integration-logo-card::before {
+  content: "";
+  position: absolute;
+  inset: 10% 8%;
+  border-radius: 10px;
+  opacity: 0;
+  background-image:
+    linear-gradient(90deg, rgba(239, 68, 68, 0.12), rgba(59, 130, 246, 0.12)),
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: auto, 8px 8px, 8px 8px;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.integration-logo-card::after {
+  content: "";
+  position: absolute;
+  inset: 6% 4%;
+  border-radius: 12px;
+  border: 1px solid rgba(123, 0, 255, 0.22);
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.14), 0 0 12px rgba(239, 68, 68, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.integration-logo-card:hover {
+  opacity: 1;
+  filter: grayscale(0%) blur(0);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.integration-logo-card:hover::before,
+.integration-logo-card:hover::after {
+  opacity: 1;
+  animation: integration-pixel-shimmer 1.8s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .marquee-track {
+    animation-duration: 34s;
+    gap: 0.75rem;
+  }
+
+  .integration-logo-card {
+    transform: none;
+  }
+
+  .integration-logo-card svg {
+    width: 142px;
+    height: 42px;
+  }
+
+  .integration-marquee:hover .marquee-track {
+    animation-play-state: running;
+  }
+
+  .integration-marquee:hover {
+    cursor: default;
+  }
+}
+
 /* Connecting dots animation */
 @keyframes dots {
   0%, 20% {

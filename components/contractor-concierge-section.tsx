@@ -79,8 +79,10 @@ export function ContractorConciergeSection() {
         className="mx-auto mt-8 max-w-6xl"
       >
         <div className="relative">
-          <div className="pointer-events-none absolute -inset-5 rounded-[2.2rem] bg-gradient-to-r from-red-500/18 via-purple-500/24 to-blue-500/18 blur-2xl" />
+          <div className="acai-command-glow pointer-events-none absolute -inset-5 rounded-[2.2rem]" />
           <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
             whileHover={{ rotateX: 1.8, rotateY: -2.4, scale: 1.01 }}
             transition={{ type: "spring", stiffness: 180, damping: 20 }}
             className="group relative min-h-[340px] overflow-hidden rounded-3xl border border-white/20 bg-black/55 shadow-[0_24px_60px_rgba(20,20,40,0.55)] [transform-style:preserve-3d] md:min-h-[620px]"
@@ -93,8 +95,11 @@ export function ContractorConciergeSection() {
               className="object-cover"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/12 to-black/60" />
-            <div className="pointer-events-none absolute inset-0 acai-scan-overlay opacity-35" />
+            <div className="acai-command-scan pointer-events-none absolute inset-0 opacity-20" />
             <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14),inset_0_0_120px_rgba(0,0,0,0.65)]" />
+            <div className="acai-command-badge absolute right-4 top-4 rounded-lg border border-white/20 bg-black/55 px-3 py-1.5 text-xs font-medium text-neutral-100 backdrop-blur-md md:right-5 md:top-5">
+              Emergency Routed
+            </div>
           </motion.div>
         </div>
       </motion.div>
@@ -212,23 +217,17 @@ export function ContractorConciergeSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.35 }}
         transition={{ duration: 0.55, ease: "easeOut" }}
-        className="relative mx-auto mt-12 max-w-4xl overflow-hidden rounded-3xl border border-white/12 bg-black/50 p-5 text-center shadow-[0_12px_36px_rgba(20,20,40,0.32)] md:mt-14 md:p-6"
+        className="relative mx-auto mt-12 max-w-4xl overflow-hidden rounded-3xl border border-white/12 bg-black/50 p-4 text-center shadow-[0_10px_28px_rgba(20,20,40,0.28)] md:mt-14 md:p-5"
       >
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/6 via-purple-500/10 to-blue-500/6" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/5 via-purple-500/8 to-blue-500/5" />
         <h3 className="relative text-3xl font-semibold text-white md:text-4xl">Ready to See Concierge in Action?</h3>
 
-        <div className="relative mt-5 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
+        <div className="relative mt-4 flex items-center justify-center">
           <Link
             href="/contact"
-            className="acai-cta-shine relative inline-flex items-center justify-center overflow-hidden rounded-full border border-white/18 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-8 py-3 text-base font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5"
+            className="acai-cta-shine relative inline-flex items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-8 py-3 text-base font-semibold text-white shadow-[0_8px_24px_rgba(123,0,255,0.22)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_12px_30px_rgba(123,0,255,0.28)]"
           >
             <span className="relative z-10">Book a Strategy Call</span>
-          </Link>
-          <Link
-            href="/ai"
-            className="inline-flex items-center justify-center rounded-full border border-white/16 bg-black/45 px-6 py-3 text-sm font-medium text-neutral-200 transition-all duration-200 hover:-translate-y-0.5 hover:text-white"
-          >
-            See a Live Call Example
           </Link>
         </div>
       </motion.div>

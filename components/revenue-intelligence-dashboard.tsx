@@ -2,7 +2,6 @@
 
 import { motion, useInView } from "framer-motion";
 import {
-  Activity,
   AlertTriangle,
   ArrowDownRight,
   ArrowUpRight,
@@ -84,8 +83,9 @@ const stageDistribution = [
   { label: "Spam", value: 4, color: "from-red-500 to-rose-500", icon: ShieldCheck },
 ] as const;
 
-export function RevenueIntelligenceDashboard() {
+export function RevenueIntelligenceDashboard({ preview = false }: { preview?: boolean }) {
   const emergencyProgress = 72;
+  const integrationLogos = ["ServiceTitan", "Housecall Pro", "Jobber", "FieldEdge"];
 
   const donutBackground = useMemo(() => {
     const stops: string[] = [];
@@ -132,7 +132,8 @@ export function RevenueIntelligenceDashboard() {
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-6 md:mt-20 md:gap-7 xl:grid-cols-12">
+        <div className="relative mt-16 md:mt-20">
+          <div className="grid grid-cols-1 gap-6 md:gap-7 xl:grid-cols-12">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -242,8 +243,27 @@ export function RevenueIntelligenceDashboard() {
               Active emergency monitoring enabled
             </motion.div>
           </motion.div>
+          </div>
+          {preview && (
+            <>
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent via-black/75 to-black" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 backdrop-blur-[2px]" />
+            </>
+          )}
         </div>
 
+        {preview && (
+          <div className="mt-8 flex justify-center md:mt-10">
+            <Link
+              href="/revenue-intelligence"
+              className="inline-flex items-center rounded-xl border border-white/18 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-7 py-3 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(123,0,255,0.26)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(123,0,255,0.34)]"
+            >
+              See Full Revenue Dashboard →
+            </Link>
+          </div>
+        )}
+
+        {!preview && (
         <div className="mt-8 grid grid-cols-1 gap-6 md:mt-10 md:gap-7 xl:grid-cols-12">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
@@ -320,33 +340,41 @@ export function RevenueIntelligenceDashboard() {
             </div>
           </motion.div>
         </div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ delay: 0.14, duration: 0.5, ease: "easeOut" }}
-          className="mt-8 rounded-3xl border border-white/12 bg-black/55 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1 md:mt-10"
+          className="mt-10 rounded-3xl border border-white/12 bg-black/55 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(10,10,30,0.45)] backdrop-blur-xl md:mt-12"
         >
           <h3 className="text-center text-2xl font-semibold text-white md:text-3xl">Built to Work With Your Systems.</h3>
           <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-neutral-300 md:text-base">
             ACAI integrates directly with your CRM and dispatch platform.
           </p>
 
-          <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4">
-            {[
-              "ServiceTitan",
-              "Housecall Pro",
-              "Jobber",
-              "FieldEdge",
-            ].map((logo) => (
-              <div
-                key={logo}
-                className="flex h-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 text-base font-semibold tracking-wide text-neutral-400 grayscale transition-all duration-200 hover:-translate-y-0.5 hover:border-white/25 hover:text-neutral-100 hover:grayscale-0"
-              >
-                {logo}
-              </div>
-            ))}
+          <div className="integration-marquee mx-auto mt-7 max-w-5xl rounded-2xl border border-white/10 bg-black/40 px-3 py-4 md:px-4 md:py-5">
+            <div className="marquee-track">
+              {[...integrationLogos, ...integrationLogos].map((logo, index) => (
+                <div key={`${logo}-${index}`} className="integration-logo-card" aria-label={logo}>
+                  <svg viewBox="0 0 220 56" className="h-11 w-[160px] md:h-12 md:w-[180px]" role="img" aria-hidden="true">
+                    <rect x="1" y="1" width="218" height="54" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)" />
+                    <text
+                      x="110"
+                      y="33"
+                      textAnchor="middle"
+                      fontSize="14"
+                      fontWeight="600"
+                      fill="currentColor"
+                      letterSpacing="0.02em"
+                    >
+                      {logo}
+                    </text>
+                  </svg>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 md:grid-cols-2">
@@ -360,15 +388,6 @@ export function RevenueIntelligenceDashboard() {
             </div>
           </div>
 
-          <div className="mt-5 flex justify-center">
-            <Link
-              href="/solutions"
-              className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(123,0,255,0.35)]"
-            >
-              <Activity className="h-4 w-4" />
-              See Integration Options
-            </Link>
-          </div>
         </motion.div>
 
         <p className="mx-auto mt-6 max-w-4xl text-center text-sm text-neutral-400 md:text-base">

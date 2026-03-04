@@ -22,7 +22,7 @@ export default function Home() {
 
         <ContractorConciergeSection />
 
-        <RevenueIntelligenceDashboard />
+        <RevenueIntelligenceDashboard preview />
 
         <SectionDivider />
 
