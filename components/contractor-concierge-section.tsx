@@ -82,9 +82,15 @@ export function ContractorConciergeSection() {
           <div className="acai-command-glow pointer-events-none absolute -inset-5 rounded-[2.2rem]" />
           <motion.div
             animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
+            transition={{
+              duration: 7.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              type: "spring",
+              stiffness: 180,
+              damping: 20,
+            }}
             whileHover={{ rotateX: 1.8, rotateY: -2.4, scale: 1.01 }}
-            transition={{ type: "spring", stiffness: 180, damping: 20 }}
             className="group relative min-h-[340px] overflow-hidden rounded-3xl border border-white/20 bg-black/55 shadow-[0_24px_60px_rgba(20,20,40,0.55)] [transform-style:preserve-3d] md:min-h-[620px]"
           >
             <Image
