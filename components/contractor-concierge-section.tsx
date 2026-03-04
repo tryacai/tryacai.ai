@@ -167,6 +167,9 @@ export function ContractorConciergeSection() {
                     <p className="relative z-10 mt-5 text-center text-sm text-neutral-400">Every call. Every emergency. Fully tracked.</p>
                   </div>
                 </div>
+            </section>
+          </motion.div>
+        </div>
       </motion.div>
 
       <motion.div
