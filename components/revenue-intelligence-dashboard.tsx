@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
 import {
   AlertTriangle,
   ArrowDownRight,
@@ -85,7 +86,13 @@ const stageDistribution = [
 
 export function RevenueIntelligenceDashboard({ preview = false }: { preview?: boolean }) {
   const emergencyProgress = 72;
-  const integrationLogos = ["ServiceTitan", "Housecall Pro", "Jobber", "FieldEdge"];
+  const integrationLogos = [
+    { name: "ServiceTitan", src: "/servicetitanlogo.png", brandClass: "brand-servicetitan" },
+    { name: "Housecall Pro", src: "/download.png", brandClass: "brand-housecall" },
+    { name: "Jobber", src: "/jobberlogo.png", brandClass: "brand-jobber" },
+    { name: "Pipedrive", src: "/pipedrivelogo.png", brandClass: "brand-pipedrive" },
+    { name: "FieldEdge", src: "/fieldedgelogo.png", brandClass: "brand-fieldedge" },
+  ] as const;
 
   const donutBackground = useMemo(() => {
     const stops: string[] = [];
@@ -358,21 +365,15 @@ export function RevenueIntelligenceDashboard({ preview = false }: { preview?: bo
           <div className="integration-marquee mx-auto mt-7 max-w-5xl rounded-2xl border border-white/10 bg-black/40 px-3 py-4 md:px-4 md:py-5">
             <div className="marquee-track">
               {[...integrationLogos, ...integrationLogos].map((logo, index) => (
-                <div key={`${logo}-${index}`} className="integration-logo-card" aria-label={logo}>
-                  <svg viewBox="0 0 220 56" className="h-11 w-[160px] md:h-12 md:w-[180px]" role="img" aria-hidden="true">
-                    <rect x="1" y="1" width="218" height="54" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)" />
-                    <text
-                      x="110"
-                      y="33"
-                      textAnchor="middle"
-                      fontSize="14"
-                      fontWeight="600"
-                      fill="currentColor"
-                      letterSpacing="0.02em"
-                    >
-                      {logo}
-                    </text>
-                  </svg>
+                <div key={`${logo.name}-${index}`} className={`integration-logo-card ${logo.brandClass}`} aria-label={logo.name}>
+                  <Image
+                    src={logo.src}
+                    alt={logo.name}
+                    width={180}
+                    height={64}
+                    className="integration-logo-image h-auto max-h-[56px] w-auto max-w-[180px] object-contain"
+                  />
+                  <p className="integration-logo-label">{logo.name}</p>
                 </div>
               ))}
             </div>

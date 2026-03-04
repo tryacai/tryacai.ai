@@ -91,33 +91,6 @@ export function ContractorConciergeSection() {
 
               <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-12 md:gap-10">
                 <div className="md:col-span-5">
-                  <div className="space-y-1 md:space-y-2">
-                    {[
-                      { label: "24/7", gradient: true },
-                      { label: "Contractor" },
-                      { label: "Call" },
-                      { label: "Operations" },
-                    ].map((item, index) => (
-                      <motion.h2
-                        key={item.label}
-                        initial={{ opacity: 0, x: -32, filter: "blur(4px)" }}
-                        whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                        viewport={{ once: true, amount: 0.45 }}
-                        transition={{ duration: 0.55, delay: 0.08 * index, ease: "easeOut" }}
-                        className={`leading-[0.95] ${
-                          item.gradient
-                            ? "bg-gradient-to-r from-red-400 via-purple-300 to-blue-300 bg-clip-text text-6xl font-bold text-transparent md:text-8xl"
-                            : "text-5xl font-semibold text-white/95 md:text-7xl"
-                        }`}
-                      >
-                        {item.label}
-                      </motion.h2>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 h-px w-full max-w-sm bg-gradient-to-r from-purple-400/60 to-transparent" />
-                  <p className="mt-4 text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
-
                   <motion.div
                     initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -131,6 +104,14 @@ export function ContractorConciergeSection() {
                       <span className="block">Behind</span>
                       <span className="block">Every Call.</span>
                     </h3>
+
+                    <h4 className="mt-8 text-2xl font-semibold text-white md:text-3xl">Ready to See Concierge in Action?</h4>
+                    <Link
+                      href="/contact"
+                      className="acai-cta-shine mt-4 inline-flex items-center justify-center rounded-xl border border-white/15 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-7 py-3 text-base font-semibold text-white shadow-[0_0_14px_rgba(120,80,255,0.28)] transition-all duration-200 hover:scale-105 hover:shadow-[0_0_20px_rgba(120,80,255,0.4)]"
+                    >
+                      Book a Strategy Call
+                    </Link>
                   </motion.div>
                 </div>
 
@@ -141,13 +122,14 @@ export function ContractorConciergeSection() {
                   transition={{ duration: 0.62, delay: 0.14, ease: "easeOut" }}
                   className="md:col-span-7 md:pt-4"
                 >
-                  <div className="group relative min-h-[340px] overflow-hidden rounded-3xl border border-white/20 bg-black/55 shadow-[0_24px_60px_rgba(20,20,40,0.55)] md:min-h-[620px]">
+                  <div className="group relative flex items-center justify-center rounded-3xl border border-white/20 bg-black/55 p-4 shadow-[0_24px_60px_rgba(20,20,40,0.55)] md:p-6">
                     <Image
                       src="/NEWcallcenter.png"
                       alt="ACAI live contractor concierge team"
-                      fill
+                      width={1800}
+                      height={1200}
                       priority
-                      className="object-cover"
+                      className="h-auto max-h-[600px] w-full object-contain object-center"
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/12 to-black/60" />
                     <div className="pointer-events-none absolute inset-0 acai-scan-overlay opacity-35" />
