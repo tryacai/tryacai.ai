@@ -58,20 +58,6 @@ export function ContractorConciergeSection() {
   return (
     <section className="relative z-10 mt-0 w-full max-w-7xl px-4 md:mt-1">
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.45 }}
-        transition={{ duration: 0.48, ease: "easeOut" }}
-        className="relative mx-auto max-w-[860px] text-center"
-      >
-        <div className="mx-auto mb-6 max-w-6xl md:mb-7">
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-400/45 to-transparent" />
-        </div>
-        <p className="relative text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
-        <h2 className="relative mx-auto mt-4 max-w-4xl text-4xl font-semibold leading-tight text-white md:text-6xl">Real People Behind Every Call.</h2>
-      </motion.div>
-
-      <motion.div
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
@@ -128,6 +114,24 @@ export function ContractorConciergeSection() {
                       </motion.h2>
                     ))}
                   </div>
+
+                  <div className="mt-6 h-px w-full max-w-sm bg-gradient-to-r from-purple-400/60 to-transparent" />
+                  <p className="mt-4 text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.45 }}
+                    transition={{ duration: 0.5, delay: 0.12, ease: "easeOut" }}
+                    className="mt-7 text-left"
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
+                    <h3 className="mt-3 text-5xl font-semibold leading-[0.95] text-white md:text-7xl">
+                      <span className="block">Real People</span>
+                      <span className="block">Behind</span>
+                      <span className="block">Every Call.</span>
+                    </h3>
+                  </motion.div>
                 </div>
 
                 <motion.div
@@ -137,23 +141,17 @@ export function ContractorConciergeSection() {
                   transition={{ duration: 0.62, delay: 0.14, ease: "easeOut" }}
                   className="md:col-span-7 md:pt-4"
                 >
-                  <p className="max-w-2xl text-base leading-relaxed text-neutral-200 md:text-lg">
-                    Built exclusively for Plumbing & Mechanical Companies.
-                  </p>
-                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-neutral-300/85 md:text-lg">
-                    Every call answered. Every emergency routed. Every job qualified.
-                  </p>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.5, delay: 0.24, ease: "easeOut" }}
-                    className="mt-8"
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-[0.32em] text-purple-300/70 md:text-sm">LIVE CONTRACTOR CONCIERGE</p>
-                    <h3 className="mt-3 max-w-3xl text-3xl font-semibold leading-tight text-white md:text-5xl">Real People Behind Every Call.</h3>
-                  </motion.div>
+                  <div className="group relative min-h-[340px] overflow-hidden rounded-3xl border border-white/20 bg-black/55 shadow-[0_24px_60px_rgba(20,20,40,0.55)] md:min-h-[620px]">
+                    <Image
+                      src="/NEWcallcenter.png"
+                      alt="ACAI live contractor concierge team"
+                      fill
+                      priority
+                      className="object-cover"
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/12 to-black/60" />
+                    <div className="pointer-events-none absolute inset-0 acai-scan-overlay opacity-35" />
+                  </div>
                 </motion.div>
               </div>
 
