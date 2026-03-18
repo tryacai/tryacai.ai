@@ -72,7 +72,6 @@ export function CallRevenueFlowSection() {
                 className={`absolute left-0 top-0 will-change-transform ${token.sizeClass}`}
                 style={{
                   offsetPath: path,
-                  WebkitOffsetPath: path,
                   filter: "drop-shadow(0 0 8px rgba(147,197,253,0.45))",
                 }}
                 animate={{
