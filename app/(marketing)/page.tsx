@@ -8,6 +8,7 @@ import { SolutionSection } from "@/components/solution-section";
 import { InfrastructureSection } from "@/components/infrastructure-section";
 import { ContractorConciergeSection } from "@/components/contractor-concierge-section";
 import { RevenueIntelligenceDashboard } from "@/components/revenue-intelligence-dashboard";
+import { CallRevenueFlowSection } from "@/components/call-revenue-flow-section";
 
 export default function Home() {
   return (
@@ -19,6 +20,8 @@ export default function Home() {
 
       <Container className="flex min-h-screen flex-col items-center">
         <Hero />
+
+        <CallRevenueFlowSection />
 
         <ContractorConciergeSection />
 
