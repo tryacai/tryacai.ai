@@ -501,3 +501,17 @@ html {
     content: '...';
   }
 }
+
+/* Thought bubble arc animation — plumber revenue flow section */
+@keyframes bubbleFlyArc {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.75); }
+  8%   { opacity: 1; transform: translate(3vw, -1.5vh) scale(1.05); }
+  38%  { opacity: 1; transform: translate(9vw, -3.5vh) scale(1.1); }
+  62%  { opacity: 1; transform: translate(17vw, -4vh) scale(1.05); }
+  85%  { opacity: 1; transform: translate(26vw, -2.5vh) scale(1.0); }
+  100% { opacity: 0; transform: translate(33vw, -1.2vh) scale(0.9); }
+}
+
+.bubble-fly-arc {
+  animation: bubbleFlyArc 2.75s ease-in-out forwards;
+}
