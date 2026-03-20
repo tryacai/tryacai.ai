@@ -914,32 +914,14 @@ export const Hero = () => {
           <Balancer>Contractor Call Operations.</Balancer>
         </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ ease: "easeOut", duration: 0.5, delay: 0.38 }}
-          className="relative mx-auto mt-4 max-w-3xl text-lg font-medium text-neutral-200 md:text-2xl"
-        >
-          <Balancer>Built exclusively for Plumbing &amp; Mechanical Companies.</Balancer>
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ ease: "easeOut", duration: 0.5, delay: 0.5 }}
-          className="relative mx-auto mt-5 max-w-3xl text-sm tracking-[0.01em] text-neutral-300 md:text-base"
-        >
-          Every call answered. Every emergency routed. Every job qualified.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: "easeOut", duration: 0.5, delay: 0.6 }}
-          className="mx-auto mt-8 max-w-6xl md:mt-10"
-        >
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-purple-400/45 to-transparent" />
-        </motion.div>
+        <div
+          style={{
+            width: "38%",
+            height: "1.5px",
+            background: "linear-gradient(to right, rgba(124,58,237,0.6), transparent)",
+            marginBottom: "12px",
+          }}
+        />
       </div>
 
       <div className="h-5 md:h-6" />

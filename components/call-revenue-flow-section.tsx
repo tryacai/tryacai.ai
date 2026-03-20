@@ -2,45 +2,46 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const IMAGES = [
   "/images/plumberimage1.png",
   "/images/plumberimage2.png",
   "/images/plumberimage3.png",
-  "/images/plumber4.png",
+  "/images/newplumber4.png",
 ];
 
 const FADE_DURATION = 2500;
 const PAUSE_ON_LAST = 1750;
-const ARC_DURATION = 1.8;
-const ARC_DURATION_MS = 1800;
+const ARC_DURATION_MS = 4500;
 const POOF_DURATION_MS = 1100;
-const GLOW_DURATION_MS = 1500;
-const ARC_T = [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1] as const;
+const GLOW_DURATION_MS = 2000;
 
 const DOLLARS = [
-  { angle: 0, size: 32, radius: 20, delay: 0 },
-  { angle: 60, size: 26, radius: 18, delay: 0.04 },
-  { angle: 120, size: 24, radius: 22, delay: 0.08 },
-  { angle: 180, size: 29, radius: 20, delay: 0.12 },
-  { angle: 240, size: 22, radius: 19, delay: 0.16 },
-  { angle: 300, size: 27, radius: 21, delay: 0.2 },
+  { angle: 0, radius: 28, size: 30, speed: 1.0 },
+  { angle: 60, radius: 22, size: 26, speed: 0.85 },
+  { angle: 120, radius: 30, size: 32, speed: 1.1 },
+  { angle: 180, radius: 20, size: 24, speed: 0.9 },
+  { angle: 240, radius: 26, size: 28, speed: 1.05 },
+  { angle: 300, radius: 24, size: 30, speed: 0.95 },
 ] as const;
 
 const POOF_COLORS = ["#22c55e", "#4ade80", "#86efac", "#bbf7d0"] as const;
 
-type ArcVars = CSSProperties & {
-  [key: `--arc-x-${number}`]: string;
-  [key: `--arc-y-${number}`]: string;
+type OrbitingDollarProps = (typeof DOLLARS)[number] & {
+  orbitAngle: number;
+  index: number;
 };
 
 function OrbitingDollar({
   angle,
   size,
   radius,
-  delay,
-}: (typeof DOLLARS)[number]) {
+  speed,
+  orbitAngle,
+  index,
+}: OrbitingDollarProps) {
+  const individualAngle = orbitAngle * speed + angle;
   return (
     <motion.span
       style={{
@@ -51,21 +52,20 @@ function OrbitingDollar({
         fontSize: size,
         fontWeight: 700,
         lineHeight: 1,
+        opacity: 0.95,
         userSelect: "none",
-        transform: `rotate(${angle}deg) translateX(${radius}px)`,
+        transform: `rotate(${individualAngle}deg) translateX(${radius}px)`,
         transformOrigin: "center",
-        textShadow:
-          "0 0 10px rgba(34,197,94,0.95), 0 0 24px rgba(34,197,94,0.65), 0 0 42px rgba(74,222,128,0.35)",
+        textShadow: "0 0 8px #22c55e, 0 0 20px #22c55e, 0 0 40px #16a34a",
       }}
       animate={{
-        scale: [0.9, 1.1, 0.9],
-        opacity: [0.8, 1, 0.8],
+        scale: [0.9, 1.15, 0.9],
+        opacity: [0.9, 1, 0.9],
       }}
       transition={{
-        duration: 0.4,
+        duration: 1.2,
         repeat: Infinity,
-        ease: "easeInOut",
-        delay,
+        delay: index * 0.2,
       }}
     >
       $
@@ -76,12 +76,12 @@ function OrbitingDollar({
 function PoofParticles({ x, y }: { x: number; y: number }) {
   return (
     <>
-      {Array.from({ length: 22 }, (_, i) => {
-        const angle = (i / 22) * 2 * Math.PI;
-        const radius = 60 + (i % 5) * 5;
+      {Array.from({ length: 28 }, (_, i) => {
+        const angle = (i / 28) * 2 * Math.PI;
+        const radius = 68 + (i % 6) * 4;
         const size = 3 + (i % 4) * 1.5;
         const color = POOF_COLORS[i % POOF_COLORS.length];
-        const drop = 18 + (i % 4) * 7;
+        const drop = 20 + (i % 5) * 7;
         return (
           <motion.div
             key={i}
@@ -99,8 +99,8 @@ function PoofParticles({ x, y }: { x: number; y: number }) {
             }}
             initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
             animate={{
-              x: Math.cos(angle) * radius,
-              y: Math.sin(angle) * radius + drop,
+              x: Math.cos(angle) * (radius + 12),
+              y: Math.sin(angle) * 90 + drop,
               opacity: 0,
               scale: 0,
             }}
@@ -120,7 +120,7 @@ function PoofParticles({ x, y }: { x: number; y: number }) {
               left: x,
               top: y,
               color: "#4ade80",
-              fontSize: 28 + i * 2,
+              fontSize: 36,
               fontWeight: 700,
               lineHeight: 1,
               textShadow:
@@ -133,7 +133,7 @@ function PoofParticles({ x, y }: { x: number; y: number }) {
               x: Math.cos(angle) * radius,
               y: Math.sin(angle) * radius + 22,
               opacity: 0,
-              scale: 1.5,
+              scale: 2.5,
             }}
             transition={{ duration: 0.95, ease: "easeOut", delay: i * 0.03 }}
           >
@@ -147,19 +147,24 @@ function PoofParticles({ x, y }: { x: number; y: number }) {
 
 export function CallRevenueFlowSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [showArc, setShowArc] = useState(false);
+  const [showBubble, setShowBubble] = useState(false);
   const [showPoof, setShowPoof] = useState(false);
   const [showGlow, setShowGlow] = useState(false);
-  const [arcParams, setArcParams] = useState<{
-    startX: number;
-    startY: number;
-    endX: number;
-    peakHeight: number;
-    cssVars: ArcVars;
-  } | null>(null);
+  const [orbitAngle, setOrbitAngle] = useState(0);
+  const [poofPoint, setPoofPoint] = useState<{ x: number; y: number } | null>(
+    null,
+  );
 
   const sectionRef = useRef<HTMLElement>(null);
   const imageAreaRef = useRef<HTMLDivElement>(null);
+  const carrierRef = useRef<HTMLDivElement>(null);
+
+  const arcRef = useRef({
+    startX: 0,
+    startY: 0,
+    endX: 0,
+    endY: 0,
+  });
 
   useEffect(() => {
     IMAGES.forEach((src) => { const img = new window.Image(); img.src = src; });
@@ -177,9 +182,9 @@ export function CallRevenueFlowSection() {
         after(advance, FADE_DURATION);
       } else {
         after(() => {
-          setShowArc(true);
+          setShowBubble(true);
           after(() => {
-            setShowArc(false);
+            setShowBubble(false);
             setShowPoof(true);
             setShowGlow(true);
 
@@ -203,37 +208,73 @@ export function CallRevenueFlowSection() {
   }, []);
 
   useEffect(() => {
-    if (!showArc || !sectionRef.current || !imageAreaRef.current) return;
+    if (!showBubble || !sectionRef.current || !imageAreaRef.current) return;
 
-    const sr = sectionRef.current.getBoundingClientRect();
-    const ir = imageAreaRef.current.getBoundingClientRect();
+    const sectionRect = sectionRef.current.getBoundingClientRect();
+    const imageRect = imageAreaRef.current.getBoundingClientRect();
 
-    const startX = ir.left - sr.left + ir.width * 0.58;
-    const startY = ir.top - sr.top + ir.height * 0.18;
-    const endX = sr.width * 0.865;
-    const peakHeight = Math.min(160, Math.max(120, sr.width * 0.14));
+    const startX =
+      imageRect.left - sectionRect.left + imageRect.width * 0.72;
+    const startY = imageRect.top - sectionRect.top + imageRect.height * 0.22;
+    const endX = sectionRect.width * 0.88;
+    const endY = startY;
 
-    const cssVars = ARC_T.reduce((vars, t, index) => {
-      const x = (endX - startX) * t;
-      const y = -peakHeight * 4 * t * (1 - t);
-      vars[`--arc-x-${index}`] = `${x}px`;
-      vars[`--arc-y-${index}`] = `${y}px`;
-      return vars;
-    }, {} as ArcVars);
+    arcRef.current = { startX, startY, endX, endY };
 
-    setArcParams({
-      startX,
-      startY,
-      endX,
-      peakHeight,
-      cssVars,
-    });
-  }, [showArc]);
+    if (carrierRef.current) {
+      carrierRef.current.style.transform = `translate(${startX}px, ${startY}px)`;
+    }
+  }, [showBubble]);
+
+  useEffect(() => {
+    if (!showBubble) return;
+    const duration = ARC_DURATION_MS;
+    const start = performance.now();
+    let raf = 0;
+
+    const { startX, startY, endX, endY } = arcRef.current;
+
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      const x = startX + (endX - startX) * ease;
+      const y = startY - 180 * 4 * ease * (1 - ease);
+
+      if (carrierRef.current) {
+        carrierRef.current.style.transform = `translate(${x}px, ${y}px)`;
+      }
+
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setPoofPoint({ x: endX, y: endY });
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [showBubble]);
+
+  useEffect(() => {
+    if (!showBubble) return;
+    let raf = 0;
+    const start = performance.now();
+
+    const spin = (now: number) => {
+      const elapsed = now - start;
+      const cycles = elapsed / 3000;
+      setOrbitAngle((cycles % 1) * 360);
+      raf = requestAnimationFrame(spin);
+    };
+
+    raf = requestAnimationFrame(spin);
+    return () => cancelAnimationFrame(raf);
+  }, [showBubble]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 mt-1 w-full max-w-7xl px-4 pb-2 md:mt-2 md:pb-3"
+      className="relative z-10 mt-0 w-full max-w-7xl px-4 pb-2 pt-0 md:mt-0 md:pb-3"
     >
       <motion.div
         initial={{ opacity: 0, y: 14 }}
@@ -241,12 +282,24 @@ export function CallRevenueFlowSection() {
         viewport={{ once: true, amount: 0.35 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div className="h-px w-[40%] min-w-[180px] max-w-[420px] bg-[#7c3aed]/50" />
+        <div
+          style={{
+            width: "38%",
+            height: "1.5px",
+            background: "linear-gradient(to right, rgba(124,58,237,0.6), transparent)",
+            marginBottom: "12px",
+          }}
+        />
 
-        <div ref={imageAreaRef} className="mt-2 w-full md:w-[60%]">
+        <div ref={imageAreaRef} style={{ marginLeft: 0, marginTop: "-8px", width: "58%" }}>
           <div
             className="relative overflow-hidden"
-            style={{ aspectRatio: "3 / 2" }}
+            style={{
+              aspectRatio: "3 / 2",
+              border: "none",
+              boxShadow: "none",
+              borderRadius: 0,
+            }}
           >
             {IMAGES.map((src, index) => (
               <div
@@ -259,67 +312,70 @@ export function CallRevenueFlowSection() {
                   src={src}
                   alt={`Plumber storyboard frame ${index + 1}`}
                   fill
-                  sizes="(min-width: 768px) 60vw, 100vw"
+                  sizes="(min-width: 768px) 58vw, 100vw"
                   className="object-cover"
                   priority={index === 0}
                 />
               </div>
             ))}
 
-            <div className="call-revenue-image-blend pointer-events-none absolute inset-0" />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 2,
+                pointerEvents: "none",
+                background:
+                  "linear-gradient(to right, transparent 55%, black 100%), linear-gradient(to bottom, transparent 65%, black 100%)",
+              }}
+            />
           </div>
         </div>
       </motion.div>
 
-      {showArc && arcParams && (
+      {showBubble && (
         <div
-          className="call-revenue-arc-carrier pointer-events-none"
+          ref={carrierRef}
+          className="pointer-events-none"
           style={{
             position: "absolute",
-            left: arcParams.startX,
-            top: arcParams.startY,
+            left: 0,
+            top: 0,
+            width: 0,
+            height: 0,
             zIndex: 40,
-            ...arcParams.cssVars,
+            transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1.0)",
           }}
         >
-          <motion.div
-            className="relative h-0 w-0"
-            animate={{ rotate: 360 }}
-            transition={{
-              duration: ARC_DURATION,
-              ease: "linear",
-            }}
-          >
+          <div className="relative h-0 w-0">
             {DOLLARS.map((cfg, index) => (
-              <OrbitingDollar key={index} {...cfg} />
+              <OrbitingDollar key={index} {...cfg} orbitAngle={orbitAngle} index={index} />
             ))}
-          </motion.div>
+          </div>
         </div>
       )}
 
-      {showPoof && arcParams && (
+      {showPoof && poofPoint && (
         <PoofParticles
-          x={arcParams.endX}
-          y={arcParams.startY}
+          x={poofPoint.x}
+          y={poofPoint.y}
         />
       )}
 
-      {showGlow && arcParams && (
-        <motion.div
+      {showGlow && poofPoint && (
+        <div
           className="pointer-events-none absolute"
           style={{
-            left: arcParams.endX - 40,
-            top: arcParams.startY - 40,
-            width: 80,
-            height: 80,
+            left: poofPoint.x - 50,
+            top: poofPoint.y - 50,
+            width: 100,
+            height: 100,
             borderRadius: "50%",
             background:
-              "radial-gradient(circle, rgba(34,197,94,0.18) 0%, transparent 70%)",
+              "radial-gradient(circle, rgba(34,197,94,0.25) 0%, transparent 70%)",
             zIndex: 38,
+            animation: "fadeOut 2s ease-out forwards",
           }}
-          initial={{ opacity: 0.9, scale: 0.85 }}
-          animate={{ opacity: 0, scale: 1.18 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
         />
       )}
     </section>
