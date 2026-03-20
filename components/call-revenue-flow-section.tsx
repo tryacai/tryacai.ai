@@ -213,11 +213,11 @@ export function CallRevenueFlowSection() {
     const imageRect = imageAreaRef.current.getBoundingClientRect();
 
     const startX =
-      imageRect.left - sectionRect.left + imageRect.width * 0.68;
-    const startY = imageRect.top - sectionRect.top + imageRect.height * 0.2;
-    const endX = sectionRect.width * 0.9;
+      imageRect.left - sectionRect.left + imageRect.width * 0.7;
+    const startY = imageRect.top - sectionRect.top + imageRect.height * 0.18;
+    const endX = sectionRect.width * 0.84;
     const endY = startY;
-    const peakHeight = 200;
+    const peakHeight = 220;
 
     arcRef.current = { startX, startY, endX, endY, peakHeight };
 
@@ -283,21 +283,21 @@ export function CallRevenueFlowSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 -mt-3 w-full max-w-7xl px-4 pb-2 pt-0 md:-mt-5 md:pb-3"
+      className="relative left-1/2 z-10 w-screen -translate-x-1/2"
     >
       <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.35 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="relative flex w-full flex-row items-start"
       >
         <div
           ref={imageAreaRef}
           style={{
             position: "relative",
-            width: "78%",
-            marginLeft: "-2%",
-            marginTop: "-4px",
+            width: "68%",
+            marginLeft: 0,
+            marginTop: 0,
           }}
         >
           <div
@@ -321,7 +321,7 @@ export function CallRevenueFlowSection() {
                   src={src}
                   alt={`Plumber storyboard frame ${index + 1}`}
                   fill
-                  sizes="(min-width: 768px) 78vw, 100vw"
+                  sizes="68vw"
                   className="object-cover"
                   priority={index === 0}
                 />
@@ -335,11 +335,18 @@ export function CallRevenueFlowSection() {
                 zIndex: 2,
                 pointerEvents: "none",
                 background:
-                  "linear-gradient(to right, transparent 62%, black 100%), linear-gradient(to bottom, transparent 70%, black 100%), linear-gradient(to left, transparent 96%, black 100%)",
+                  "linear-gradient(to right, transparent 58%, black 95%), linear-gradient(to bottom, transparent 72%, black 100%), linear-gradient(to left, transparent 94%, rgba(0,0,0,0.4) 100%)",
               }}
             />
           </div>
         </div>
+
+        <div
+          style={{
+            width: "32%",
+            position: "relative",
+          }}
+        />
       </motion.div>
 
       {showBubble && (

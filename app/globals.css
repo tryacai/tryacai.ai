@@ -56,39 +56,41 @@ html {
 }
 
 h2:has(.acai-247-sweep) + div {
-  width: min(420px, 100%) !important;
+  width: min(400px, 100%) !important;
   height: 2px !important;
-  margin: 6px auto 10px !important;
+  margin-top: 8px !important;
+  margin-right: auto !important;
+  margin-bottom: 0 !important;
+  margin-left: auto !important;
   border: none !important;
   box-shadow: none !important;
   background: linear-gradient(
     to right,
     transparent 0%,
-    rgba(124, 58, 237, 0.7) 20%,
-    rgba(149, 76, 255, 1) 50%,
-    rgba(124, 58, 237, 0.7) 80%,
+    rgba(139, 92, 246, 0.8) 30%,
+    rgba(167, 139, 250, 1) 50%,
+    rgba(139, 92, 246, 0.8) 70%,
     transparent 100%
   ) !important;
 }
 
 h2:has(.acai-247-sweep) + div::before {
   content: "Built exclusively for Plumbing & Mechanical Companies.";
-  position: relative;
+  position: static;
   display: block;
   width: 100%;
-  bottom: 8px;
-  color: rgb(229 229 229 / 1);
-  font-size: 1.125rem;
+  margin-bottom: 8px;
+  color: rgb(212 212 216 / 1);
+  font-size: 1rem;
   font-weight: 500;
-  line-height: 1.75rem;
+  line-height: 1.5rem;
   text-align: center;
-  white-space: nowrap;
 }
 
 @media (min-width: 768px) {
   h2:has(.acai-247-sweep) + div::before {
-    font-size: 1.5rem;
-    line-height: 2rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 }
 
