@@ -46,6 +46,52 @@ html {
   animation: gradient-flow 4s ease infinite;
 }
 
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+h2:has(.acai-247-sweep) + div {
+  width: min(420px, 100%) !important;
+  height: 2px !important;
+  margin: 6px auto 10px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(124, 58, 237, 0.7) 20%,
+    rgba(149, 76, 255, 1) 50%,
+    rgba(124, 58, 237, 0.7) 80%,
+    transparent 100%
+  ) !important;
+}
+
+h2:has(.acai-247-sweep) + div::before {
+  content: "Built exclusively for Plumbing & Mechanical Companies.";
+  position: relative;
+  display: block;
+  width: 100%;
+  bottom: 8px;
+  color: rgb(229 229 229 / 1);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.75rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  h2:has(.acai-247-sweep) + div::before {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
 @keyframes acai-premium-pulse {
   0%,
   100% {

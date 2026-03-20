@@ -13,50 +13,49 @@ const IMAGES = [
 
 const FADE_DURATION = 2500;
 const PAUSE_ON_LAST = 1750;
-const ARC_DURATION_MS = 4500;
+const ARC_DURATION_MS = 5000;
 const POOF_DURATION_MS = 1100;
-const GLOW_DURATION_MS = 2000;
+const GLOW_DURATION_MS = 2500;
 
-const DOLLARS = [
-  { angle: 0, radius: 28, size: 30, speed: 1.0 },
-  { angle: 60, radius: 22, size: 26, speed: 0.85 },
-  { angle: 120, radius: 30, size: 32, speed: 1.1 },
-  { angle: 180, radius: 20, size: 24, speed: 0.9 },
-  { angle: 240, radius: 26, size: 28, speed: 1.05 },
-  { angle: 300, radius: 24, size: 30, speed: 0.95 },
+const SIGNS = [
+  { baseAngle: 0, radius: 32, fontSize: 32 },
+  { baseAngle: 60, radius: 26, fontSize: 28 },
+  { baseAngle: 120, radius: 34, fontSize: 30 },
+  { baseAngle: 180, radius: 28, fontSize: 34 },
+  { baseAngle: 240, radius: 30, fontSize: 26 },
+  { baseAngle: 300, radius: 24, fontSize: 30 },
 ] as const;
 
 const POOF_COLORS = ["#22c55e", "#4ade80", "#86efac", "#bbf7d0"] as const;
 
-type OrbitingDollarProps = (typeof DOLLARS)[number] & {
-  orbitAngle: number;
+type DollarSignProps = {
+  fontSize: number;
   index: number;
+  setRef: (element: HTMLSpanElement | null) => void;
 };
 
-function OrbitingDollar({
-  angle,
-  size,
-  radius,
-  speed,
-  orbitAngle,
-  index,
-}: OrbitingDollarProps) {
-  const individualAngle = orbitAngle * speed + angle;
+function DollarSign({ fontSize, index, setRef }: DollarSignProps) {
   return (
-    <motion.span
+    <span
+      ref={setRef}
       style={{
         position: "absolute",
         left: 0,
         top: 0,
+        transform: "translate(0px, 0px)",
+      }}
+    >
+      <motion.span
+        style={{
+          display: "block",
         color: "#22c55e",
-        fontSize: size,
-        fontWeight: 700,
+        fontSize: `${fontSize}px`,
+        fontWeight: 800,
         lineHeight: 1,
         opacity: 0.95,
         userSelect: "none",
-        transform: `rotate(${individualAngle}deg) translateX(${radius}px)`,
-        transformOrigin: "center",
-        textShadow: "0 0 8px #22c55e, 0 0 20px #22c55e, 0 0 40px #16a34a",
+        pointerEvents: "none",
+        textShadow: "0 0 8px #22c55e, 0 0 18px #22c55e, 0 0 35px #16a34a",
       }}
       animate={{
         scale: [0.9, 1.15, 0.9],
@@ -69,7 +68,8 @@ function OrbitingDollar({
       }}
     >
       $
-    </motion.span>
+      </motion.span>
+    </span>
   );
 }
 
@@ -150,20 +150,19 @@ export function CallRevenueFlowSection() {
   const [showBubble, setShowBubble] = useState(false);
   const [showPoof, setShowPoof] = useState(false);
   const [showGlow, setShowGlow] = useState(false);
-  const [orbitAngle, setOrbitAngle] = useState(0);
-  const [poofPoint, setPoofPoint] = useState<{ x: number; y: number } | null>(
-    null,
-  );
 
   const sectionRef = useRef<HTMLElement>(null);
   const imageAreaRef = useRef<HTMLDivElement>(null);
   const carrierRef = useRef<HTMLDivElement>(null);
+  const signRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const orbitRef = useRef(0);
 
   const arcRef = useRef({
     startX: 0,
     startY: 0,
     endX: 0,
     endY: 0,
+    peakHeight: 200,
   });
 
   useEffect(() => {
@@ -214,12 +213,13 @@ export function CallRevenueFlowSection() {
     const imageRect = imageAreaRef.current.getBoundingClientRect();
 
     const startX =
-      imageRect.left - sectionRect.left + imageRect.width * 0.72;
-    const startY = imageRect.top - sectionRect.top + imageRect.height * 0.22;
-    const endX = sectionRect.width * 0.88;
+      imageRect.left - sectionRect.left + imageRect.width * 0.68;
+    const startY = imageRect.top - sectionRect.top + imageRect.height * 0.2;
+    const endX = sectionRect.width * 0.9;
     const endY = startY;
+    const peakHeight = 200;
 
-    arcRef.current = { startX, startY, endX, endY };
+    arcRef.current = { startX, startY, endX, endY, peakHeight };
 
     if (carrierRef.current) {
       carrierRef.current.style.transform = `translate(${startX}px, ${startY}px)`;
@@ -232,13 +232,13 @@ export function CallRevenueFlowSection() {
     const start = performance.now();
     let raf = 0;
 
-    const { startX, startY, endX, endY } = arcRef.current;
+    const { startX, startY, endX, peakHeight } = arcRef.current;
 
     const tick = (now: number) => {
       const t = Math.min((now - start) / duration, 1);
       const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
       const x = startX + (endX - startX) * ease;
-      const y = startY - 180 * 4 * ease * (1 - ease);
+      const y = startY - peakHeight * 4 * ease * (1 - ease);
 
       if (carrierRef.current) {
         carrierRef.current.style.transform = `translate(${x}px, ${y}px)`;
@@ -246,8 +246,6 @@ export function CallRevenueFlowSection() {
 
       if (t < 1) {
         raf = requestAnimationFrame(tick);
-      } else {
-        setPoofPoint({ x: endX, y: endY });
       }
     };
 
@@ -258,15 +256,26 @@ export function CallRevenueFlowSection() {
   useEffect(() => {
     if (!showBubble) return;
     let raf = 0;
-    const start = performance.now();
+    orbitRef.current = 0;
 
-    const spin = (now: number) => {
-      const elapsed = now - start;
-      const cycles = elapsed / 3000;
-      setOrbitAngle((cycles % 1) * 360);
+    const updateOrbit = () => {
+      SIGNS.forEach((sign, index) => {
+        const element = signRefs.current[index];
+        if (!element) return;
+        const angle = (sign.baseAngle + orbitRef.current) * (Math.PI / 180);
+        const x = Math.cos(angle) * sign.radius;
+        const y = Math.sin(angle) * sign.radius;
+        element.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    };
+
+    const spin = () => {
+      orbitRef.current = (orbitRef.current + 0.4) % 360;
+      updateOrbit();
       raf = requestAnimationFrame(spin);
     };
 
+    updateOrbit();
     raf = requestAnimationFrame(spin);
     return () => cancelAnimationFrame(raf);
   }, [showBubble]);
@@ -274,7 +283,7 @@ export function CallRevenueFlowSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 mt-0 w-full max-w-7xl px-4 pb-2 pt-0 md:mt-0 md:pb-3"
+      className="relative z-10 -mt-3 w-full max-w-7xl px-4 pb-2 pt-0 md:-mt-5 md:pb-3"
     >
       <motion.div
         initial={{ opacity: 0, y: 14 }}
@@ -283,19 +292,19 @@ export function CallRevenueFlowSection() {
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <div
+          ref={imageAreaRef}
           style={{
-            width: "38%",
-            height: "1.5px",
-            background: "linear-gradient(to right, rgba(124,58,237,0.6), transparent)",
-            marginBottom: "12px",
+            position: "relative",
+            width: "78%",
+            marginLeft: "-2%",
+            marginTop: "-4px",
           }}
-        />
-
-        <div ref={imageAreaRef} style={{ marginLeft: 0, marginTop: "-8px", width: "58%" }}>
+        >
           <div
             className="relative overflow-hidden"
             style={{
               aspectRatio: "3 / 2",
+              outline: "none",
               border: "none",
               boxShadow: "none",
               borderRadius: 0,
@@ -312,7 +321,7 @@ export function CallRevenueFlowSection() {
                   src={src}
                   alt={`Plumber storyboard frame ${index + 1}`}
                   fill
-                  sizes="(min-width: 768px) 58vw, 100vw"
+                  sizes="(min-width: 768px) 78vw, 100vw"
                   className="object-cover"
                   priority={index === 0}
                 />
@@ -326,7 +335,7 @@ export function CallRevenueFlowSection() {
                 zIndex: 2,
                 pointerEvents: "none",
                 background:
-                  "linear-gradient(to right, transparent 55%, black 100%), linear-gradient(to bottom, transparent 65%, black 100%)",
+                  "linear-gradient(to right, transparent 62%, black 100%), linear-gradient(to bottom, transparent 70%, black 100%), linear-gradient(to left, transparent 96%, black 100%)",
               }}
             />
           </div>
@@ -348,33 +357,40 @@ export function CallRevenueFlowSection() {
           }}
         >
           <div className="relative h-0 w-0">
-            {DOLLARS.map((cfg, index) => (
-              <OrbitingDollar key={index} {...cfg} orbitAngle={orbitAngle} index={index} />
+            {SIGNS.map((sign, index) => (
+              <DollarSign
+                key={index}
+                fontSize={sign.fontSize}
+                index={index}
+                setRef={(element) => {
+                  signRefs.current[index] = element;
+                }}
+              />
             ))}
           </div>
         </div>
       )}
 
-      {showPoof && poofPoint && (
+      {showPoof && (
         <PoofParticles
-          x={poofPoint.x}
-          y={poofPoint.y}
+          x={arcRef.current.endX}
+          y={arcRef.current.endY}
         />
       )}
 
-      {showGlow && poofPoint && (
+      {showGlow && (
         <div
           className="pointer-events-none absolute"
           style={{
-            left: poofPoint.x - 50,
-            top: poofPoint.y - 50,
-            width: 100,
-            height: 100,
+            left: arcRef.current.endX - 60,
+            top: arcRef.current.endY - 60,
+            width: 120,
+            height: 120,
             borderRadius: "50%",
             background:
               "radial-gradient(circle, rgba(34,197,94,0.25) 0%, transparent 70%)",
             zIndex: 38,
-            animation: "fadeOut 2s ease-out forwards",
+            animation: "fadeOut 2.5s ease-out forwards",
           }}
         />
       )}
