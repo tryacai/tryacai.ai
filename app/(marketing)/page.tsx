@@ -1,5 +1,5 @@
 import { Container } from "@/components/container";
-import { Hero } from "@/components/hero";
+import { Hero, OurVoiceAISection } from "@/components/hero";
 import { Background } from "@/components/background";
 import { CTA } from "@/components/cta";
 import { SectionDivider } from "@/components/section-divider";
@@ -24,6 +24,8 @@ export default function Home() {
         <CallRevenueFlowSection />
 
         <ContractorConciergeSection />
+
+        <OurVoiceAISection />
 
         <RevenueIntelligenceDashboard preview />
 

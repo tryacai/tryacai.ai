@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { RetellWebClient } from "retell-client-js-sdk";
+import { Link } from "next-view-transitions";
 
 import { useRouter } from "next/navigation";
 
@@ -210,7 +211,7 @@ const TypewriterHeadline = ({
     const deletingSpeed = 95;
     const pauseAfterTyping = 2500;
 
-    const fullPhraseCall = "Never Miss a Call Again";
+    const fullPhraseCall = "Never Miss a Lead Again";
     const fullPhraseJob = "Never Miss a Job Again";
     const basePhrase = "Never Miss a ";
 
@@ -291,7 +292,7 @@ const TypewriterHeadline = ({
       {(() => {
         const base = "Never Miss a ";
         const baseLen = base.length;
-        const fixedPhrase = "Never Miss a Call Again";
+        const fixedPhrase = "Never Miss a Lead Again";
         const prefix = text.slice(0, Math.min(text.length, baseLen)).replace(/ /g, "\u00A0");
         const suffix = text.length > baseLen ? text.slice(baseLen).replace(/ /g, "\u00A0") : "";
         return (
@@ -693,7 +694,7 @@ const PrimaryDemoCard = ({
         }`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
-              🎙 Experience the ACAI Concierge™
+              🎙 Voice Receptionist Example
             </h3>
             {isLive && (
               <motion.span
@@ -708,7 +709,7 @@ const PrimaryDemoCard = ({
             )}
           </div>
           <p className="text-base md:text-lg text-neutral-300 dark:text-neutral-400 mb-8">
-            This live AI receptionist demonstrates all three pain points in one call flow: instant call pickup, emergency intent routing, and high-value lead capture with immediate booking.
+            See how ACAI handles missed inbound calls, captures lead details, and keeps opportunities moving to booked jobs.
           </p>
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
@@ -738,12 +739,14 @@ interface SecondaryDemoCardProps extends BaseDemoCardProps {
   title: string;
   subtitle?: string;
   large?: boolean;
+  planLabel?: string;
 }
 
 const SecondaryDemoCard = ({
   title,
   subtitle,
   large = false,
+  planLabel,
   demoId,
   delay,
   activeDemo,
@@ -798,6 +801,16 @@ const SecondaryDemoCard = ({
             <p className="mb-5 text-center text-sm text-neutral-300 md:text-base">
               {subtitle}
             </p>
+          )}
+          {planLabel && (
+            <div className="mb-5 flex justify-center">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-200 transition-all duration-150 ease-out hover:border-white/35 hover:text-white"
+              >
+                {planLabel}
+              </Link>
+            </div>
           )}
           <div className="flex flex-col items-center gap-3">
             <div className="relative">
@@ -926,5 +939,88 @@ export const Hero = () => {
 
       <div className="h-5 md:h-6" />
     </div>
+  );
+};
+
+export const OurVoiceAISection = () => {
+  const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
+  const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
+
+  const registerTerminator = useCallback((demo: DemoId, terminateFn: (() => Promise<void>) | null) => {
+    if (terminateFn) {
+      terminatorsRef.current[demo] = terminateFn;
+      return;
+    }
+    delete terminatorsRef.current[demo];
+  }, []);
+
+  const terminateOtherDemo = useCallback(
+    async (selectedDemo: DemoId) => {
+      if (!activeDemo || activeDemo === selectedDemo) return;
+      const terminateActive = terminatorsRef.current[activeDemo];
+      if (terminateActive) {
+        await terminateActive();
+      }
+    },
+    [activeDemo]
+  );
+
+  return (
+    <section className="relative z-20 mt-14 w-full max-w-7xl px-4 md:mt-20">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.55, ease: "easeOut" }}
+        className="mx-auto max-w-6xl"
+      >
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/55 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_0_35px_rgba(96,70,255,0.18)] backdrop-blur-xl md:p-10">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/6 via-purple-500/8 to-blue-500/6" />
+          <div className="relative z-10 text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-purple-300/70 md:text-sm">OUR VOICE AI</p>
+            <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">Our Voice AI</h2>
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
+              ACAI answers when your team cannot get to the phone, captures lead information, qualifies the caller, and helps turn missed opportunities into booked customers.
+            </p>
+          </div>
+
+          <div className="relative z-10 mt-10">
+            <PrimaryDemoCard
+              delay={0.05}
+              demoId="main"
+              activeDemo={activeDemo}
+              setActiveDemo={setActiveDemo}
+              terminateOtherDemo={terminateOtherDemo}
+              registerTerminator={registerTerminator}
+            />
+
+            <div className="mt-7 grid grid-cols-1 gap-5 md:grid-cols-2">
+              <SecondaryDemoCard
+                title="Epoxy Flooring Reception Demo"
+                subtitle="Example: qualify floor size, project urgency, and timeline before routing to your calendar."
+                planLabel="See Epoxy Plan"
+                demoId="plumbing"
+                delay={0.14}
+                activeDemo={activeDemo}
+                setActiveDemo={setActiveDemo}
+                terminateOtherDemo={terminateOtherDemo}
+                registerTerminator={registerTerminator}
+              />
+              <SecondaryDemoCard
+                title="Garage Installation Reception Demo"
+                subtitle="Example: capture build scope, confirm fit, and move the caller to a booked estimate faster."
+                planLabel="See Garage Installation Plan"
+                demoId="barber"
+                delay={0.2}
+                activeDemo={activeDemo}
+                setActiveDemo={setActiveDemo}
+                terminateOtherDemo={terminateOtherDemo}
+                registerTerminator={registerTerminator}
+              />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </section>
   );
 };

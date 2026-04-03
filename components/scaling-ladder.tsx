@@ -16,7 +16,7 @@ const levels = [
   {
     level: "TIER 2",
     title: "Recover",
-    headline: "Revenue Doesn&apos;t Slip Through Cracks.",
+    headline: "Revenue Doesn’t Slip Through Cracks.",
     shortDescription:
       "Recover missed calls, automate follow-ups, and build reputation without manual effort.",
     learnMoreLink: "/solutions",
@@ -35,10 +35,10 @@ export const ScalingLadder = () => {
   return (
     <section className="relative z-20 py-10 lg:py-20 w-full">
       <Heading as="h2" size="md">
-        The ACAI System
+        Lead Conversion Outcomes
       </Heading>
       <p className="mt-3 text-center text-sm text-neutral-600 dark:text-neutral-400 md:text-base">
-        One infrastructure. Three levels of capability.
+        One platform, three clear stages to capture, recover, and grow revenue.
       </p>
 
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">

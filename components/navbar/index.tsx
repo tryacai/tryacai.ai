@@ -18,10 +18,6 @@ const navItems = [
     ],
   },
   {
-    title: "Pricing",
-    link: "/pricing",
-  },
-  {
     title: "FAQ",
     link: "/faq",
   },

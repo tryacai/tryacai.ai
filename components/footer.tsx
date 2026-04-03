@@ -5,10 +5,6 @@ import { Logo } from "./Logo";
 export const Footer = () => {
   const primaryLinks = [
     {
-      name: "Pricing",
-      href: "/pricing",
-    },
-    {
       name: "Try Our AI",
       href: "/ai",
     },
