@@ -77,16 +77,57 @@ html {
 }
 
 .acai-pulse-banner-track {
-  animation: acai-pulse-banner-scroll 24s linear infinite;
+  animation: acai-pulse-banner-scroll 22s linear infinite;
 }
 
-.acai-wave-dot {
-  height: 8px;
-  width: 8px;
+@keyframes acai-voice-flow {
+  0%,
+  100% {
+    transform: scaleY(0.45);
+    opacity: 0.65;
+  }
+  50% {
+    transform: scaleY(1.25);
+    opacity: 1;
+  }
+}
+
+.acai-voice-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+  width: 16px;
+}
+
+.acai-voice-wave > span {
+  width: 2px;
+  height: 100%;
   border-radius: 999px;
-  background: linear-gradient(130deg, #60a5fa, #a855f7, #ef4444);
-  box-shadow: 0 0 14px rgba(147, 51, 234, 0.5);
-  animation: acai-pulse-wave 1.15s ease-in-out infinite;
+  background: linear-gradient(180deg, #60a5fa 0%, #a855f7 50%, #ef4444 100%);
+  box-shadow: 0 0 10px rgba(147, 51, 234, 0.3);
+  transform-origin: center;
+  animation: acai-voice-flow 0.9s ease-in-out infinite;
+}
+
+.acai-voice-wave > span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.acai-voice-wave > span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.acai-voice-wave > span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.acai-voice-wave > span:nth-child(4) {
+  animation-delay: 0.36s;
+}
+
+.acai-voice-wave > span:nth-child(5) {
+  animation-delay: 0.48s;
 }
 
 @keyframes acai-premium-pulse {

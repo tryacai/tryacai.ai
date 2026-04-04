@@ -133,7 +133,7 @@ export function CallRevenueFlowSection() {
   };
 
   return (
-    <section className="relative z-20 mx-auto mt-12 w-full max-w-6xl px-4 md:mt-16">
+    <section className="relative z-20 mx-auto mt-5 w-full max-w-6xl px-4 md:mt-7">
       <div className="rounded-[2.2rem] border border-white/10 bg-black/45 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_0_38px_rgba(78,60,170,0.16)] backdrop-blur-xl md:p-10">
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_0.95fr] lg:gap-12">
           <div>
