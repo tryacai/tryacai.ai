@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "next-view-transitions";
 import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, Filter, MessageSquareText, Mic, Settings2, type LucideIcon } from "lucide-react";
 
 const funnelStages = [
   {
@@ -33,28 +34,47 @@ const funnelStages = [
 
 const stageWidths = ["100%", "92%", "84%", "76%", "68%", "60%"];
 
+type SystemCard = {
+  title: string;
+  body: string;
+  href: string;
+  Icon: LucideIcon;
+  accent: string;
+};
+
 const systemCards = [
   {
-    title: "Web Funnel",
-    body: "Captures leads from paid traffic and landing pages before they drop.",
-    href: "/web-funnel",
+    title: "Automation Engine",
+    body: "Routes qualified leads and books next steps.",
+    href: "/automation-engine",
+    Icon: Settings2,
+    accent: "Flow Core",
   },
   {
     title: "Chat Widget",
-    body: "Engages instantly when visitors have intent but hesitate to call.",
+    body: "Engages visitors the moment intent appears.",
     href: "/chat-widget",
+    Icon: MessageSquareText,
+    accent: "Intent Signal",
   },
   {
     title: "Voice AI",
-    body: "Answers, qualifies, and handles callers when your team is unavailable.",
+    body: "Answers and qualifies when your team can’t.",
     href: "/voice-ai",
+    Icon: Mic,
+    accent: "Live Response",
   },
   {
-    title: "Automation Engine",
-    body: "Routes qualified leads and books next steps without delay.",
-    href: "/automation-engine",
+    title: "Web Funnel",
+    body: "Captures paid traffic before it drops.",
+    href: "/web-funnel",
+    Icon: Filter,
+    accent: "Capture Layer",
   },
-] as const;
+] as const satisfies readonly SystemCard[];
+
+const SYSTEM_ROTATE_MS = 4000;
+const STACK_ANIMATION_MS = 620;
 
 type RoiValues = {
   monthlyLeads: number;
@@ -71,16 +91,32 @@ const initialRoiValues: RoiValues = {
 export function CallRevenueFlowSection() {
   const [roiValues, setRoiValues] = useState<RoiValues>(initialRoiValues);
   const [displayLoss, setDisplayLoss] = useState(0);
-  const [activeCard, setActiveCard] = useState(0);
+  const [deckOrder, setDeckOrder] = useState<number[]>(systemCards.map((_, index) => index));
+  const [isDeckAnimating, setIsDeckAnimating] = useState(false);
+  const [isDeckHovered, setIsDeckHovered] = useState(false);
   const [activeFunnelIndex, setActiveFunnelIndex] = useState(0);
+
+  const rotateDeck = () => {
+    if (isDeckAnimating) {
+      return;
+    }
+
+    setIsDeckAnimating(true);
+    window.setTimeout(() => {
+      setDeckOrder((previous) => [...previous.slice(1), previous[0]]);
+      setIsDeckAnimating(false);
+    }, STACK_ANIMATION_MS);
+  };
 
   useEffect(() => {
     const rotation = setInterval(() => {
-      setActiveCard((previous) => (previous + 1) % systemCards.length);
-    }, 3200);
+      if (!isDeckHovered && !isDeckAnimating) {
+        rotateDeck();
+      }
+    }, SYSTEM_ROTATE_MS);
 
     return () => clearInterval(rotation);
-  }, []);
+  }, [isDeckHovered, isDeckAnimating]);
 
   useEffect(() => {
     const ticker = setInterval(() => {
@@ -236,33 +272,104 @@ export function CallRevenueFlowSection() {
 
         <div className="mt-10 grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-purple-300/70 md:text-sm">System Understanding</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400 md:text-sm">System Flow</p>
             <h3 className="mt-3 text-2xl font-semibold leading-tight text-white md:text-4xl">
               One connected system that closes every gap
             </h3>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-300 md:text-lg">
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-neutral-300 md:text-lg">
               ACAI combines your capture, response, qualification, and routing into one continuous flow.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {systemCards.map((card, index) => (
-              <Link
-                key={card.title}
-                href={card.href}
-                onMouseEnter={() => setActiveCard(index)}
-                className={`group rounded-2xl border border-white/12 bg-black/50 p-4 transition-all duration-250 hover:scale-[1.02] hover:border-transparent hover:bg-gradient-to-r hover:from-blue-500/20 hover:via-purple-500/20 hover:to-red-500/20 ${index === activeCard ? "border-transparent bg-gradient-to-r from-blue-500/18 via-purple-500/18 to-red-500/18" : ""}`}
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/12 via-purple-500/12 to-red-500/12 blur-3xl" />
+            <div
+              className="relative mx-auto h-[292px] max-w-[460px]"
+              onMouseEnter={() => setIsDeckHovered(true)}
+              onMouseLeave={() => setIsDeckHovered(false)}
+            >
+              {deckOrder.map((cardIndex, orderIndex) => {
+                const card = systemCards[cardIndex];
+                const isActive = orderIndex === 0;
+                const isOutgoing = isActive && isDeckAnimating;
+                const shiftedOrder = !isOutgoing && isDeckAnimating ? Math.max(orderIndex - 1, 0) : orderIndex;
+                const zIndex = systemCards.length - shiftedOrder;
+                const baseX = shiftedOrder * 8;
+                const baseY = shiftedOrder * 14;
+                const baseScale = 1 - shiftedOrder * 0.03;
+
+                return (
+                  <motion.div
+                    key={card.title}
+                    className="absolute inset-x-0"
+                    style={{ zIndex }}
+                    animate={
+                      isOutgoing
+                        ? {
+                            x: 62,
+                            y: 58,
+                            rotate: -7,
+                            scale: 0.9,
+                            opacity: 0.48,
+                          }
+                        : {
+                            x: baseX,
+                            y: baseY,
+                            rotate: shiftedOrder * -0.9,
+                            scale: isActive && isDeckHovered ? 1.02 : baseScale,
+                            opacity: 1 - shiftedOrder * 0.14,
+                          }
+                    }
+                    transition={{ duration: 0.58, ease: [0.2, 0.8, 0.2, 1] }}
+                  >
+                    <Link
+                      href={card.href}
+                      className={`group block min-h-[220px] rounded-2xl border border-white/14 bg-black/65 p-5 backdrop-blur-sm transition duration-300 ${
+                        isActive && isDeckHovered
+                          ? "border-white/30 shadow-[0_18px_40px_rgba(109,84,255,0.28)]"
+                          : "shadow-[0_10px_24px_rgba(0,0,0,0.38)]"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-400">{card.accent}</p>
+                          <h4 className="mt-2 text-2xl font-semibold text-white">{card.title}</h4>
+                        </div>
+                        <div className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-black/45">
+                          <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400/18 via-purple-400/18 to-red-400/18" />
+                          <card.Icon className="relative h-5 w-5 text-white" strokeWidth={1.9} />
+                        </div>
+                      </div>
+
+                      <p className="mt-5 max-w-[30ch] text-sm leading-relaxed text-neutral-300">{card.body}</p>
+
+                      {card.title === "Web Funnel" && (
+                        <div className="mt-6 space-y-1.5">
+                          {["w-full", "w-5/6", "w-2/3"].map((width) => (
+                            <span key={width} className={`block h-1 rounded-full bg-gradient-to-r from-blue-400/60 to-purple-400/60 ${width}`} />
+                          ))}
+                        </div>
+                      )}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+
+              <button
+                type="button"
+                aria-label="Show next system"
+                onClick={rotateDeck}
+                className="absolute -right-1 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2.5 text-white transition hover:border-white/35 hover:bg-black/80"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-300/70">Product</p>
-                <h4 className="mt-2 text-xl font-semibold text-white">{card.title}</h4>
-                <p className="mt-2 text-sm text-neutral-300">{card.body}</p>
-              </Link>
-            ))}
-            <div className="md:col-span-2 flex gap-2 pt-1">
-              {systemCards.map((card, index) => (
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mx-auto mt-4 flex max-w-[460px] gap-2">
+              {deckOrder.map((cardIndex, index) => (
                 <span
-                  key={card.title}
-                  className={`h-1.5 flex-1 rounded-full transition ${index === activeCard ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400" : "bg-white/20"}`}
+                  key={systemCards[cardIndex].title}
+                  className={`h-1.5 flex-1 rounded-full transition ${index === 0 ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400" : "bg-white/15"}`}
                 />
               ))}
             </div>

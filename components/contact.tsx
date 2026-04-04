@@ -11,37 +11,9 @@ import { Button } from "@/components/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
 const industryOptions = ["Plumbing", "HVAC", "Barber", "Detailing", "Roofing", "Other"] as const;
-const monthlyCallVolumeOptions = ["0-50", "50-150", "150-300", "300+"] as const;
+const leadBottleneckOptions = ["Slow follow-up", "Missed calls", "Low form conversion", "Poor qualification", "Booking drop-off", "Not sure yet"] as const;
+const systemInterestOptions = ["Web Funnel", "Chat Widget", "Voice AI", "Automation Engine"] as const;
 const freeEmailDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com"];
-
-const tierOptions = [
-  {
-    key: "capture",
-    label: "Capture",
-    description: "Best if your #1 issue is missed calls and weak first response speed.",
-    href: "/solutions#capture",
-  },
-  {
-    key: "recover",
-    label: "Recover",
-    description: "Best if you need follow-up and review automation to recover lost revenue.",
-    href: "/solutions#recover",
-  },
-  {
-    key: "optimize",
-    label: "Optimize",
-    description: "Best for advanced routing and multi-location operational control.",
-    href: "/solutions#optimize",
-  },
-  {
-    key: "unsure",
-    label: "Not Sure Yet",
-    description: "We&apos;ll help you choose the right level based on your team and call volume.",
-    href: "/solutions",
-  },
-] as const;
-
-type TierPreference = (typeof tierOptions)[number]["key"];
 
 type BookingDetails = {
   eventId: string;
@@ -71,14 +43,14 @@ const formSchema = z.object({
     .string({ required_error: "Please select your industry" })
     .min(1, "Please select your industry")
     .refine((value) => industryOptions.includes(value as (typeof industryOptions)[number]), "Please select a valid industry"),
-  monthlyCallVolume: z
-    .string({ required_error: "Please select estimated monthly call volume" })
-    .min(1, "Please select estimated monthly call volume")
+  biggestLeadBottleneck: z
+    .string({ required_error: "Please select your biggest lead bottleneck" })
+    .min(1, "Please select your biggest lead bottleneck")
     .refine(
-      (value) => monthlyCallVolumeOptions.includes(value as (typeof monthlyCallVolumeOptions)[number]),
-      "Please select a valid monthly call volume",
+      (value) => leadBottleneckOptions.includes(value as (typeof leadBottleneckOptions)[number]),
+      "Please select a valid bottleneck",
     ),
-  tierPreference: z.enum(["capture", "recover", "optimize", "unsure"]),
+  systemsInterestedIn: z.array(z.enum(systemInterestOptions)).min(1, "Select at least one system"),
   message: z
     .string()
     .max(300, "Message must be 300 characters or fewer")
@@ -175,8 +147,8 @@ export function ContactForm() {
       phone: "",
       company: "",
       industry: "",
-      monthlyCallVolume: "",
-      tierPreference: "unsure",
+      biggestLeadBottleneck: "",
+      systemsInterestedIn: [],
       message: "",
       smsConsent: false,
       company_website: "",
@@ -191,7 +163,7 @@ export function ContactForm() {
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
 
   const readyToBook = form.watch("readyToBook");
-  const tierPreference = form.watch("tierPreference");
+  const systemsInterestedIn = form.watch("systemsInterestedIn");
   const watchedMessage = form.watch("message") || "";
 
   useEffect(() => {
@@ -254,14 +226,14 @@ export function ContactForm() {
           phone_number: values.phone,
           company_name: values.company,
           industry: values.industry,
-          call_volume: values.monthlyCallVolume,
+          call_volume: values.biggestLeadBottleneck,
           message: values.message || "",
           sms_consent: values.smsConsent,
           demo_requested: values.readyToBook,
           booking_time: booking?.startTime || null,
           booking_end_time: booking?.endTime || null,
           event_id: booking?.eventId || null,
-          tier_preference: values.tierPreference,
+          tier_preference: values.systemsInterestedIn.join(", "),
         }),
       });
 
@@ -279,8 +251,8 @@ export function ContactForm() {
         phone: "",
         company: "",
         industry: "",
-        monthlyCallVolume: "",
-        tierPreference: "unsure",
+        biggestLeadBottleneck: "",
+        systemsInterestedIn: [],
         message: "",
         smsConsent: false,
         company_website: "",
@@ -442,22 +414,22 @@ export function ContactForm() {
 
                   <FormField
                     control={form.control}
-                    name="monthlyCallVolume"
+                    name="biggestLeadBottleneck"
                     render={({ field }) => (
                       <FormItem>
-                        <label htmlFor="monthlyCallVolume" className="block text-sm font-medium text-neutral-200">
-                          Estimated Monthly Call Volume
+                        <label htmlFor="biggestLeadBottleneck" className="block text-sm font-medium text-neutral-200">
+                          Biggest lead bottleneck
                         </label>
                         <FormControl>
                           <select
-                            id="monthlyCallVolume"
+                            id="biggestLeadBottleneck"
                             className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                             {...field}
                           >
                             <option value="" className="bg-neutral-950 text-neutral-400">
-                              Select call volume
+                              Select a bottleneck
                             </option>
-                            {monthlyCallVolumeOptions.map((option) => (
+                            {leadBottleneckOptions.map((option) => (
                               <option key={option} value={option} className="bg-neutral-950 text-white">
                                 {option}
                               </option>
@@ -470,73 +442,44 @@ export function ContactForm() {
                   />
                 </div>
 
-                <section className="space-y-3 rounded-xl border border-white/10 bg-black/30 p-4">
-                  <p className="text-sm font-semibold text-white">Choose your tier preference</p>
+                <FormField
+                  control={form.control}
+                  name="systemsInterestedIn"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3 rounded-xl border border-white/10 bg-black/30 p-4">
+                      <p className="text-sm font-semibold text-white">What are you most interested in?</p>
+                      <p className="text-xs text-neutral-400">Select the systems you&apos;d like to explore or improve.</p>
+                      <div className="flex flex-wrap gap-2">
+                        {systemInterestOptions.map((option) => {
+                          const selected = field.value.includes(option);
 
-                  <div className="mx-auto grid max-w-xl grid-cols-3 gap-3">
-                    {tierOptions
-                      .filter((option) => option.key !== "unsure")
-                      .map((option) => {
-                        const selected = tierPreference === option.key;
-
-                        return (
-                          <motion.button
-                            key={option.key}
-                            type="button"
-                            onClick={() => form.setValue("tierPreference", option.key)}
-                            whileTap={{ scale: 0.98 }}
-                            animate={{ y: selected ? -3 : 0 }}
-                            transition={{ duration: 0.18, ease: "easeOut" }}
-                            className={`rounded-lg border px-3 py-2 text-center text-sm font-semibold transition-all duration-200 ${
-                              selected
-                                ? "border-transparent bg-gradient-to-r from-red-500/35 via-purple-500/35 to-blue-500/35 text-white shadow-[0_0_12px_rgba(168,85,247,0.35)]"
-                                : "border-white/15 bg-neutral-950 text-neutral-200 hover:border-white/30"
-                            }`}
-                          >
-                            {option.label}
-                          </motion.button>
-                        );
-                      })}
-                  </div>
-
-                  {(() => {
-                    const unsure = tierOptions.find((option) => option.key === "unsure")!;
-                    const selected = tierPreference === unsure.key;
-
-                    return (
-                      <div className="flex justify-center">
-                        <motion.button
-                          type="button"
-                          onClick={() => form.setValue("tierPreference", unsure.key)}
-                          whileTap={{ scale: 0.98 }}
-                          animate={{ y: selected ? -2 : 0 }}
-                          transition={{ duration: 0.18, ease: "easeOut" }}
-                          className={`rounded-md border px-4 py-1.5 text-xs font-medium transition-all duration-200 ${
-                            selected
-                              ? "border-transparent bg-gradient-to-r from-red-500/25 via-purple-500/25 to-blue-500/25 text-white shadow-[0_0_10px_rgba(168,85,247,0.28)]"
-                              : "border-white/20 bg-neutral-950 text-neutral-300 hover:border-white/35"
-                          }`}
-                        >
-                          {unsure.label}
-                        </motion.button>
+                          return (
+                            <motion.button
+                              key={option}
+                              type="button"
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => {
+                                const current = field.value || [];
+                                const next = current.includes(option)
+                                  ? current.filter((item) => item !== option)
+                                  : [...current, option];
+                                field.onChange(next);
+                              }}
+                              className={`rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                                selected
+                                  ? "border-transparent bg-gradient-to-r from-red-500/35 via-purple-500/35 to-blue-500/35 text-white shadow-[0_0_14px_rgba(168,85,247,0.32)]"
+                                  : "border-white/20 bg-neutral-950 text-neutral-200 hover:border-white/35"
+                              }`}
+                            >
+                              {option}
+                            </motion.button>
+                          );
+                        })}
                       </div>
-                    );
-                  })()}
-
-                  <div className="rounded-lg border border-white/10 bg-black/25 px-3 py-2 text-center">
-                    <p className="text-xs text-neutral-200">
-                      {tierOptions.find((option) => option.key === tierPreference)?.key === "unsure"
-                        ? "I'll help you choose the right level based on your team and call volume."
-                        : tierOptions.find((option) => option.key === tierPreference)?.description}
-                    </p>
-                    <Link
-                      href={tierOptions.find((option) => option.key === tierPreference)?.href || "/solutions"}
-                      className="mt-1 inline-block text-xs text-purple-300 underline underline-offset-4 hover:text-white"
-                    >
-                      See more about this tier
-                    </Link>
-                  </div>
-                </section>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
