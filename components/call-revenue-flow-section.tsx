@@ -1,44 +1,39 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BadgeCheck, CalendarCheck2, CircleDollarSign, FileText, MousePointerClick, Zap } from "lucide-react";
 
 const funnelStages = [
   {
     title: "Ad Clicked",
-    description: "A prospect taps your ad and lands on your offer.",
-    icon: MousePointerClick,
+    description: "Paid demand lands on your page.",
   },
   {
     title: "Form Filled",
-    description: "Lead details are submitted and captured instantly.",
-    icon: FileText,
+    description: "Lead details are captured in real time.",
   },
   {
     title: "Instant Follow Up",
-    description: "ACAI responds fast with voice + workflow automation.",
-    icon: Zap,
+    description: "ACAI follows up before intent cools.",
   },
   {
     title: "Lead Qualified",
-    description: "Intent, fit, and urgency are filtered before handoff.",
-    icon: BadgeCheck,
+    description: "Fit and urgency are screened automatically.",
   },
   {
     title: "Appointment Booked",
-    description: "Qualified leads get routed directly to scheduling.",
-    icon: CalendarCheck2,
+    description: "Qualified prospects are routed to schedule.",
   },
   {
     title: "Paying Customer",
-    description: "More ad spend turns into revenue with less leakage.",
-    icon: CircleDollarSign,
+    description: "More clicks become real revenue.",
   },
 ] as const;
 
+const stageWidths = ["100%", "92%", "84%", "76%", "68%", "60%"];
+
 export function CallRevenueFlowSection() {
   return (
-    <section className="relative z-20 mt-6 w-full max-w-7xl px-4 md:mt-8">
+    <section className="relative z-20 mt-10 w-full px-4 md:mt-14">
       <motion.div
         initial={{ opacity: 0, y: 22 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -46,40 +41,33 @@ export function CallRevenueFlowSection() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="mx-auto w-full max-w-6xl"
       >
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/55 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_0_40px_rgba(96,70,255,0.15)] backdrop-blur-xl md:p-8">
+        <div className="grid grid-cols-1 items-center gap-8 rounded-[2rem] border border-white/10 bg-black/45 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_0_36px_rgba(96,70,255,0.16)] backdrop-blur-xl md:p-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/6 via-purple-500/10 to-blue-500/6" />
-          <div className="pointer-events-none absolute -left-24 top-6 h-44 w-44 rounded-full bg-red-500/10 blur-3xl" />
-          <div className="pointer-events-none absolute -right-20 bottom-6 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
 
-          <div className="relative z-10 text-center">
+          <div className="relative z-10 max-w-xl text-left">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-purple-300/75 md:text-sm">
               LEAD CONVERSION FUNNEL
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">
               Turn Every Click Into Revenue
             </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
-              Most businesses lose leads after the click, not before it. ACAI helps you respond faster, qualify instantly, and convert more of the demand you already paid for.
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-neutral-300 md:text-lg">
+              Most companies don&apos;t lose demand at the ad. They lose it in the gap after the click. ACAI closes that gap with immediate response, qualification, and routing.
             </p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.5, delay: 0.08, ease: "easeOut" }}
-            className="relative z-10 mx-auto mt-7 max-w-3xl overflow-hidden rounded-2xl border border-emerald-400/25 bg-emerald-400/10 px-5 py-4 text-center shadow-[0_0_0_1px_rgba(16,185,129,0.22),0_0_28px_rgba(16,185,129,0.16)]"
-          >
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-200/90">Harvard Insight</p>
-            <p className="mt-2 text-lg font-medium leading-snug text-white md:text-2xl">
-              Companies that respond to leads within an hour can see up to a <span className="bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text font-bold text-transparent">391% increase in conversions.</span>
-            </p>
-          </motion.div>
+          <div className="relative z-10 mx-auto w-full max-w-xl">
+            <div className="relative rounded-2xl border border-white/10 bg-black/55 p-4 md:p-6">
+              <div className="pointer-events-none absolute inset-y-8 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-blue-400/70 via-purple-400/55 to-red-400/70" />
+              <motion.div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-8 h-3 w-3 -translate-x-1/2 rounded-full bg-white shadow-[0_0_18px_rgba(255,255,255,0.9),0_0_34px_rgba(96,70,255,0.65)]"
+                animate={{ y: [0, 360, 0] }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+              />
 
-          <div className="relative z-10 mt-8 grid grid-cols-1 gap-4 lg:grid-cols-6 lg:gap-3">
+              <div className="relative flex flex-col items-center gap-3 md:gap-4">
             {funnelStages.map((stage, index) => {
-              const Icon = stage.icon;
-              const isLast = index === funnelStages.length - 1;
               return (
                 <motion.div
                   key={stage.title}
@@ -87,44 +75,22 @@ export function CallRevenueFlowSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.25 }}
                   transition={{ duration: 0.45, delay: index * 0.06, ease: "easeOut" }}
-                  whileHover={{ y: -4, scale: 1.01 }}
-                  className="group relative"
+                      className="relative"
+                      style={{ width: stageWidths[index] }}
                 >
-                  <div className="relative flex h-full min-h-[178px] flex-col rounded-2xl border border-white/10 bg-black/55 p-4 shadow-[0_8px_20px_rgba(0,0,0,0.28)] transition-all duration-300 group-hover:border-white/25 group-hover:shadow-[0_12px_30px_rgba(68,40,168,0.28)]">
-                    <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-gradient-to-br from-red-500/10 via-purple-500/12 to-blue-500/10" />
-                    <div className="relative z-10">
-                      <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <h3 className="mt-4 text-base font-semibold text-white md:text-lg">{stage.title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-neutral-300">{stage.description}</p>
-                    </div>
+                  <div className="rounded-xl border border-white/10 bg-black/70 px-4 py-3 text-center shadow-[0_8px_18px_rgba(0,0,0,0.24)] backdrop-blur-sm">
+                    <h3 className="text-sm font-semibold text-white md:text-base">{stage.title}</h3>
+                    <p className="mt-1 text-xs leading-relaxed text-neutral-300 md:text-sm">{stage.description}</p>
                   </div>
-
-                  {!isLast && (
-                    <>
-                      <div className="pointer-events-none absolute -bottom-3 left-1/2 h-6 w-px -translate-x-1/2 bg-gradient-to-b from-purple-400/80 to-blue-400/30 lg:hidden" />
-                      <div className="pointer-events-none absolute right-[-10px] top-1/2 hidden h-[2px] w-5 -translate-y-1/2 overflow-hidden rounded-full bg-gradient-to-r from-purple-400/90 to-blue-400/50 lg:block">
-                        <motion.span
-                          className="absolute inset-y-0 left-0 w-1/2 bg-white/90"
-                          animate={{ x: ["-130%", "260%"] }}
-                          transition={{ duration: 1.2, repeat: Infinity, ease: "linear", delay: index * 0.1 }}
-                        />
-                      </div>
-                    </>
-                  )}
                 </motion.div>
               );
             })}
+              </div>
           </div>
-
-          <div className="relative z-10 mt-7 flex flex-wrap items-center justify-center gap-3">
-            <span className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-200">
-              See Epoxy Plan
-            </span>
-            <span className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-200">
-              See Garage Installation Plan
-            </span>
+            <div className="mt-4 flex items-center justify-between px-3 text-[11px] uppercase tracking-[0.2em] text-neutral-400 md:px-6">
+              <span>Top of Funnel</span>
+              <span>Revenue</span>
+            </div>
           </div>
         </div>
       </motion.div>

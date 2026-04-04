@@ -917,15 +917,14 @@ export const Hero = () => {
         <div className="pointer-events-none absolute inset-x-10 -top-6 h-[220px] rounded-full bg-black/45 blur-2xl md:inset-x-20 md:h-[260px]" />
         <div className="pointer-events-none absolute left-1/2 top-8 h-44 w-80 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/14 via-purple-500/22 to-blue-500/14 blur-3xl" />
 
-        <motion.h2
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
-          className="relative mt-2 text-4xl font-semibold leading-tight text-white md:text-6xl"
+          className="relative mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-xl"
         >
-          <span className="acai-247-sweep inline-block">24/7</span>{" "}
-          <Balancer>Contractor Call Operations.</Balancer>
-        </motion.h2>
+          ACAI helps you respond instantly, qualify faster, and convert more of the demand you already paid for.
+        </motion.p>
 
         <div
           style={{

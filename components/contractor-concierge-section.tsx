@@ -1,194 +1,76 @@
 "use client";
 
-import Image from "next/image";
-import { Link } from "next-view-transitions";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const callJourneyStages = [
   {
     label: "Answer",
-    description: "Your call is answered by a real trained concierge.",
+    description: "Every inbound call gets an immediate response.",
   },
   {
     label: "Qualify",
-    description: "We qualify the job type, urgency, and location.",
+    description: "Intent and job details are collected automatically.",
   },
   {
     label: "Route",
-    description: "We route it directly to your technician’s calendar.",
+    description: "Qualified leads are routed to the right next action.",
   },
   {
     label: "Log",
-    description: "Every call is logged, tagged, and attributed in your CRM.",
+    description: "Calls are logged for attribution and follow-up.",
   },
 ] as const;
 
 export function ContractorConciergeSection() {
-  const [activeStageIndex, setActiveStageIndex] = useState(0);
-  const journeyRef = useRef<HTMLDivElement | null>(null);
-  const isJourneyInView = useInView(journeyRef, { amount: 0.45, once: false });
-
-  useEffect(() => {
-    if (!isJourneyInView) {
-      return;
-    }
-
-    setActiveStageIndex(0);
-    const interval = window.setInterval(() => {
-      setActiveStageIndex((current) => (current + 1) % callJourneyStages.length);
-    }, 1500);
-
-    return () => {
-      window.clearInterval(interval);
-    };
-  }, [isJourneyInView]);
-
   return (
-    <section className="relative z-10 mt-0 w-full max-w-7xl px-4 md:mt-1">
+    <section className="relative z-10 mt-16 w-full px-4 md:mt-24">
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="mx-auto mt-8 max-w-6xl"
+        className="mx-auto max-w-6xl"
       >
-        <div className="relative">
-          <div className="acai-command-glow pointer-events-none absolute -inset-5 rounded-[2.2rem]" />
-          <motion.div
-            animate={{ y: [0, -5, 0] }}
-            transition={{
-              duration: 7.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              type: "spring",
-            }}
-          >
-            <section className="relative z-10 mt-0 w-full max-w-7xl overflow-hidden px-4 md:mt-1">
-                <div className="text-center">
-                  <p className="text-xs font-semibold uppercase tracking-[0.26em] text-purple-300/70 md:text-sm">HOW EVERY CALL BECOMES REVENUE</p>
+        <div className="grid grid-cols-1 items-center gap-8 rounded-[2rem] border border-white/10 bg-black/45 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_0_32px_rgba(88,65,185,0.2)] backdrop-blur-xl md:p-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+          <div className="text-left">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-purple-300/70 md:text-sm">How Every Call Becomes Revenue</p>
+            <h2 className="mt-4 text-3xl font-semibold leading-tight text-white md:text-5xl">
+              Move every conversation from first ring to booked work
+            </h2>
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-neutral-300 md:text-lg">
+              ACAI runs a consistent handoff sequence for each caller, so your team spends less time chasing details and more time closing jobs.
+            </p>
+          </div>
 
-                  <div
-                    ref={journeyRef}
-                    className="relative mt-5 overflow-hidden rounded-2xl border border-white/15 bg-black/60 p-5 text-left shadow-[0_0_0_1px_rgba(255,255,255,0.05),0_0_28px_rgba(96,70,255,0.18)] backdrop-blur-xl md:p-7"
-                  >
-                    <motion.div
-                      aria-hidden
-                      animate={{ opacity: [0.28, 0.42, 0.28] }}
-                      transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/8 via-purple-500/12 to-blue-500/8"
-                    />
-                    <motion.div
-                      aria-hidden
-                      animate={{ x: ["-120%", "120%"] }}
-                      transition={{ duration: 3.6, repeat: Infinity, ease: "linear" }}
-                      className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent blur-md"
-                    />
+          <div className="relative rounded-2xl border border-white/12 bg-black/60 p-4 md:p-6">
+            <div className="pointer-events-none absolute left-8 right-8 top-1/2 hidden h-px -translate-y-1/2 bg-gradient-to-r from-red-400/40 via-purple-400/50 to-blue-400/40 md:block" />
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute left-8 top-1/2 hidden h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-white shadow-[0_0_14px_rgba(255,255,255,0.9),0_0_28px_rgba(96,70,255,0.7)] md:block"
+              animate={{ x: [0, 360, 0] }}
+              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+            />
 
-                    <div className="relative z-10 flex flex-wrap items-center justify-center gap-2 md:flex-nowrap md:gap-3">
-                      {callJourneyStages.map((stage, index) => {
-                        const isActive = index === activeStageIndex;
-                        const isReached = index <= activeStageIndex;
+            <div className="relative grid grid-cols-1 gap-3 md:grid-cols-4 md:gap-2">
+              {callJourneyStages.map((stage, index) => (
+                <motion.div
+                  key={stage.label}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.4, delay: index * 0.08, ease: "easeOut" }}
+                  className="rounded-xl border border-white/10 bg-black/70 px-3 py-4 text-center"
+                >
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-white md:text-xs">{stage.label}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-neutral-300">{stage.description}</p>
+                </motion.div>
+              ))}
+            </div>
 
-                        return (
-                          <div key={stage.label} className="flex w-full items-center justify-center md:w-auto">
-                            <motion.div
-                              animate={{
-                                opacity: isActive ? 1 : 0.5,
-                                scale: isActive ? 1.07 : 1,
-                                boxShadow: isActive
-                                  ? "0 0 0 1px rgba(255,255,255,0.2), 0 0 22px rgba(123,97,255,0.45), 0 0 35px rgba(59,130,246,0.24)"
-                                  : "0 0 0 1px rgba(255,255,255,0.07)",
-                              }}
-                              transition={{ duration: 0.35, ease: "easeOut" }}
-                              className="relative flex h-14 w-14 items-center justify-center rounded-full bg-black/65"
-                            >
-                              <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-red-500/90 via-purple-500/90 to-blue-500/90 p-[1px]">
-                                <span className="block h-full w-full rounded-full bg-black/85" />
-                              </span>
-                              <motion.span
-                                animate={{ opacity: isActive ? 1 : 0.65 }}
-                                transition={{ duration: 0.28 }}
-                                className="relative z-10 text-xs font-semibold uppercase tracking-[0.2em] text-white"
-                              >
-                                {stage.label}
-                              </motion.span>
-                              {isActive && (
-                                <motion.span
-                                  aria-hidden
-                                  initial={{ opacity: 0.4, scale: 0.8 }}
-                                  animate={{ opacity: [0.25, 0.5, 0.25], scale: [1, 1.16, 1] }}
-                                  transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-                                  className="pointer-events-none absolute -inset-2 rounded-full bg-gradient-to-r from-red-500/20 via-purple-500/25 to-blue-500/20 blur-md"
-                                />
-                              )}
-                            </motion.div>
-
-                            {index < callJourneyStages.length - 1 && (
-                              <div className="relative mx-2 hidden h-px w-14 overflow-hidden rounded-full bg-white/15 md:block">
-                                <motion.div
-                                  animate={{ opacity: isReached ? 1 : 0.35 }}
-                                  className="absolute inset-0 bg-gradient-to-r from-red-500/65 via-purple-500/65 to-blue-500/65"
-                                />
-                                {isActive && (
-                                  <motion.span
-                                    aria-hidden
-                                    initial={{ x: "-100%", opacity: 0.5 }}
-                                    animate={{ x: "440%", opacity: [0.35, 1, 0.35] }}
-                                    transition={{ duration: 1.15, repeat: Infinity, ease: "linear" }}
-                                    className="absolute -top-1.5 h-3 w-3 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.7)]"
-                                  />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    <div className="relative z-10 mt-7 rounded-xl border border-white/10 bg-black/45 p-5 md:p-6">
-                      <AnimatePresence mode="wait">
-                        <motion.p
-                          key={callJourneyStages[activeStageIndex].label}
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -6 }}
-                          transition={{ duration: 0.26, ease: "easeOut" }}
-                          className="text-2xl font-medium leading-tight text-white md:text-3xl"
-                        >
-                          {callJourneyStages[activeStageIndex].description}
-                        </motion.p>
-                      </AnimatePresence>
-                      <p className="mt-4 text-base leading-relaxed text-neutral-300 md:text-lg">
-                        We handle everything from the first ring to the final payment.
-                      </p>
-                    </div>
-
-                    <p className="relative z-10 mt-5 text-center text-sm text-neutral-400">Every call. Every emergency. Fully tracked.</p>
-                  </div>
-                </div>
-            </section>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.35 }}
-        transition={{ duration: 0.55, ease: "easeOut" }}
-        className="relative mx-auto mt-12 max-w-4xl overflow-hidden rounded-3xl border border-white/12 bg-black/50 p-4 text-center shadow-[0_10px_28px_rgba(20,20,40,0.28)] md:mt-14 md:p-5"
-      >
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/5 via-purple-500/8 to-blue-500/5" />
-        <h3 className="relative text-3xl font-semibold text-white md:text-4xl">Ready to See Concierge in Action?</h3>
-
-        <div className="relative mt-4 flex items-center justify-center">
-          <Link
-            href="/contact"
-            className="acai-cta-shine relative inline-flex items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 px-8 py-3 text-base font-semibold text-white shadow-[0_8px_24px_rgba(123,0,255,0.22)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_12px_30px_rgba(123,0,255,0.28)]"
-          >
-            <span className="relative z-10">Book a Strategy Call</span>
-          </Link>
+            <p className="mt-4 text-center text-xs uppercase tracking-[0.18em] text-neutral-400 md:mt-5">
+              Answer → Qualify → Route → Log
+            </p>
+          </div>
         </div>
       </motion.div>
     </section>

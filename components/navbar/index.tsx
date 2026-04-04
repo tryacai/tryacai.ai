@@ -5,19 +5,6 @@ import { motion } from "framer-motion";
 
 const navItems = [
   {
-    title: "Contractor Services We Support",
-    link: "#",
-    children: [
-      { title: "Plumbing", link: "/plumbing" },
-      { title: "HVAC", link: "/hvac" },
-      { title: "Sewer & Drain", link: "/sewer-drain" },
-      { title: "Septic", link: "/septic" },
-      { title: "Water Heater Services", link: "/water-heater" },
-      { title: "Residential Plumbing", link: "/residential-plumbing" },
-      { title: "Commercial Plumbing", link: "/commercial-plumbing" },
-    ],
-  },
-  {
     title: "FAQ",
     link: "/faq",
   },
