@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "ACAI AI | AI Receptionists for Service Businesses",
+  title: "Try ACAI AI | Never Miss a Lead Again",
   description:
-    "Never miss a call again. ACAI AI is an AI receptionist built for plumbers and HVAC to answer calls and book jobs 24/7.",
+    "Never miss a lead again. ACAI helps service businesses automate follow-up, qualify leads faster, and turn more demand into booked jobs.",
   openGraph: {
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    images: ["https://tryacai.ai/opengraph-image.png"],
   },
 };
 

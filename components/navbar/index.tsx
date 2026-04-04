@@ -13,7 +13,7 @@ const navItems = [
     link: "/contact",
   },
   {
-    title: "Try Our AI",
+    title: "System Hub",
     link: "/ai",
     highlightAI: true,
   },

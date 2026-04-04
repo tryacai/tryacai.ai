@@ -80,6 +80,22 @@ html {
   animation: acai-pulse-banner-scroll 22s linear infinite;
 }
 
+.acai-signal-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(96, 165, 250, 0.16), rgba(168, 85, 247, 0.16), rgba(239, 68, 68, 0.16)),
+    repeating-linear-gradient(
+      100deg,
+      transparent 0,
+      transparent 12px,
+      rgba(255, 255, 255, 0.06) 12px,
+      rgba(255, 255, 255, 0.06) 13px
+    );
+  opacity: 0.42;
+  animation: acai-pulse-banner-scroll 12s linear infinite;
+}
+
 @keyframes acai-voice-flow {
   0%,
   100% {
@@ -128,6 +144,42 @@ html {
 
 .acai-voice-wave > span:nth-child(5) {
   animation-delay: 0.48s;
+}
+
+.acai-slider {
+  width: 100%;
+  appearance: none;
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.45), rgba(168, 85, 247, 0.55), rgba(239, 68, 68, 0.5));
+  outline: none;
+}
+
+.acai-slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid rgba(168, 85, 247, 0.8);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.45);
+  cursor: ew-resize;
+}
+
+.acai-slider::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid rgba(168, 85, 247, 0.8);
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.45);
+  cursor: ew-resize;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: ease-out;
 }
 
 @keyframes acai-premium-pulse {

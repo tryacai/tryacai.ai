@@ -7,28 +7,36 @@ import { ViewTransitions } from "next-view-transitions";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tryacai.ai"),
-  title: "ACAI AI | AI Receptionists for Service Businesses",
-  description: "Never miss a call again. ACAI AI is an AI receptionist built for service businesses to answer calls and book jobs 24/7.",
+  title: "Try ACAI AI | Never Miss a Lead Again",
+  description:
+    "Never miss a lead again. ACAI helps service businesses automate follow-up, qualify leads faster, and turn more demand into booked jobs.",
+  icons: {
+    icon: "/icon.jpg",
+    shortcut: "/icon.jpg",
+    apple: "/apple-icon.jpg",
+  },
   openGraph: {
-    title: "ACAI AI | AI Receptionist for Service Businesses",
-    description: "Never miss a call again. ACAI AI is an AI receptionist built for service businesses to answer calls and book jobs 24/7.",
+    title: "Try ACAI AI | Never Miss a Lead Again",
+    description:
+      "Never miss a lead again. ACAI helps service businesses automate follow-up, qualify leads faster, and turn more demand into booked jobs.",
     url: "https://tryacai.ai",
     siteName: "ACAI AI",
     images: [
       {
-        url: "https://tryacai.ai/V2websitepreviewimage.png",
+        url: "https://tryacai.ai/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "ACAI AI – AI Receptionist for Service Businesses",
+        alt: "Try ACAI AI | Never Miss a Lead Again",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ACAI AI | AI Receptionist for Service Businesses",
-    description: "Never miss a call again. ACAI AI is an AI receptionist built for service businesses to answer calls and book jobs 24/7.",
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    title: "Try ACAI AI | Never Miss a Lead Again",
+    description:
+      "Never miss a lead again. ACAI helps service businesses automate follow-up, qualify leads faster, and turn more demand into booked jobs.",
+    images: ["https://tryacai.ai/twitter-image.png"],
   },
 };
 

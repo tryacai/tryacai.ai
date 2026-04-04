@@ -834,6 +834,11 @@ const SecondaryDemoCard = ({
 
 export const Hero = () => {
   const router = useRouter();
+  const heroCards = [
+    "Stop Running to the Phone",
+    "Stop Losing Emergency Calls",
+    "Stop Missing High-Value Leads",
+  ] as const;
   const [startSublineTyping, setStartSublineTyping] = useState(false);
   const [typingSyncCycle, setTypingSyncCycle] = useState(0);
   const [headlineCanDelete, setHeadlineCanDelete] = useState(false);
@@ -873,9 +878,9 @@ export const Hero = () => {
         }}
         className="flex justify-center"
       >
-        <Badge onClick={() => router.push("/blog/top-5-llm-of-all-time")}>
+        <Badge onClick={() => router.push("/blog")}>
           <span className="bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
-            Meet the ACAI Team
+            Why ACAI
           </span>
         </Badge>
       </motion.div>
@@ -904,8 +909,22 @@ export const Hero = () => {
           transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
           className="relative mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-xl"
         >
-          ACAI helps you respond instantly, qualify faster, and convert more of the demand you already paid for.
+          Reliable AI-powered solutions for service businesses.
         </motion.p>
+
+        <div className="relative mx-auto mt-7 grid w-full max-w-4xl grid-cols-1 gap-3 md:grid-cols-3">
+          {heroCards.map((card, index) => (
+            <motion.div
+              key={card}
+              initial={{ opacity: 0, y: 18, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.45, delay: 0.16 + index * 0.16, ease: "easeOut" }}
+              className="rounded-xl border border-white/10 bg-black/55 px-4 py-3 text-sm font-medium text-neutral-100 shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_0_22px_rgba(91,62,207,0.14)] backdrop-blur"
+            >
+              {card}
+            </motion.div>
+          ))}
+        </div>
 
         <div
           style={{
@@ -915,6 +934,30 @@ export const Hero = () => {
             marginBottom: "12px",
           }}
         />
+
+        <div className="pointer-events-none relative mx-auto mt-2 h-16 w-full max-w-4xl overflow-hidden">
+          <svg viewBox="0 0 900 170" className="h-full w-full" fill="none" aria-hidden>
+            <defs>
+              <linearGradient id="heroSignalGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.65" />
+                <stop offset="50%" stopColor="#a855f7" stopOpacity="0.7" />
+                <stop offset="100%" stopColor="#ef4444" stopOpacity="0.65" />
+              </linearGradient>
+            </defs>
+            {[
+              "M150 0 C 170 80, 260 120, 290 170",
+              "M450 0 C 455 78, 455 120, 450 170",
+              "M750 0 C 730 80, 640 120, 610 170",
+            ].map((path, index) => (
+              <g key={path}>
+                <path d={path} stroke="url(#heroSignalGradient)" strokeWidth="2" strokeLinecap="round" className="opacity-60" />
+                <circle r="3" fill="#fff" className="opacity-85">
+                  <animateMotion dur={`${1.8 + index * 0.35}s`} repeatCount="indefinite" path={path} />
+                </circle>
+              </g>
+            ))}
+          </svg>
+        </div>
       </div>
 
       <div className="h-1 md:h-2" />
