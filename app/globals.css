@@ -55,43 +55,38 @@ html {
   }
 }
 
-h2:has(.acai-247-sweep) + div {
-  width: min(400px, 100%) !important;
-  height: 2px !important;
-  margin-top: 8px !important;
-  margin-right: auto !important;
-  margin-bottom: 0 !important;
-  margin-left: auto !important;
-  border: none !important;
-  box-shadow: none !important;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(139, 92, 246, 0.8) 30%,
-    rgba(167, 139, 250, 1) 50%,
-    rgba(139, 92, 246, 0.8) 70%,
-    transparent 100%
-  ) !important;
-}
-
-h2:has(.acai-247-sweep) + div::before {
-  content: "Built exclusively for Plumbing & Mechanical Companies.";
-  position: static;
-  display: block;
-  width: 100%;
-  margin-bottom: 8px;
-  color: rgb(212 212 216 / 1);
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5rem;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  h2:has(.acai-247-sweep) + div::before {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+@keyframes acai-pulse-banner-scroll {
+  0% {
+    transform: translateX(0%);
   }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes acai-pulse-wave {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+.acai-pulse-banner-track {
+  animation: acai-pulse-banner-scroll 24s linear infinite;
+}
+
+.acai-wave-dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 999px;
+  background: linear-gradient(130deg, #60a5fa, #a855f7, #ef4444);
+  box-shadow: 0 0 14px rgba(147, 51, 234, 0.5);
+  animation: acai-pulse-wave 1.15s ease-in-out infinite;
 }
 
 @keyframes acai-premium-pulse {

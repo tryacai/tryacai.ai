@@ -1,14 +1,11 @@
 "use client";
 
 import Balancer from "react-wrap-balancer";
-import { Badge } from "./badge";
 import { motion } from "framer-motion";
 import { Mic } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { RetellWebClient } from "retell-client-js-sdk";
 import { Link } from "next-view-transitions";
-
-import { useRouter } from "next/navigation";
 
 type DemoId = "main" | "plumbing" | "barber";
 
@@ -834,85 +831,26 @@ const SecondaryDemoCard = ({
 };
 
 export const Hero = () => {
-  const router = useRouter();
-  const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
-  const [startSublineTyping, setStartSublineTyping] = useState(false);
-  const [typingSyncCycle, setTypingSyncCycle] = useState(0);
-  const [headlineCanDelete, setHeadlineCanDelete] = useState(false);
-  const [headlineDeleteSignal, setHeadlineDeleteSignal] = useState(0);
-  const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
-
-  const registerTerminator = useCallback((demo: DemoId, terminateFn: (() => Promise<void>) | null) => {
-    if (terminateFn) {
-      terminatorsRef.current[demo] = terminateFn;
-      return;
-    }
-    delete terminatorsRef.current[demo];
-  }, []);
-
-  const terminateOtherDemo = useCallback(
-    async (selectedDemo: DemoId) => {
-      if (!activeDemo || activeDemo === selectedDemo) return;
-      const terminateActive = terminatorsRef.current[activeDemo];
-      if (terminateActive) {
-        await terminateActive();
-      }
-    },
-    [activeDemo]
-  );
-
-  const handleHeadlineWordTyped = useCallback(() => {
-    setTypingSyncCycle((previous) => previous + 1);
-    setHeadlineCanDelete(false);
-    if (!startSublineTyping) {
-      setStartSublineTyping(true);
-    }
-  }, [startSublineTyping]);
-
-  const handleWithAcaiHoldComplete = useCallback(() => {
-    setHeadlineCanDelete(true);
-  }, []);
-
-  const handleHeadlineDeleteStarted = useCallback(() => {
-    setHeadlineDeleteSignal((previous) => previous + 1);
-    setHeadlineCanDelete(false);
-  }, []);
-
   return (
     <div className="relative flex min-h-[76vh] flex-col overflow-hidden pt-20 md:min-h-[82vh] md:pt-36">
-      <motion.div
-        initial={{
-          y: 40,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-        }}
-        className="flex justify-center"
+      <motion.h1
+        initial={{ y: 32, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ ease: "easeOut", duration: 0.5 }}
+        className="mx-auto mt-6 max-w-6xl px-4 text-center text-3xl font-semibold leading-tight text-white md:text-5xl lg:text-7xl"
       >
-        <Badge onClick={() => router.push("/blog/top-5-llm-of-all-time")}>
-          <span className="bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
-            Meet the ACAI Team
-          </span>
-        </Badge>
-      </motion.div>
-      <TypewriterHeadline
-        canDelete={headlineCanDelete}
-        onWordTyped={handleHeadlineWordTyped}
-        onDeleteStarted={handleHeadlineDeleteStarted}
-      />
-      {startSublineTyping && (
-        <TypewriterText
-          syncCycle={typingSyncCycle}
-          deleteSignal={headlineDeleteSignal}
-          onWithAcaiHoldComplete={handleWithAcaiHoldComplete}
-        />
-      )}
+        Never Miss a Lead Again
+      </motion.h1>
+
+      <motion.h2
+        initial={{ y: 28, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ ease: "easeOut", duration: 0.5, delay: 0.12 }}
+        className="mx-auto mt-3 px-4 text-center text-xl font-semibold tracking-wide md:text-3xl lg:text-4xl"
+      >
+        <span className="bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">With ACAI</span>
+      </motion.h2>
+
       <div className="relative z-10 mx-auto mt-7 w-full max-w-5xl px-4 text-center md:mt-10">
         <div className="pointer-events-none absolute inset-x-10 -top-6 h-[220px] rounded-full bg-black/45 blur-2xl md:inset-x-20 md:h-[260px]" />
         <div className="pointer-events-none absolute left-1/2 top-8 h-44 w-80 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/14 via-purple-500/22 to-blue-500/14 blur-3xl" />
@@ -923,7 +861,7 @@ export const Hero = () => {
           transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
           className="relative mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-xl"
         >
-          ACAI helps you respond instantly, qualify faster, and convert more of the demand you already paid for.
+          Simple changes. Instant results.
         </motion.p>
 
         <div

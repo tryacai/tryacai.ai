@@ -9,10 +9,6 @@ const navItems = [
     link: "/faq",
   },
   {
-    title: "Blog",
-    link: "/blog",
-  },
-  {
     title: "Contact",
     link: "/contact",
   },
