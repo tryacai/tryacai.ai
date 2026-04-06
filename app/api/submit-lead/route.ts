@@ -16,79 +16,67 @@ type SubmitLeadPayload = {
   tier_preference?: string;
 };
 
-type GhlPipeline = {
-  id?: string;
-  name?: string;
-  stages?: Array<{ id?: string; name?: string }>;
-  pipelineStages?: Array<{ id?: string; name?: string }>;
+type FormspreeResponse = {
+  next?: string;
+  ok?: boolean;
+  errors?: Array<{ message?: string; field?: string; code?: string }>;
 };
 
-const GHL_BASE_URL = "https://services.leadconnectorhq.com";
+const suspiciousTextPattern = /(https?:\/\/|www\.|\b(crypto|bitcoin|casino|viagra|porn|seo|backlink|loan)\b)/i;
+const repeatedCharactersPattern = /(.)\1{4,}/;
 
-function splitFullName(fullName: string) {
-  const trimmed = fullName.trim();
+function isLikelyRealName(input: string) {
+  const trimmed = input.trim();
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+
+  if (parts.length < 2) {
+    return false;
+  }
+
+  if (!/^[a-zA-Z][a-zA-Z'\- ]*[a-zA-Z]$/.test(trimmed)) {
+    return false;
+  }
+
+  if (parts.some((part) => part.length < 2)) {
+    return false;
+  }
+
+  if (repeatedCharactersPattern.test(trimmed.toLowerCase())) {
+    return false;
+  }
+
+  return true;
+}
+
+function looksLikeSpam(input: string) {
+  const trimmed = input.trim();
   if (!trimmed) {
-    return { firstName: "", lastName: "" };
+    return false;
   }
 
-  const parts = trimmed.split(/\s+/);
-  if (parts.length === 1) {
-    return { firstName: parts[0], lastName: "" };
+  if (suspiciousTextPattern.test(trimmed)) {
+    return true;
   }
 
-  return {
-    firstName: parts.slice(0, -1).join(" "),
-    lastName: parts[parts.length - 1],
-  };
+  if (repeatedCharactersPattern.test(trimmed.toLowerCase())) {
+    return true;
+  }
+
+  return false;
 }
 
-async function ghlRequest<T>(
-  path: string,
-  apiKey: string,
-  init: RequestInit = {}
-): Promise<T> {
-  const response = await fetch(`${GHL_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      Version: "2021-07-28",
-      "Content-Type": "application/json",
-      ...(init.headers || {}),
-    },
-    cache: "no-store",
-  });
-
-  const bodyText = await response.text();
-  const body = bodyText ? JSON.parse(bodyText) : null;
-
-  if (!response.ok) {
-    throw new Error(body?.message || body?.error || `GoHighLevel request failed: ${response.status}`);
+function getFormspreeEndpoint() {
+  const explicitEndpoint = process.env.FORMSPREE_ENDPOINT?.trim();
+  if (explicitEndpoint) {
+    return explicitEndpoint;
   }
 
-  return body as T;
-}
-
-function findStageInPipelines(
-  pipelines: GhlPipeline[],
-  targetStageName: string
-): { pipelineId: string; pipelineStageId: string } | null {
-  const normalizedTarget = targetStageName.toLowerCase();
-
-  for (const pipeline of pipelines) {
-    const stages = pipeline.stages || pipeline.pipelineStages || [];
-    const matchingStage = stages.find(
-      (stage) => stage.name?.toLowerCase() === normalizedTarget
-    );
-
-    if (pipeline.id && matchingStage?.id) {
-      return {
-        pipelineId: pipeline.id,
-        pipelineStageId: matchingStage.id,
-      };
-    }
+  const formId = process.env.FORMSPREE_FORM_ID?.trim();
+  if (formId) {
+    return `https://formspree.io/f/${formId}`;
   }
 
-  return null;
+  return "https://formspree.io/f/maqyarlv";
 }
 
 export async function POST(request: Request) {
@@ -123,6 +111,20 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!isLikelyRealName(fullName)) {
+      return NextResponse.json(
+        { error: "Please enter a real first and last name." },
+        { status: 400 }
+      );
+    }
+
+    if (looksLikeSpam(companyName) || looksLikeSpam(message || "")) {
+      return NextResponse.json(
+        { error: "Submission blocked. Please remove spammy links/keywords and try again." },
+        { status: 400 }
+      );
+    }
+
     if (demoRequested && !eventId) {
       return NextResponse.json(
         { error: "Booking confirmation is required when demo is requested." },
@@ -130,42 +132,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const apiKey = process.env.GHL_API_KEY;
-    const locationId = process.env.GHL_LOCATION_ID;
+    const formspreeEndpoint = getFormspreeEndpoint();
 
-    if (!apiKey || !locationId) {
+    if (!formspreeEndpoint) {
       return NextResponse.json(
-        { error: "Missing GoHighLevel credentials." },
+        { error: "Missing Formspree configuration. Set FORMSPREE_ENDPOINT or FORMSPREE_FORM_ID." },
         { status: 500 }
       );
     }
-
-    const { firstName, lastName } = splitFullName(fullName);
-    const tags: string[] = [];
-    if (eventId) {
-      tags.push("demo_booked");
-    } else {
-      tags.push("warm_lead");
-    }
-
-    if (demoRequested) {
-      tags.push("demo_requested");
-    }
-
-    if (industry) {
-      tags.push(`industry_${industry.toLowerCase().replace(/\s+/g, "_")}`);
-    }
-
-    if (callVolume) {
-      tags.push(
-        `volume_${callVolume
-          .replace(/\+/g, "plus")
-          .replace(/\s/g, "_")
-          .toLowerCase()}`
-      );
-    }
-
-    const stageName = eventId ? "Demo Scheduled" : "Follow Up – No Demo";
 
     console.log("[submit-lead] Payload:", {
       fullName,
@@ -180,110 +154,55 @@ export async function POST(request: Request) {
       eventId,
     });
 
-    const contactResponse = await ghlRequest<{ contact?: { id?: string } }>(
-      "/contacts/upsert",
-      apiKey,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          locationId,
-          firstName,
-          lastName,
-          name: fullName,
-          email: businessEmail,
-          phone: phoneNumber,
-          companyName,
-          tags,
-          source: "website_demo_funnel",
-          customFields: [
-            {
-              key: "industry",
-              field_value: industry,
-            },
-            {
-              key: "estimated_monthly_call_volume",
-              field_value: callVolume,
-            },
-            {
-              key: "tier_preference",
-              field_value: tierPreference,
-            },
-            {
-              key: "website_message",
-              field_value: message || "",
-            },
-            {
-              key: "sms_website_consent",
-              field_value: smsConsent,
-            },
-            {
-              key: "demo_requested",
-              field_value: demoRequested,
-            },
-            {
-              key: "demo_booking_time",
-              field_value: bookingTime || "",
-            },
-            {
-              key: "form_source",
-              field_value: "Website Contact Form",
-            },
-          ],
-        }),
-      }
-    );
+    const formspreeKey = process.env.FORMSPREE_API_KEY?.trim();
+    const response = await fetch(formspreeEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(formspreeKey ? { Authorization: `Bearer ${formspreeKey}` } : {}),
+      },
+      body: JSON.stringify({
+        name: fullName,
+        email: businessEmail,
+        phone: phoneNumber,
+        company: companyName,
+        industry,
+        lead_bottleneck: callVolume,
+        tier_preference: tierPreference,
+        message: message || "",
+        sms_consent: smsConsent,
+        demo_requested: demoRequested,
+        booking_time: bookingTime || "",
+        booking_end_time: body.booking_end_time?.trim() || "",
+        event_id: eventId || "",
+        source: "Website Contact Form",
+        _subject: `New lead: ${companyName} (${industry})`,
+      }),
+    });
 
-    const contactId = contactResponse?.contact?.id;
-
-    if (!contactId) {
-      throw new Error("Unable to create or update contact in GoHighLevel.");
+    let formspreeData: FormspreeResponse | null = null;
+    try {
+      formspreeData = (await response.json()) as FormspreeResponse;
+    } catch {
+      formspreeData = null;
     }
 
-    let stageAssigned = false;
-
-    try {
-      const pipelineResponse = await ghlRequest<{ pipelines?: GhlPipeline[] }>(
-        `/opportunities/pipelines?locationId=${encodeURIComponent(locationId)}`,
-        apiKey,
-        { method: "GET" }
-      );
-
-      const pipelines = pipelineResponse?.pipelines || [];
-      const match = findStageInPipelines(pipelines, stageName);
-
-      if (match) {
-        await ghlRequest(
-          "/opportunities/",
-          apiKey,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              locationId,
-              contactId,
-              pipelineId: match.pipelineId,
-              pipelineStageId: match.pipelineStageId,
-              status: "open",
-              name: `${companyName} - ${stageName}`,
-              source: "website_demo_funnel",
-              notes: message || undefined,
-            }),
-          }
-        );
-
-        stageAssigned = true;
-      }
-    } catch (pipelineError) {
-      console.error("[submit-lead] Pipeline stage assignment failed:", pipelineError);
+    if (!response.ok) {
+      const firstError = formspreeData?.errors?.[0]?.message;
+      throw new Error(firstError || "Form submission failed. Please verify Formspree settings.");
     }
 
     return NextResponse.json({
       success: true,
-      contact_id: contactId,
+      contact_id: null,
       demo_requested: demoRequested,
       event_id: eventId || null,
       booking_time: bookingTime || null,
-      stage_name: stageName,
-      stage_assigned: stageAssigned,
+      stage_name: null,
+      stage_assigned: false,
+      provider: "formspree",
+      formspree_ok: formspreeData?.ok ?? true,
     });
   } catch (error) {
     const message =

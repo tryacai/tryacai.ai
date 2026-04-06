@@ -44,7 +44,7 @@ const flowSteps = [
 
 export default function AiPage() {
   const [metricIndex, setMetricIndex] = useState(0);
-  const [timelinePlayhead, setTimelinePlayhead] = useState(0);
+  const [responseTimelineScene, setResponseTimelineScene] = useState(0);
 
   const [demoName, setDemoName] = useState("");
   const [demoEmail, setDemoEmail] = useState("");
@@ -79,8 +79,8 @@ export default function AiPage() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimelinePlayhead((previous) => (previous + 1) % 3);
-    }, 2500);
+      setResponseTimelineScene((previous) => (previous + 1) % 2);
+    }, 4200);
     return () => clearInterval(timer);
   }, []);
 
@@ -136,7 +136,7 @@ export default function AiPage() {
     return transcriptMoments.findLast((entry) => voiceProgress >= entry.t) ?? transcriptMoments[0];
   }, [voiceProgress]);
 
-  const flowActiveStep = Math.min(Math.floor((timelinePlayhead + voiceProgress / 6) % flowSteps.length), flowSteps.length - 1);
+  const flowActiveStep = Math.min(Math.floor((responseTimelineScene + voiceProgress / 6) % flowSteps.length), flowSteps.length - 1);
 
   const webFunnelSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -201,29 +201,71 @@ export default function AiPage() {
         </section>
 
         <section className="mx-auto mt-10 grid w-full max-w-6xl gap-6 rounded-3xl border border-white/10 bg-black/45 p-5 backdrop-blur-sm md:p-8">
-          <h2 className="text-2xl font-semibold text-white md:text-3xl">Response Time Timeline</h2>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            <motion.div
-              animate={{ opacity: timelinePlayhead >= 0 ? 1 : 0.45, y: timelinePlayhead === 0 ? -3 : 0 }}
-              className="rounded-2xl border border-white/12 bg-black/55 p-4"
-            >
-              <p className="text-xs uppercase tracking-[0.16em] text-neutral-400">2:00:00 PM</p>
-              <p className="mt-2 text-sm text-white">Customer fills out form</p>
-            </motion.div>
-            <motion.div
-              animate={{ opacity: timelinePlayhead >= 1 ? 1 : 0.4, y: timelinePlayhead === 1 ? -3 : 0 }}
-              className="rounded-2xl border border-red-400/25 bg-red-500/8 p-4"
-            >
-              <p className="text-xs uppercase tracking-[0.16em] text-red-300/80">5:30:00 PM</p>
-              <p className="mt-2 text-sm text-white">Competitor responds 3.5 hours later</p>
-            </motion.div>
-            <motion.div
-              animate={{ opacity: timelinePlayhead >= 2 ? 1 : 0.4, y: timelinePlayhead === 2 ? -3 : 0 }}
-              className="rounded-2xl border border-blue-400/25 bg-blue-500/10 p-4"
-            >
-              <p className="text-xs uppercase tracking-[0.16em] text-blue-200">2:00:04 PM</p>
-              <p className="mt-2 text-sm text-white">ACAI responds in 4 seconds</p>
-            </motion.div>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-2xl font-semibold text-white md:text-3xl">Response Time Story</h2>
+            <p className="text-xs uppercase tracking-[0.16em] text-neutral-400">Auto rewind and replay</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/12 bg-black/55 p-4">
+            <div className="relative overflow-hidden rounded-xl border border-white/10 bg-black/50 p-4 md:p-5">
+              <AnimatePresence mode="wait">
+                {responseTimelineScene === 0 ? (
+                  <motion.div
+                    key="competitor-delay"
+                    initial={{ opacity: 0, x: -40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 40 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                      <div className="rounded-xl border border-white/12 bg-black/40 p-3">
+                        <p className="text-xs uppercase tracking-[0.16em] text-neutral-400">2:00 PM</p>
+                        <p className="mt-2 text-sm text-white">A customer sends an inquiry.</p>
+                      </div>
+                      <div className="rounded-xl border border-red-400/25 bg-red-500/8 p-3">
+                        <p className="text-xs uppercase tracking-[0.16em] text-red-300/80">5:30 PM</p>
+                        <p className="mt-2 text-sm text-white">You finally respond after 3.5 hours.</p>
+                      </div>
+                    </div>
+                    <p className="rounded-xl border border-red-400/20 bg-red-500/8 px-3 py-2 text-sm text-red-100">
+                      By then, they already heard back from five competitors.
+                    </p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="acai-instant"
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -40 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                      <div className="rounded-xl border border-white/12 bg-black/40 p-3">
+                        <p className="text-xs uppercase tracking-[0.16em] text-neutral-400">2:00 PM</p>
+                        <p className="mt-2 text-sm text-white">Customer inquiry enters your system.</p>
+                      </div>
+                      <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 p-3">
+                        <p className="text-xs uppercase tracking-[0.16em] text-blue-200">2:00:04 PM</p>
+                        <p className="mt-2 text-sm text-white">ACAI responds instantly.</p>
+                      </div>
+                    </div>
+                    <p className="rounded-xl border border-blue-400/20 bg-blue-500/10 px-3 py-2 text-sm text-blue-100">
+                      Your 24/7 custom agent sends a personalized call or text right away, keeping that lead with your company.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="mt-4 flex items-center gap-2">
+              <span className={`h-2.5 w-2.5 rounded-full transition-all ${responseTimelineScene === 0 ? "bg-red-300" : "bg-neutral-600"}`} />
+              <span className={`h-2.5 w-2.5 rounded-full transition-all ${responseTimelineScene === 1 ? "bg-blue-300" : "bg-neutral-600"}`} />
+              <p className="ml-2 text-xs text-neutral-400">
+                {responseTimelineScene === 0 ? "Typical slow follow-up" : "ACAI instant response"}
+              </p>
+            </div>
           </div>
         </section>
 

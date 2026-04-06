@@ -13,7 +13,49 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 const industryOptions = ["Plumbing", "HVAC", "Barber", "Detailing", "Roofing", "Other"] as const;
 const leadBottleneckOptions = ["Slow follow-up", "Missed calls", "Low form conversion", "Poor qualification", "Booking drop-off", "Not sure yet"] as const;
 const systemInterestOptions = ["Web Funnel", "Chat Widget", "Voice AI", "Automation Engine"] as const;
-const freeEmailDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com"];
+
+const suspiciousTextPattern = /(https?:\/\/|www\.|\b(crypto|bitcoin|casino|viagra|porn|seo|backlink|loan)\b)/i;
+const repeatedCharactersPattern = /(.)\1{4,}/;
+
+function isLikelyRealName(input: string) {
+  const trimmed = input.trim();
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+
+  if (parts.length < 2) {
+    return false;
+  }
+
+  if (!/^[a-zA-Z][a-zA-Z'\- ]*[a-zA-Z]$/.test(trimmed)) {
+    return false;
+  }
+
+  if (parts.some((part) => part.length < 2)) {
+    return false;
+  }
+
+  if (repeatedCharactersPattern.test(trimmed.toLowerCase())) {
+    return false;
+  }
+
+  return true;
+}
+
+function looksLikeSpam(input: string) {
+  const trimmed = input.trim();
+  if (!trimmed) {
+    return false;
+  }
+
+  if (suspiciousTextPattern.test(trimmed)) {
+    return true;
+  }
+
+  if (repeatedCharactersPattern.test(trimmed.toLowerCase())) {
+    return true;
+  }
+
+  return false;
+}
 
 type BookingDetails = {
   eventId: string;
@@ -22,23 +64,22 @@ type BookingDetails = {
 };
 
 const formSchema = z.object({
-  name: z.string({ required_error: "Please enter your full name" }).min(1, "Please enter your full name"),
+  name: z
+    .string({ required_error: "Please enter your full name" })
+    .min(1, "Please enter your full name")
+    .refine((value) => isLikelyRealName(value), "Please enter your real first and last name."),
   email: z
-    .string({ required_error: "Please enter your business email" })
-    .min(1, "Please enter your business email")
-    .email("Please enter a valid email")
-    .refine((value) => {
-      const domain = value.split("@")[1]?.toLowerCase();
-      if (!domain) {
-        return false;
-      }
-      return !freeEmailDomains.includes(domain);
-    }, "Please use a business email (no free email domains)."),
+    .string({ required_error: "Please enter your email" })
+    .min(1, "Please enter your email")
+    .email("Please enter a valid email"),
   phone: z
     .string({ required_error: "Please enter your phone number" })
     .min(10, "Phone number must be at least 10 digits")
     .regex(/^\d+$/, "Phone number must contain numbers only"),
-  company: z.string({ required_error: "Please enter your company name" }).min(1, "Please enter your company name"),
+  company: z
+    .string({ required_error: "Please enter your company name" })
+    .min(1, "Please enter your company name")
+    .refine((value) => !looksLikeSpam(value), "Please enter a valid company name."),
   industry: z
     .string({ required_error: "Please select your industry" })
     .min(1, "Please select your industry")
@@ -54,6 +95,7 @@ const formSchema = z.object({
   message: z
     .string()
     .max(300, "Message must be 300 characters or fewer")
+    .refine((value) => !looksLikeSpam(value || ""), "Please remove spammy links/keywords from your message.")
     .optional(),
   smsConsent: z.boolean().refine((value) => value === true, {
     message: "You must agree to receive SMS messages before submitting.",
