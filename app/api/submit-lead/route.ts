@@ -6,21 +6,23 @@ type SubmitLeadPayload = {
   phone_number?: string;
   company_name?: string;
   industry?: string;
+  biggest_lead_bottleneck?: string;
+  systems_interested_in?: string;
   call_volume?: string;
   message?: string;
   sms_consent?: boolean;
-  demo_requested?: boolean;
+  ready_to_book?: boolean;
+  booking_start_time?: string | null;
   booking_time?: string | null;
   booking_end_time?: string | null;
+  booking_event_id?: string | null;
   event_id?: string | null;
   tier_preference?: string;
+  demo_requested?: boolean;
 };
 
-type FormspreeResponse = {
-  next?: string;
-  ok?: boolean;
-  errors?: Array<{ message?: string; field?: string; code?: string }>;
-};
+const GOOGLE_APPS_SCRIPT_ENDPOINT =
+  "https://script.google.com/macros/s/AKfycby6UXqt3SZxDEHNR6hUCgTwDuo7Ii6Er1AJ91jJ10E9svxuMsPJwHakE7x4ECln9r02mQ/exec";
 
 const suspiciousTextPattern = /(https?:\/\/|www\.|\b(crypto|bitcoin|casino|viagra|porn|seo|backlink|loan)\b)/i;
 const repeatedCharactersPattern = /(.)\1{4,}/;
@@ -65,18 +67,27 @@ function looksLikeSpam(input: string) {
   return false;
 }
 
-function getFormspreeEndpoint() {
-  const explicitEndpoint = process.env.FORMSPREE_ENDPOINT?.trim();
-  if (explicitEndpoint) {
-    return explicitEndpoint;
+function getProviderErrorMessage(providerData: Record<string, unknown> | null) {
+  if (!providerData) {
+    return null;
   }
 
-  const formId = process.env.FORMSPREE_FORM_ID?.trim();
-  if (formId) {
-    return `https://formspree.io/f/${formId}`;
+  const error = providerData.error;
+  if (typeof error === "string" && error.trim()) {
+    return error.trim();
   }
 
-  return "https://formspree.io/f/maqyarlv";
+  const message = providerData.message;
+  if (typeof message === "string" && message.trim()) {
+    return message.trim();
+  }
+
+  const status = providerData.status;
+  if (typeof status === "string" && status.toLowerCase() === "error") {
+    return "Google Apps Script rejected the submission.";
+  }
+
+  return null;
 }
 
 export async function POST(request: Request) {
@@ -88,13 +99,17 @@ export async function POST(request: Request) {
     const phoneNumber = body.phone_number?.trim() || "";
     const companyName = body.company_name?.trim() || "";
     const industry = body.industry?.trim() || "";
-    const callVolume = body.call_volume?.trim() || "";
+    const biggestLeadBottleneck =
+      body.biggest_lead_bottleneck?.trim() || body.call_volume?.trim() || "";
+    const systemsInterestedIn =
+      body.systems_interested_in?.trim() || body.tier_preference?.trim() || "Not Sure Yet";
     const message = body.message?.trim() || "";
     const smsConsent = Boolean(body.sms_consent);
-    const demoRequested = Boolean(body.demo_requested);
-    const bookingTime = body.booking_time?.trim() || "";
-    const eventId = body.event_id?.trim() || "";
-    const tierPreference = body.tier_preference?.trim() || "Not Sure Yet";
+    const readyToBook =
+      typeof body.ready_to_book === "boolean" ? body.ready_to_book : Boolean(body.demo_requested);
+    const bookingStartTime = body.booking_start_time?.trim() || body.booking_time?.trim() || "";
+    const bookingEndTime = body.booking_end_time?.trim() || "";
+    const bookingEventId = body.booking_event_id?.trim() || body.event_id?.trim() || "";
 
     if (
       !fullName ||
@@ -102,7 +117,7 @@ export async function POST(request: Request) {
       !phoneNumber ||
       !companyName ||
       !industry ||
-      !callVolume ||
+      !biggestLeadBottleneck ||
       !smsConsent
     ) {
       return NextResponse.json(
@@ -125,19 +140,10 @@ export async function POST(request: Request) {
       );
     }
 
-    if (demoRequested && !eventId) {
+    if (readyToBook && !bookingEventId) {
       return NextResponse.json(
         { error: "Booking confirmation is required when demo is requested." },
         { status: 400 }
-      );
-    }
-
-    const formspreeEndpoint = getFormspreeEndpoint();
-
-    if (!formspreeEndpoint) {
-      return NextResponse.json(
-        { error: "Missing Formspree configuration. Set FORMSPREE_ENDPOINT or FORMSPREE_FORM_ID." },
-        { status: 500 }
       );
     }
 
@@ -147,62 +153,71 @@ export async function POST(request: Request) {
       phoneNumber,
       companyName,
       industry,
-      callVolume,
-      tierPreference,
-      demoRequested,
-      bookingTime,
-      eventId,
+      biggestLeadBottleneck,
+      systemsInterestedIn,
+      readyToBook,
+      bookingStartTime,
+      bookingEventId,
     });
 
-    const formspreeKey = process.env.FORMSPREE_API_KEY?.trim();
-    const response = await fetch(formspreeEndpoint, {
+    const response = await fetch(GOOGLE_APPS_SCRIPT_ENDPOINT, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        ...(formspreeKey ? { Authorization: `Bearer ${formspreeKey}` } : {}),
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        Accept: "application/json, text/plain, */*",
       },
-      body: JSON.stringify({
-        name: fullName,
-        email: businessEmail,
-        phone: phoneNumber,
-        company: companyName,
+      body: new URLSearchParams({
+        full_name: fullName,
+        business_email: businessEmail,
+        phone_number: phoneNumber,
+        company_name: companyName,
         industry,
-        lead_bottleneck: callVolume,
-        tier_preference: tierPreference,
+        biggest_lead_bottleneck: biggestLeadBottleneck,
+        systems_interested_in: systemsInterestedIn,
         message: message || "",
-        sms_consent: smsConsent,
-        demo_requested: demoRequested,
-        booking_time: bookingTime || "",
-        booking_end_time: body.booking_end_time?.trim() || "",
-        event_id: eventId || "",
+        sms_consent: String(smsConsent),
+        ready_to_book: String(readyToBook),
+        booking_start_time: bookingStartTime || "",
+        booking_end_time: bookingEndTime || "",
+        booking_event_id: bookingEventId || "",
         source: "Website Contact Form",
-        _subject: `New lead: ${companyName} (${industry})`,
-      }),
+      }).toString(),
+      redirect: "follow",
     });
 
-    let formspreeData: FormspreeResponse | null = null;
+    let providerData: Record<string, unknown> | null = null;
+    let providerText = "";
     try {
-      formspreeData = (await response.json()) as FormspreeResponse;
+      providerText = await response.text();
+      if (providerText) {
+        providerData = JSON.parse(providerText) as Record<string, unknown>;
+      }
     } catch {
-      formspreeData = null;
+      providerData = null;
     }
 
     if (!response.ok) {
-      const firstError = formspreeData?.errors?.[0]?.message;
-      throw new Error(firstError || "Form submission failed. Please verify Formspree settings.");
+      throw new Error(
+        getProviderErrorMessage(providerData) || "Form submission failed. Please verify Google Apps Script settings."
+      );
+    }
+
+    const providerErrorMessage = getProviderErrorMessage(providerData);
+    if (providerErrorMessage) {
+      throw new Error(providerErrorMessage);
     }
 
     return NextResponse.json({
       success: true,
       contact_id: null,
-      demo_requested: demoRequested,
-      event_id: eventId || null,
-      booking_time: bookingTime || null,
+      demo_requested: readyToBook,
+      event_id: bookingEventId || null,
+      booking_time: bookingStartTime || null,
       stage_name: null,
       stage_assigned: false,
-      provider: "formspree",
-      formspree_ok: formspreeData?.ok ?? true,
+      provider: "google-apps-script",
+      google_apps_script_ok: response.ok,
+      provider_response: providerData ?? (providerText || null),
     });
   } catch (error) {
     const message =
