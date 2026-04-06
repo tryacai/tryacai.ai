@@ -6,6 +6,11 @@ import { CallRevenueFlowSection } from "@/components/call-revenue-flow-section";
 export default function Home() {
   return (
     <div className="relative overflow-hidden">
+      <h1 className="sr-only">Never Miss a Lead Again</h1>
+      <p className="sr-only">
+        ACAI helps service businesses improve response speed, automate follow up, and convert more inbound demand into booked revenue.
+      </p>
+
       {/* Top background */}
       <div className="absolute inset-0 h-full w-full overflow-hidden">
         <Background />

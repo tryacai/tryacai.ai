@@ -1,6 +1,13 @@
 import { Background } from "@/components/background";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Automation Engine | ACAI AI",
+  description:
+    "ACAI Automation Engine connects capture, qualification, routing, and booking so your team can convert more leads without response delays.",
+};
 
 export default function AutomationEnginePage() {
   return (

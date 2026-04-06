@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "SMS Consent - ACAI AI",
+  title: "SMS Consent | ACAI AI",
   description: "SMS consent disclosure for ACAI Enterprises LLC.",
 };
 

@@ -3,11 +3,15 @@ import { Metadata } from "next";
 import { HorizontalGradient } from "@/components/horizontal-gradient";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - ACAI AI",
+  title: "Privacy Policy | ACAI AI",
   description:
-    "ACAI AI's Privacy Policy. Learn how we collect, use, and protect your data when you use our AI receptionist service for plumbing and HVAC businesses.",
+    "ACAI AI's Privacy Policy. Learn how we collect, use, and protect your data when you use our lead conversion and automation platform.",
+  robots: {
+    index: false,
+    follow: false,
+  },
   openGraph: {
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    images: ["https://tryacai.ai/opengraph-image.png"],
   },
 };
 

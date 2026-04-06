@@ -2,11 +2,11 @@ import { LoginForm } from "@/components/login";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login - ACAI AI",
+  title: "Login | ACAI AI",
   description:
-    "Log in to ACAI AI to manage your AI receptionist for your plumbing or HVAC business.",
+    "Log in to ACAI AI to manage your lead conversion and follow-up automation workflows.",
   openGraph: {
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    images: ["https://tryacai.ai/opengraph-image.png"],
   },
 };
 

@@ -6,11 +6,11 @@ import { Pricing } from "@/components/pricing";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing - ACAI AI",
+  title: "Pricing | ACAI AI",
   description:
-    "Contractor-focused ACAI pricing plans built to convert calls into booked jobs.",
+    "Flexible ACAI plans built to improve lead response speed, automate follow up, and convert more demand into booked revenue.",
   openGraph: {
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    images: ["https://tryacai.ai/opengraph-image.png"],
   },
 };
 

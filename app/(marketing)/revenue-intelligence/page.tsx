@@ -1,6 +1,13 @@
 import { Background } from "@/components/background";
 import { Container } from "@/components/container";
 import { RevenueIntelligenceDashboard } from "@/components/revenue-intelligence-dashboard";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Revenue Intelligence | ACAI AI",
+  description:
+    "Measure response speed, qualification quality, and booking outcomes with ACAI Revenue Intelligence for service businesses.",
+};
 
 export default function RevenueIntelligencePage() {
   return (

@@ -4,6 +4,17 @@ import { Container } from "@/components/container";
 import { Heading } from "@/components/heading";
 import { Subheading } from "@/components/subheading";
 import { Link } from "next-view-transitions";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Industry Solutions | ACAI AI",
+  description:
+    "Lead conversion and follow-up automation for service businesses.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const tiers = [
   {

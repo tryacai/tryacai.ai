@@ -41,7 +41,7 @@ export const Footer = () => {
               <Logo />
             </div>
             <div className="mt-2 text-xs sm:text-sm max-w-md">
-              24/7 AI customer assistant built for plumbing and HVAC businesses. Never miss another call and never miss another client.
+              Never miss another lead again with ACAI&apos;s system for Florida service businesses. Your AI front desk that never sleeps.
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mt-10 md:mt-0">

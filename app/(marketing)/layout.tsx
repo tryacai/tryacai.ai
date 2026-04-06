@@ -8,9 +8,19 @@ import { Footer } from "@/components/footer";
 export const metadata: Metadata = {
   title: "Try ACAI AI | Never Miss a Lead Again",
   description:
-    "Never miss a lead again. ACAI helps service businesses automate follow-up, qualify leads faster, and turn more demand into booked jobs.",
+    "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
   openGraph: {
+    title: "Try ACAI AI | Never Miss a Lead Again",
+    description:
+      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
     images: ["https://tryacai.ai/opengraph-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Try ACAI AI | Never Miss a Lead Again",
+    description:
+      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+    images: ["https://tryacai.ai/twitter-image.png"],
   },
 };
 

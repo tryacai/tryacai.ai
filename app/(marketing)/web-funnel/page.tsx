@@ -1,6 +1,13 @@
 import { Background } from "@/components/background";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Web Funnel | ACAI AI",
+  description:
+    "Capture more inbound demand with ACAI Web Funnel, an instant follow up system that prioritizes intent and routes qualified leads faster.",
+};
 
 export default function WebFunnelPage() {
   return (

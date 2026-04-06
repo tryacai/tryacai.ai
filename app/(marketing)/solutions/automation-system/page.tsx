@@ -7,7 +7,7 @@ import { Link } from "next-view-transitions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Growth Automation System - ACAI AI",
+  title: "Growth Automation System | ACAI AI",
   description:
     "Automated follow-ups, review generation, and missed call texting to maximize every opportunity.",
   openGraph: {
@@ -42,7 +42,7 @@ export default function AutomationSystemPage() {
                   Everything from Level 1
                 </h3>
                 <p className="text-neutral-600 dark:text-neutral-400">
-                  24/7 call answering, instant scheduling, and natural conversations.
+                  Instant lead response, qualification routing, and conversion workflows.
                 </p>
               </div>
 

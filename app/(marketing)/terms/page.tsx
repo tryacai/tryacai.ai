@@ -4,11 +4,15 @@ import Link from "next/link";
 import { Button } from "@/components/button";
 
 export const metadata: Metadata = {
-  title: "Terms of Service - ACAI AI",
+  title: "Terms of Service | ACAI AI",
   description:
-    "ACAI AI's Terms of Service. Learn about our service terms, payment policies, and user obligations when using our AI receptionist platform.",
+    "ACAI AI's Terms of Service for lead conversion and automation products, including service terms, payment policies, and user obligations.",
+  robots: {
+    index: false,
+    follow: false,
+  },
   openGraph: {
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    images: ["https://tryacai.ai/opengraph-image.png"],
   },
 };
 

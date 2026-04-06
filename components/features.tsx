@@ -21,7 +21,7 @@ export const Features = () => {
     {
       title: "Automated Follow-Ups That Keep Clients Coming Back",
       description:
-        "Alongside your 24/7 AI receptionist, ACAI automates reminders and follow-ups to keep customers engaged and uncover new opportunities.",
+        "ACAI automates reminders and follow-ups to keep customers engaged and uncover new opportunities.",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
@@ -44,7 +44,7 @@ export const Features = () => {
     <div className="relative z-20 py-10 lg:py-40 overflow-hidden">
       <Heading as="h2">Custom Integration?</Heading>
       <Subheading className="text-center ">
-        No worries! We customize AI tools designed to help your plumbing and HVAC businesses capture more jobs book faster and 𝑵𝒆𝒗𝒆𝒓 miss a call again.
+        No worries. We customize AI systems that help service businesses capture more inbound demand, book faster, and never miss a lead.
       </Subheading>
 
       <div className="relative">

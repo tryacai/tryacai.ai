@@ -4,11 +4,20 @@ import { HorizontalGradient } from "@/components/horizontal-gradient";
 import { ContactForm } from "../../../components/contact";
 
 export const metadata: Metadata = {
-  title: "Contact Us - ACAI AI",
+  title: "Contact | ACAI AI",
   description:
-    "Request a strategy demo with ACAI to close the gap between inquiry and booked revenue using Web Funnel, Chat Widget, Voice AI, and Automation Engine systems.",
+    "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
   openGraph: {
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    title: "Try ACAI AI | Never Miss a Lead Again",
+    description:
+      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+    images: ["https://tryacai.ai/opengraph-image.png"],
+  },
+  twitter: {
+    title: "Try ACAI AI | Never Miss a Lead Again",
+    description:
+      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+    images: ["https://tryacai.ai/twitter-image.png"],
   },
 };
 

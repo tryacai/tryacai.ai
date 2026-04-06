@@ -8,6 +8,17 @@ import { Subheading } from "@/components/subheading";
 import { Link } from "next-view-transitions";
 import { motion } from "framer-motion";
 import { Phone, DollarSign, AlertTriangle } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Industry Solutions | ACAI AI",
+  description:
+    "Lead conversion and follow-up automation for service businesses.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const tiers = [
   {

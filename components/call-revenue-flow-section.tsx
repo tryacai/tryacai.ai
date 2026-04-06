@@ -287,6 +287,7 @@ export function CallRevenueFlowSection() {
               className="relative mx-auto h-[292px] max-w-[460px]"
               onMouseEnter={() => setIsDeckHovered(true)}
               onMouseLeave={() => setIsDeckHovered(false)}
+              aria-label="ACAI System cards"
             >
               {deckOrder.map((cardIndex, orderIndex) => {
                 const card = systemCards[cardIndex];
@@ -324,6 +325,7 @@ export function CallRevenueFlowSection() {
                   >
                     <Link
                       href={card.href}
+                      aria-label={`Open ${card.title} in ACAI System`}
                       className={`group block min-h-[220px] rounded-2xl border border-white/14 bg-black/65 p-5 backdrop-blur-sm transition duration-300 ${
                         isActive && isDeckHovered
                           ? "border-white/30 shadow-[0_18px_40px_rgba(109,84,255,0.28)]"
@@ -372,6 +374,15 @@ export function CallRevenueFlowSection() {
                   className={`h-1.5 flex-1 rounded-full transition ${index === 0 ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400" : "bg-white/15"}`}
                 />
               ))}
+            </div>
+
+            <div className="mx-auto mt-5 flex max-w-[460px] justify-end">
+              <Link
+                href="/ai"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/55 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-100 transition hover:border-white/35 hover:text-white"
+              >
+                Explore ACAI System <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </div>
         </div>

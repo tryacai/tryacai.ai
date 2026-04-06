@@ -7,11 +7,12 @@ import { Link } from "next-view-transitions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Receptionist - ACAI AI",
+  title: "Lead Response System | ACAI AI",
   description:
-    "24/7 AI-powered receptionist that answers calls, books appointments, and never misses an opportunity.",
-  openGraph: {
-    images: ["https://tryacai.ai/V2websitepreviewimage.png"],
+    "Lead response automation that captures inbound demand, qualifies opportunities, and books next steps faster.",
+  robots: {
+    index: false,
+    follow: false,
   },
 };
 

@@ -3,10 +3,13 @@ import { Background } from "@/components/background";
 import { Container } from "@/components/container";
 
 export const metadata: Metadata = {
-  title: "Why ACAI",
+  title: "Why ACAI | ACAI AI",
   description:
     "ACAI was built to solve one core problem: service businesses losing revenue from slow response times and missed follow-ups.",
   openGraph: {
+    title: "Try ACAI AI | Never Miss a Lead Again",
+    description:
+      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
     images: ["https://tryacai.ai/opengraph-image.png"],
   },
 };
