@@ -4,7 +4,7 @@ import { Background } from "@/components/background";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, Calculator, Clock3, Play, ShieldCheck, Wallet, X } from "lucide-react";
+import { ArrowRight, BadgeCheck, Calculator, Clock3, Play, ShieldCheck, Wallet, X, Smartphone, CheckCircle2, RotateCcw, Activity, PhoneCall, Zap } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 const stats = [
@@ -41,6 +41,157 @@ const flowSteps = [
   "AI books consultation or escalates to human",
   "You show up to warm, qualified lead",
 ] as const;
+
+function DemoPreview() {
+  const [stage, setStage] = useState<"before" | "rewind" | "after" | "result">("before");
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          if (stage === "before") {
+            setStage("rewind");
+            return 0;
+          }
+          if (stage === "rewind") {
+            setStage("after");
+            return 0;
+          }
+          if (stage === "after") {
+            setStage("result");
+            return 0;
+          }
+          if (stage === "result") {
+            setStage("before");
+            return 0;
+          }
+        }
+        return prev + (stage === "rewind" ? 10 : 0.8);
+      });
+    }, 100);
+    return () => clearInterval(interval);
+  }, [stage]);
+
+  return (
+    <div className="relative h-64 w-full overflow-hidden rounded-xl border border-white/10 bg-black/80 font-sans">
+      <AnimatePresence mode="wait">
+        {stage === "before" && (
+          <motion.div
+            key="before"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex h-full flex-col items-center justify-center p-6 text-center"
+          >
+            <div className="mb-4 flex items-center gap-3">
+              <div className="h-12 w-12 rounded-lg bg-red-500/20 flex items-center justify-center border border-red-500/30">
+                <Smartphone className="h-6 w-6 text-red-400" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs font-semibold text-red-400 uppercase tracking-wider">Before ACAI</p>
+                <p className="text-sm text-white font-medium">Customer Clicks Ad</p>
+              </div>
+            </div>
+            <div className="w-48 h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-red-500" 
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+              />
+            </div>
+            <p className="mt-4 text-sm text-neutral-400">Waiting for response... <span className="text-red-400 font-mono">2 hours later</span></p>
+            <p className="mt-2 text-xs text-red-400/70 italic">"I'll just call the other company..."</p>
+          </motion.div>
+        )}
+
+        {stage === "rewind" && (
+          <motion.div
+            key="rewind"
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex h-full flex-col items-center justify-center bg-blue-600/20 backdrop-blur-sm"
+          >
+            <RotateCcw className="h-12 w-12 text-blue-400 animate-spin" />
+            <p className="mt-4 text-xl font-bold text-white italic tracking-tighter uppercase">Rewinding with ACAI...</p>
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/vhs.png')] opacity-30 pointer-events-none" />
+          </motion.div>
+        )}
+
+        {stage === "after" && (
+          <motion.div
+            key="after"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex h-full flex-col items-center justify-center p-6 text-center"
+          >
+            <div className="mb-6 flex items-center gap-4">
+              <div className="relative">
+                <div className="h-14 w-14 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/40">
+                  <Activity className="h-7 w-7 text-blue-400 animate-pulse" />
+                </div>
+                <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/50">
+                  <Zap className="h-3 w-3 text-white fill-white" />
+                </div>
+              </div>
+              <div className="text-left">
+                <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider">ACAI System Active</p>
+                <p className="text-lg text-white font-bold">Instant Lead Response</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-2 mb-4">
+              {[0, 1, 2].map((i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0.3 }}
+                  animate={{ opacity: progress > (i * 33) ? 1 : 0.3 }}
+                  className="h-1.5 w-16 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                />
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-emerald-400 font-medium">
+              <PhoneCall className="h-4 w-4 animate-bounce" />
+              <span>Triggering Outbound Voice AI... <span className="font-mono text-white">0.4s</span></span>
+            </div>
+          </motion.div>
+        )}
+
+        {stage === "result" && (
+          <motion.div
+            key="result"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex h-full flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-indigo-600/10"
+          >
+            <div className="h-16 w-16 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/40 mb-4">
+              <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+            </div>
+            <h4 className="text-xl font-bold text-white">Lead Qualified & Booked</h4>
+            <p className="mt-2 text-sm text-neutral-300">Epoxy Flooring Project: <span className="text-white font-semibold">$4,200 Job</span></p>
+            <div className="mt-4 px-4 py-1.5 rounded-full bg-blue-500 text-xs font-bold text-white uppercase tracking-widest">
+              391% ROI Increase
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Progress Bar at Bottom */}
+      <div className="absolute bottom-0 left-0 h-1 w-full bg-white/5">
+        <motion.div 
+          className="h-full bg-gradient-to-r from-blue-500 to-purple-500" 
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ ease: "linear" }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function AiPage() {
   const [metricIndex, setMetricIndex] = useState(0);
@@ -250,154 +401,48 @@ export default function AiPage() {
                 required
               />
               <button
-                type="submit"
-                className="rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 px-4 py-2 text-sm font-semibold text-white"
+                disabled={webFunnelLoading || webFunnelSubmitted}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-50"
               >
-                {webFunnelLoading ? "Responding..." : "Simulate ACAI Response"}
+                {webFunnelLoading ? "Sending..." : webFunnelSubmitted ? "Lead Captured" : "Test Response Speed"}
               </button>
             </form>
 
-            {webFunnelSubmitted && !webFunnelLoading && (
-              <p className="mt-3 rounded-lg border border-emerald-300/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-                Response delivered in 4 seconds. Imagine if YOUR leads got this speed.
-              </p>
-            )}
-
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="rounded-xl border border-red-400/25 bg-red-500/8 p-3 text-xs text-neutral-200">
-                <p className="font-semibold text-red-200">Typical Response</p>
-                <p className="mt-1">Form sits for 3 hours. Lead goes cold.</p>
-              </div>
-              <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 p-3 text-xs text-neutral-200">
-                <p className="font-semibold text-blue-100">ACAI Response</p>
-                <p className="mt-1">Instant confirmation and qualification starts.</p>
-              </div>
-            </div>
-
-            <Link href="/web-funnel" className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-semibold text-blue-200 group-hover:text-white">
-              Learn More <ArrowRight className="h-4 w-4" />
-            </Link>
+            <AnimatePresence>
+              {webFunnelSubmitted && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-5 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">System Pulse</p>
+                  <p className="mt-1 text-sm text-white">Lead routed to Voice AI engine. Expect call in &lt;10s.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </article>
 
-          <article className="group relative flex h-full min-h-[420px] flex-col rounded-3xl border border-white/12 bg-black/55 p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-300/35 hover:shadow-[0_20px_45px_rgba(56,96,255,0.16)]">
-            <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-blue-500/15 via-purple-500/12 to-indigo-500/15 opacity-90" />
-            <h3 className="text-2xl font-semibold text-white">Chat Widget</h3>
-            <p className="mt-2 text-sm text-neutral-300">Live simulation with typing and instant qualification prompts.</p>
-
-            <div className="mt-4 h-52 overflow-y-auto rounded-xl border border-white/12 bg-black/65 p-3">
-              {chatThread.map((message, index) => (
-                <div key={`${message.from}-${index}`} className={`mb-2 flex ${message.from === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[82%] rounded-xl px-3 py-2 text-xs ${message.from === "user" ? "bg-blue-500/25 text-blue-100" : "bg-white/10 text-neutral-200"}`}>
-                    {message.text}
-                  </div>
-                </div>
-              ))}
-              {chatTyping && <p className="text-xs text-neutral-400">ACAI is typing...</p>}
-            </div>
-
-            <div className="mt-3 flex gap-2">
-              <input
-                value={chatInput}
-                onChange={(event) => setChatInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    sendChat();
-                  }
-                }}
-                placeholder="Ask a lead question"
-                className="w-full rounded-xl border border-white/15 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-blue-300/50"
-              />
-              <button onClick={sendChat} className="rounded-xl bg-blue-500/80 px-3 py-2 text-xs font-semibold text-white">Send</button>
-            </div>
-
-            <div className="mt-3 rounded-lg border border-white/12 bg-black/45 p-3 text-xs text-neutral-300">
-              ACAI can handle 3 conversations simultaneously while a human front desk typically handles 1.
-            </div>
-
-            <Link href="/chat-widget" className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-semibold text-blue-200 group-hover:text-white">
-              Learn More <ArrowRight className="h-4 w-4" />
-            </Link>
-          </article>
-
-          <article className="group relative flex h-full min-h-[420px] flex-col rounded-3xl border border-white/12 bg-black/55 p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-300/35 hover:shadow-[0_20px_45px_rgba(56,96,255,0.16)]">
-            <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-blue-500/15 via-purple-500/12 to-indigo-500/15 opacity-90" />
-            <h3 className="text-2xl font-semibold text-white">Voice AI</h3>
-            <p className="mt-2 text-sm text-neutral-300">Audio simulation with transcript milestones.</p>
-
-            <div className="mt-4 rounded-xl border border-white/12 bg-black/65 p-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs uppercase tracking-[0.14em] text-neutral-400">Sample Call</p>
-                <button
-                  onClick={() => setVoicePlaying((previous) => !previous)}
-                  className="inline-flex items-center gap-1 rounded-full border border-white/20 px-3 py-1 text-xs text-white"
-                >
-                  <Play className="h-3 w-3" /> {voicePlaying ? "Pause" : "Play"}
-                </button>
-              </div>
-              <div className="mt-3 h-1.5 rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400" style={{ width: `${(voiceProgress / 18) * 100}%` }} />
-              </div>
-              <div className="mt-3 rounded-lg border border-white/10 bg-black/45 p-2">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-blue-200">{activeTranscript.label}</p>
-                <p className="mt-1 text-xs text-neutral-200">{activeTranscript.text}</p>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                <div className="rounded-lg border border-red-400/25 bg-red-500/8 p-2 text-neutral-200">Competitor phone rings 8 times then voicemail.</div>
-                <div className="rounded-lg border border-blue-400/25 bg-blue-500/10 p-2 text-neutral-200">ACAI picks up in 2 rings.</div>
-              </div>
-            </div>
-
-            <Link href="/voice-ai" className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-semibold text-blue-200 group-hover:text-white">
-              Learn More <ArrowRight className="h-4 w-4" />
-            </Link>
-          </article>
-
-          <article className="group relative flex h-full min-h-[420px] flex-col rounded-3xl border border-white/12 bg-black/55 p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-300/35 hover:shadow-[0_20px_45px_rgba(56,96,255,0.16)]">
-            <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-blue-500/15 via-purple-500/12 to-indigo-500/15 opacity-90" />
-            <h3 className="text-2xl font-semibold text-white">Automation Engine</h3>
-            <p className="mt-2 text-sm text-neutral-300">Animated workflow from inbound lead to qualified booking.</p>
-
-            <ol className="mt-4 space-y-2">
-              {flowSteps.map((step, index) => (
-                <motion.li
-                  key={step}
-                  animate={{
-                    opacity: flowActiveStep >= index ? 1 : 0.45,
-                    x: flowActiveStep === index ? 3 : 0,
-                  }}
-                  className="relative rounded-lg border border-white/12 bg-black/55 px-3 py-2 text-xs text-neutral-200"
-                >
-                  <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/25 text-[10px] font-semibold text-blue-100">{index + 1}</span>
-                  {step}
-                </motion.li>
-              ))}
-            </ol>
-
-            <Link href="/automation-engine" className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-semibold text-blue-200 group-hover:text-white">
-              Learn More <ArrowRight className="h-4 w-4" />
-            </Link>
-          </article>
-        </section>
-
-        <section className="mx-auto mt-12 grid w-full max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="rounded-3xl border border-white/12 bg-black/55 p-5 md:p-7">
             <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-neutral-400">
-              <Calculator className="h-4 w-4" /> Response Loss Calculator
+              <Clock3 className="h-4 w-4" /> Calculator
             </div>
-            <h2 className="mt-3 text-2xl font-semibold text-white">How much revenue are you losing to slow response times?</h2>
-
-            <div className="mt-5 grid gap-4">
-              <label className="text-sm text-neutral-300">
-                Leads per month: <span className="font-semibold text-white">{leadsPerMonth}</span>
-                <input type="range" min={20} max={900} step={5} value={leadsPerMonth} onChange={(event) => setLeadsPerMonth(Number(event.target.value))} className="mt-2 w-full" />
+            <h2 className="mt-3 text-2xl font-semibold text-white">ROI Opportunity</h2>
+            <div className="mt-6 space-y-5">
+              <label className="block">
+                <div className="flex justify-between text-sm text-neutral-300">
+                  <span>Monthly Leads</span>
+                  <span className="text-white">{leadsPerMonth}</span>
+                </div>
+                <input type="range" min={20} max={1000} step={10} value={leadsPerMonth} onChange={(event) => setLeadsPerMonth(Number(event.target.value))} className="mt-2 w-full" />
               </label>
-              <label className="text-sm text-neutral-300">
-                Average deal value: <span className="font-semibold text-white">${avgDealValue}</span>
-                <input type="range" min={200} max={8000} step={50} value={avgDealValue} onChange={(event) => setAvgDealValue(Number(event.target.value))} className="mt-2 w-full" />
+              <label className="block">
+                <div className="flex justify-between text-sm text-neutral-300">
+                  <span>Avg Deal Value</span>
+                  <span className="text-white">${avgDealValue}</span>
+                </div>
+                <input type="range" min={500} max={10000} step={100} value={avgDealValue} onChange={(event) => setAvgDealValue(Number(event.target.value))} className="mt-2 w-full" />
               </label>
-              <label className="text-sm text-neutral-300">
-                Current response time (minutes): <span className="font-semibold text-white">{responseMinutes}</span>
+              <label className="block">
+                <div className="flex justify-between text-sm text-neutral-300">
+                  <span>Avg Response (min)</span>
+                  <span className="text-white">{responseMinutes}m</span>
+                </div>
                 <input type="range" min={1} max={240} step={1} value={responseMinutes} onChange={(event) => setResponseMinutes(Number(event.target.value))} className="mt-2 w-full" />
               </label>
             </div>
@@ -517,12 +562,9 @@ export default function AiPage() {
               </button>
 
               <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">Before you go</p>
-              <h3 className="mt-2 text-2xl font-semibold text-white">Wait - see it in action first</h3>
-              <div className="mt-4 rounded-2xl border border-white/12 bg-black/70 p-4">
-                <p className="text-sm text-neutral-300">Embedded 30-second demo preview</p>
-                <div className="mt-3 flex h-36 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/18 via-purple-500/12 to-indigo-500/16 text-sm text-white">
-                  <Play className="mr-2 h-5 w-5" /> Play 30s Demo
-                </div>
+              <h3 className="mt-2 text-2xl font-semibold text-white">Wait - see the ACAI System in action</h3>
+              <div className="mt-4">
+                <DemoPreview />
               </div>
               <Link href="/contact" className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 px-5 py-3 text-sm font-semibold text-white">
                 Get free audit of your current lead response time
