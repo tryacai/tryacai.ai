@@ -13,14 +13,14 @@ export const metadata: Metadata = {
     title: "Try ACAI AI | Never Miss a Lead Again",
     description:
       "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
-    images: ["https://tryacai.ai/opengraph-image.png"],
+    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Try ACAI AI | Never Miss a Lead Again",
     description:
       "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
-    images: ["https://tryacai.ai/twitter-image.png"],
+    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
 };
 

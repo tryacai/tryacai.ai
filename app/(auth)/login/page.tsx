@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Log in to ACAI AI to manage your lead conversion and follow-up automation workflows.",
   openGraph: {
-    images: ["https://tryacai.ai/opengraph-image.png"],
+    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
 };
 

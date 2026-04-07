@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     follow: false,
   },
   openGraph: {
-    images: ["https://tryacai.ai/opengraph-image.png"],
+    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
 };
 

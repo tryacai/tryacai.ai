@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     siteName: "ACAI AI",
     images: [
       {
-        url: "https://tryacai.ai/opengraph-image.png",
+        url: "https://tryacai.ai/nevermissaleadpreviewimage.png",
         width: 1200,
         height: 630,
         alt: "Try ACAI AI | Never Miss a Lead Again",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "Try ACAI AI | Never Miss a Lead Again",
     description:
       "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
-    images: ["https://tryacai.ai/twitter-image.png"],
+    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
 };
 
