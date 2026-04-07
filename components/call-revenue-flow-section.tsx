@@ -73,8 +73,7 @@ const systemCards = [
   },
 ] as const satisfies readonly SystemCard[];
 
-const SYSTEM_ROTATE_MS = 4000;
-const STACK_ANIMATION_MS = 620;
+const SYSTEM_ROTATE_MS = 3500;
 
 type RoiValues = {
   monthlyLeads: number;
@@ -91,32 +90,17 @@ const initialRoiValues: RoiValues = {
 export function CallRevenueFlowSection() {
   const [roiValues, setRoiValues] = useState<RoiValues>(initialRoiValues);
   const [displayLoss, setDisplayLoss] = useState(0);
-  const [deckOrder, setDeckOrder] = useState<number[]>(systemCards.map((_, index) => index));
-  const [isDeckAnimating, setIsDeckAnimating] = useState(false);
-  const [isDeckHovered, setIsDeckHovered] = useState(false);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [isCardHovered, setIsCardHovered] = useState(false);
   const [activeFunnelIndex, setActiveFunnelIndex] = useState(0);
 
-  const rotateDeck = () => {
-    if (isDeckAnimating) {
-      return;
-    }
-
-    setIsDeckAnimating(true);
-    window.setTimeout(() => {
-      setDeckOrder((previous) => [...previous.slice(1), previous[0]]);
-      setIsDeckAnimating(false);
-    }, STACK_ANIMATION_MS);
-  };
-
   useEffect(() => {
+    if (isCardHovered) return;
     const rotation = setInterval(() => {
-      if (!isDeckHovered && !isDeckAnimating) {
-        rotateDeck();
-      }
+      setActiveCardIndex((prev) => (prev + 1) % systemCards.length);
     }, SYSTEM_ROTATE_MS);
-
     return () => clearInterval(rotation);
-  }, [isDeckHovered, isDeckAnimating]);
+  }, [isCardHovered]);
 
   useEffect(() => {
     const ticker = setInterval(() => {
@@ -270,7 +254,7 @@ export function CallRevenueFlowSection() {
           </div>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="mt-10 grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400 md:text-sm">System Flow</p>
             <h3 className="mt-3 text-2xl font-semibold leading-tight text-white md:text-4xl">
@@ -282,96 +266,58 @@ export function CallRevenueFlowSection() {
           </div>
 
           <div className="relative">
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/12 via-purple-500/12 to-red-500/12 blur-3xl" />
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/8 via-purple-500/8 to-red-500/8 blur-3xl" />
             <div
-              className="relative mx-auto h-[292px] max-w-[460px]"
-              onMouseEnter={() => setIsDeckHovered(true)}
-              onMouseLeave={() => setIsDeckHovered(false)}
+              className="grid grid-cols-2 gap-3"
+              onMouseEnter={() => setIsCardHovered(true)}
+              onMouseLeave={() => setIsCardHovered(false)}
               aria-label="ACAI System cards"
             >
-              {deckOrder.map((cardIndex, orderIndex) => {
-                const card = systemCards[cardIndex];
-                const isActive = orderIndex === 0;
-                const isOutgoing = isActive && isDeckAnimating;
-                const shiftedOrder = !isOutgoing && isDeckAnimating ? Math.max(orderIndex - 1, 0) : orderIndex;
-                const zIndex = systemCards.length - shiftedOrder;
-                const baseX = shiftedOrder * 8;
-                const baseY = shiftedOrder * 14;
-                const baseScale = 1 - shiftedOrder * 0.03;
-
+              {systemCards.map((card, index) => {
+                const isActive = index === activeCardIndex;
                 return (
                   <motion.div
                     key={card.title}
-                    className="absolute inset-x-0"
-                    style={{ zIndex }}
-                    animate={
-                      isOutgoing
-                        ? {
-                            x: 62,
-                            y: 58,
-                            rotate: -7,
-                            scale: 0.9,
-                            opacity: 0.48,
-                          }
-                        : {
-                            x: baseX,
-                            y: baseY,
-                            rotate: shiftedOrder * -0.9,
-                            scale: isActive && isDeckHovered ? 1.02 : baseScale,
-                            opacity: 1 - shiftedOrder * 0.14,
-                          }
-                    }
-                    transition={{ duration: 0.58, ease: [0.2, 0.8, 0.2, 1] }}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    onMouseEnter={() => setActiveCardIndex(index)}
                   >
                     <Link
                       href={card.href}
                       aria-label={`Open ${card.title} in ACAI System`}
-                      className={`group block min-h-[220px] rounded-2xl border border-white/14 bg-black/65 p-5 backdrop-blur-sm transition duration-300 ${
-                        isActive && isDeckHovered
-                          ? "border-white/30 shadow-[0_18px_40px_rgba(109,84,255,0.28)]"
-                          : "shadow-[0_10px_24px_rgba(0,0,0,0.38)]"
+                      className={`group relative block overflow-hidden rounded-2xl border bg-neutral-950/80 p-5 backdrop-blur-sm transition-all duration-300 ${
+                        isActive
+                          ? "-translate-y-1 border-purple-400/40 shadow-[0_12px_32px_rgba(168,85,247,0.15)]"
+                          : "border-white/[0.05] hover:-translate-y-1 hover:border-purple-400/25"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-400">{card.accent}</p>
-                          <h4 className="mt-2 text-2xl font-semibold text-white">{card.title}</h4>
+                      <span className="pointer-events-none absolute right-3 top-1 select-none text-[3.5rem] font-black leading-none text-purple-400/[0.04]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-300 ${
+                            isActive ? "border-purple-400/30 bg-purple-500/10" : "border-white/10 bg-white/[0.03]"
+                          }`}>
+                            <card.Icon className={`h-4 w-4 transition-colors duration-300 ${isActive ? "text-purple-300" : "text-neutral-400"}`} strokeWidth={1.8} />
+                          </div>
+                          <h4 className="text-sm font-semibold text-white">{card.title}</h4>
                         </div>
-                        <div className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-black/45">
-                          <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400/18 via-purple-400/18 to-red-400/18" />
-                          <card.Icon className="relative h-5 w-5 text-white" strokeWidth={1.9} />
-                        </div>
+                        <p className="mt-2.5 text-xs leading-relaxed text-neutral-400">{card.body}</p>
                       </div>
-
-                      <p className="mt-5 max-w-[30ch] text-sm leading-relaxed text-neutral-300">{card.body}</p>
-
-                      {card.title === "Web Funnel" && (
-                        <div className="mt-6 space-y-1.5">
-                          {["w-full", "w-5/6", "w-2/3"].map((width) => (
-                            <span key={width} className={`block h-1 rounded-full bg-gradient-to-r from-blue-400/60 to-purple-400/60 ${width}`} />
-                          ))}
-                        </div>
-                      )}
                     </Link>
                   </motion.div>
                 );
               })}
-
-              <button
-                type="button"
-                aria-label="Show next system"
-                onClick={rotateDeck}
-                className="absolute -right-1 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-2.5 text-white transition hover:border-white/35 hover:bg-black/80"
-              >
-                <ArrowRight className="h-4 w-4" />
-              </button>
             </div>
 
             <div className="mx-auto mt-4 flex max-w-[460px] gap-2">
-              {deckOrder.map((cardIndex, index) => (
+              {systemCards.map((card, index) => (
                 <span
-                  key={systemCards[cardIndex].title}
-                  className={`h-1.5 flex-1 rounded-full transition ${index === 0 ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400" : "bg-white/15"}`}
+                  key={card.title}
+                  className={`h-1 flex-1 rounded-full transition-all duration-300 ${index === activeCardIndex ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400" : "bg-white/10"}`}
                 />
               ))}
             </div>
@@ -379,9 +325,9 @@ export function CallRevenueFlowSection() {
             <div className="mx-auto mt-5 flex max-w-[460px] justify-end">
               <Link
                 href="/ai"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/55 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-100 transition hover:border-white/35 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-full border border-purple-400/25 bg-purple-500/[0.06] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-purple-200 transition-all duration-300 hover:border-purple-400/40 hover:bg-purple-500/10 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]"
               >
-                Explore ACAI System <ArrowRight className="h-3.5 w-3.5" />
+                Explore The ACAI System <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           </div>

@@ -13,7 +13,7 @@ const navItems = [
     link: "/contact",
   },
   {
-    title: "System Hub",
+    title: "The ACAI System",
     link: "/ai",
     highlightAI: true,
   },
