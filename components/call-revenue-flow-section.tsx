@@ -254,80 +254,69 @@ export function CallRevenueFlowSection() {
           </div>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="mt-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-[0.6fr_1fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400 md:text-sm">System Flow</p>
-            <h3 className="mt-3 text-2xl font-semibold leading-tight text-white md:text-4xl">
+            <h3 className="mt-2 text-xl font-semibold leading-tight text-white md:text-2xl">
               One connected system that closes every gap
             </h3>
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-neutral-300 md:text-lg">
-              ACAI combines your capture, response, qualification, and routing into one continuous flow.
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-neutral-400 md:text-base">
+              Capture, response, qualification, and routing in one continuous flow.
             </p>
           </div>
 
           <div className="relative">
             <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/8 via-purple-500/8 to-red-500/8 blur-3xl" />
-            <div
-              className="grid grid-cols-2 gap-3"
+
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-5 md:p-6"
               onMouseEnter={() => setIsCardHovered(true)}
               onMouseLeave={() => setIsCardHovered(false)}
               aria-label="ACAI System cards"
             >
-              {systemCards.map((card, index) => {
-                const isActive = index === activeCardIndex;
-                return (
-                  <motion.div
-                    key={card.title}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                    onMouseEnter={() => setActiveCardIndex(index)}
-                  >
-                    <Link
-                      href={card.href}
-                      aria-label={`Open ${card.title} in ACAI System`}
-                      className={`group relative block overflow-hidden rounded-2xl border bg-neutral-950/80 p-5 backdrop-blur-sm transition-all duration-300 ${
-                        isActive
-                          ? "-translate-y-1 border-purple-400/40 shadow-[0_12px_32px_rgba(168,85,247,0.15)]"
-                          : "border-white/[0.05] hover:-translate-y-1 hover:border-purple-400/25"
-                      }`}
+              <AnimatePresence mode="wait">
+                {systemCards.map((card, index) => {
+                  if (index !== activeCardIndex) return null;
+                  return (
+                    <motion.div
+                      key={card.title}
+                      initial={{ opacity: 0, x: 40, scale: 0.97 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -40, scale: 0.97 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="flex items-start gap-4"
                     >
-                      <span className="pointer-events-none absolute right-3 top-1 select-none text-[3.5rem] font-black leading-none text-purple-400/[0.04]">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-2.5">
-                          <div className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-300 ${
-                            isActive ? "border-purple-400/30 bg-purple-500/10" : "border-white/10 bg-white/[0.03]"
-                          }`}>
-                            <card.Icon className={`h-4 w-4 transition-colors duration-300 ${isActive ? "text-purple-300" : "text-neutral-400"}`} strokeWidth={1.8} />
-                          </div>
-                          <h4 className="text-sm font-semibold text-white">{card.title}</h4>
-                        </div>
-                        <p className="mt-2.5 text-xs leading-relaxed text-neutral-400">{card.body}</p>
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-purple-400/30 bg-purple-500/10">
+                        <card.Icon className="h-5 w-5 text-purple-300" strokeWidth={1.8} />
                       </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
+                      <div>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-purple-400/60">{card.accent}</p>
+                        <h4 className="mt-0.5 text-lg font-semibold text-white">{card.title}</h4>
+                        <p className="mt-1 text-sm leading-relaxed text-neutral-400">{card.body}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+
+              <div className="mt-4 flex gap-2">
+                {systemCards.map((card, index) => (
+                  <button
+                    key={card.title}
+                    onClick={() => setActiveCardIndex(index)}
+                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${index === activeCardIndex ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 shadow-[0_0_8px_rgba(168,85,247,0.4)]" : "bg-white/10 hover:bg-white/20"}`}
+                  />
+                ))}
+              </div>
             </div>
 
-            <div className="mx-auto mt-4 flex max-w-[460px] gap-2">
-              {systemCards.map((card, index) => (
-                <span
-                  key={card.title}
-                  className={`h-1 flex-1 rounded-full transition-all duration-300 ${index === activeCardIndex ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400" : "bg-white/10"}`}
-                />
-              ))}
-            </div>
-
-            <div className="mx-auto mt-5 flex max-w-[460px] justify-end">
+            <div className="mt-5 flex justify-center">
               <Link
                 href="/ai"
-                className="inline-flex items-center gap-2 rounded-full border border-purple-400/25 bg-purple-500/[0.06] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-purple-200 transition-all duration-300 hover:border-purple-400/40 hover:bg-purple-500/10 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]"
+                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-purple-400/30 bg-gradient-to-r from-purple-600/20 via-purple-500/15 to-blue-500/20 px-8 py-3.5 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300 hover:border-purple-400/50 hover:shadow-[0_0_40px_rgba(168,85,247,0.35)] hover:scale-[1.03] md:px-10 md:py-4 md:text-base"
               >
-                Explore The ACAI System <ArrowRight className="h-3.5 w-3.5" />
+                <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/20 to-red-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <span className="relative">Explore The ACAI System</span>
+                <ArrowRight className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 md:h-5 md:w-5" />
               </Link>
             </div>
           </div>
