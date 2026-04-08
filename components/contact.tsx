@@ -111,9 +111,7 @@ const formSchema = z.object({
   foundFrom: z
     .string({ required_error: "Please select how you found us" })
     .min(1, "Please select how you found us"),
-  smsConsent: z.boolean().refine((value) => value === true, {
-    message: "You must agree to receive SMS messages before submitting.",
-  }),
+  smsConsent: z.boolean().default(false),
   company_website: z.string().optional(),
   readyToBook: z.boolean().default(false),
 });
@@ -612,7 +610,7 @@ export function ContactForm() {
                             />
                           </FormControl>
                           <span>
-                            I agree to receive SMS messages from ACAI Enterprises LLC regarding demo scheduling and product updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.
+                            <span className="text-neutral-400">(Optional)</span> I agree to receive SMS messages from ACAI Enterprises LLC regarding demo scheduling and product updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.
                           </span>
                         </label>
 
