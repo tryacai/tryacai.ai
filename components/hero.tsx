@@ -877,16 +877,11 @@ export const Hero = () => {
           ease: "easeOut",
           duration: 0.5,
         }}
-        className="flex justify-center gap-3"
+        className="flex justify-center"
       >
         <Badge onClick={() => router.push("/blog")}>
-          <span className="bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
-            Why ACAI
-          </span>
-        </Badge>
-        <Badge onClick={() => router.push("/blog")}>
-          <span className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
-            <Zap className="h-3 w-3 text-yellow-400 fill-yellow-400" />
+          <span className="flex items-center gap-1.5 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
+            <Zap className="h-3 w-3 text-purple-400 fill-purple-400" />
             ACAI Reports — Daily
           </span>
         </Badge>
