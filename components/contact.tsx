@@ -14,6 +14,17 @@ const industryOptions = ["Plumbing", "HVAC", "Barber", "Detailing", "Roofing", "
 const leadBottleneckOptions = ["Slow follow-up", "Missed calls", "Low form conversion", "Poor qualification", "Booking drop-off", "Not sure yet"] as const;
 const systemInterestOptions = ["Web Funnel", "Chat Widget", "Voice AI", "Automation Engine"] as const;
 
+const foundFromOptions = [
+  { value: "email_outreach", label: "Email Outreach" },
+  { value: "call_outreach", label: "Call Outreach" },
+  { value: "advertisement", label: "Advertisement" },
+  { value: "google_search", label: "Google Search" },
+  { value: "direct_referral", label: "Direct Referral" },
+  { value: "social_media", label: "Social Media" },
+  { value: "returning_visitor", label: "Returning Visitor" },
+  { value: "other", label: "Other" },
+] as const;
+
 const suspiciousTextPattern = /(https?:\/\/|www\.|\b(crypto|bitcoin|casino|viagra|porn|seo|backlink|loan)\b)/i;
 const repeatedCharactersPattern = /(.)\1{4,}/;
 
@@ -97,6 +108,9 @@ const formSchema = z.object({
     .max(300, "Message must be 300 characters or fewer")
     .refine((value) => !looksLikeSpam(value || ""), "Please remove spammy links/keywords from your message.")
     .optional(),
+  foundFrom: z
+    .string({ required_error: "Please select how you found us" })
+    .min(1, "Please select how you found us"),
   smsConsent: z.boolean().refine((value) => value === true, {
     message: "You must agree to receive SMS messages before submitting.",
   }),
@@ -192,6 +206,7 @@ export function ContactForm() {
       biggestLeadBottleneck: "",
       systemsInterestedIn: [],
       message: "",
+      foundFrom: "",
       smsConsent: false,
       company_website: "",
       readyToBook: false,
@@ -272,10 +287,10 @@ export function ContactForm() {
           systems_interested_in: values.systemsInterestedIn.join(", "),
           message: values.message || "",
           sms_consent: values.smsConsent,
-          ready_to_book: values.readyToBook,
-          booking_start_time: booking?.startTime || null,
-          booking_end_time: booking?.endTime || null,
-          booking_event_id: booking?.eventId || null,
+          found_from: values.foundFrom,
+          booked_call: values.readyToBook,
+          call_date: booking?.startTime || "",
+          company_website: values.company_website || "",
         }),
       });
 
@@ -296,6 +311,7 @@ export function ContactForm() {
         biggestLeadBottleneck: "",
         systemsInterestedIn: [],
         message: "",
+        foundFrom: "",
         smsConsent: false,
         company_website: "",
         readyToBook: false,
@@ -518,6 +534,35 @@ export function ContactForm() {
                           );
                         })}
                       </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="foundFrom"
+                  render={({ field }) => (
+                    <FormItem>
+                      <label htmlFor="foundFrom" className="block text-sm font-medium text-neutral-200">
+                        How did you find us?
+                      </label>
+                      <FormControl>
+                        <select
+                          id="foundFrom"
+                          className="mt-2 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          {...field}
+                        >
+                          <option value="" className="bg-neutral-950 text-neutral-400">
+                            Select an option
+                          </option>
+                          {foundFromOptions.map((option) => (
+                            <option key={option.value} value={option.value} className="bg-neutral-950 text-white">
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

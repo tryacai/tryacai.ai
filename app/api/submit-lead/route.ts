@@ -8,21 +8,13 @@ type SubmitLeadPayload = {
   industry?: string;
   biggest_lead_bottleneck?: string;
   systems_interested_in?: string;
-  call_volume?: string;
   message?: string;
   sms_consent?: boolean;
-  ready_to_book?: boolean;
-  booking_start_time?: string | null;
-  booking_time?: string | null;
-  booking_end_time?: string | null;
-  booking_event_id?: string | null;
-  event_id?: string | null;
-  tier_preference?: string;
-  demo_requested?: boolean;
+  found_from?: string;
+  booked_call?: boolean;
+  call_date?: string;
+  company_website?: string;
 };
-
-const GOOGLE_APPS_SCRIPT_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycby6UXqt3SZxDEHNR6hUCgTwDuo7Ii6Er1AJ91jJ10E9svxuMsPJwHakE7x4ECln9r02mQ/exec";
 
 const suspiciousTextPattern = /(https?:\/\/|www\.|\b(crypto|bitcoin|casino|viagra|porn|seo|backlink|loan)\b)/i;
 const repeatedCharactersPattern = /(.)\1{4,}/;
@@ -67,49 +59,28 @@ function looksLikeSpam(input: string) {
   return false;
 }
 
-function getProviderErrorMessage(providerData: Record<string, unknown> | null) {
-  if (!providerData) {
-    return null;
-  }
-
-  const error = providerData.error;
-  if (typeof error === "string" && error.trim()) {
-    return error.trim();
-  }
-
-  const message = providerData.message;
-  if (typeof message === "string" && message.trim()) {
-    return message.trim();
-  }
-
-  const status = providerData.status;
-  if (typeof status === "string" && status.toLowerCase() === "error") {
-    return "Google Apps Script rejected the submission.";
-  }
-
-  return null;
-}
-
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as SubmitLeadPayload;
+
+    // Honeypot check
+    if (body.company_website && body.company_website.trim().length > 0) {
+      // Silently reject bot submissions
+      return NextResponse.json({ success: true });
+    }
 
     const fullName = body.full_name?.trim() || "";
     const businessEmail = body.business_email?.trim() || "";
     const phoneNumber = body.phone_number?.trim() || "";
     const companyName = body.company_name?.trim() || "";
     const industry = body.industry?.trim() || "";
-    const biggestLeadBottleneck =
-      body.biggest_lead_bottleneck?.trim() || body.call_volume?.trim() || "";
-    const systemsInterestedIn =
-      body.systems_interested_in?.trim() || body.tier_preference?.trim() || "Not Sure Yet";
+    const biggestLeadBottleneck = body.biggest_lead_bottleneck?.trim() || "";
+    const systemsInterestedIn = body.systems_interested_in?.trim() || "";
     const message = body.message?.trim() || "";
     const smsConsent = Boolean(body.sms_consent);
-    const readyToBook =
-      typeof body.ready_to_book === "boolean" ? body.ready_to_book : Boolean(body.demo_requested);
-    const bookingStartTime = body.booking_start_time?.trim() || body.booking_time?.trim() || "";
-    const bookingEndTime = body.booking_end_time?.trim() || "";
-    const bookingEventId = body.booking_event_id?.trim() || body.event_id?.trim() || "";
+    const foundFrom = body.found_from?.trim() || "";
+    const bookedCall = Boolean(body.booked_call);
+    const callDate = body.call_date?.trim() || "";
 
     if (
       !fullName ||
@@ -140,88 +111,67 @@ export async function POST(request: Request) {
       );
     }
 
-    if (readyToBook && !bookingEventId) {
+    const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+    if (!webhookUrl) {
+      console.error("[submit-lead] MAKE_WEBHOOK_URL is not configured.");
       return NextResponse.json(
-        { error: "Booking confirmation is required when demo is requested." },
-        { status: 400 }
+        { error: "Server configuration error. Please try again later." },
+        { status: 500 }
       );
     }
 
-    console.log("[submit-lead] Payload:", {
-      fullName,
-      businessEmail,
-      phoneNumber,
-      companyName,
+    const payload = {
+      submitted_at: new Date().toISOString(),
+      full_name: fullName,
+      business_email: businessEmail,
+      phone_number: phoneNumber,
+      company_name: companyName,
       industry,
-      biggestLeadBottleneck,
-      systemsInterestedIn,
-      readyToBook,
-      bookingStartTime,
-      bookingEventId,
+      biggest_lead_bottleneck: biggestLeadBottleneck,
+      systems_interested_in: systemsInterestedIn,
+      message,
+      source: "website_form",
+      found_from: foundFrom,
+      booked_call: bookedCall ? "yes" : "no",
+      call_date: callDate,
+    };
+
+    console.log("[submit-lead] Forwarding payload to Make.com:", {
+      ...payload,
+      business_email: "***",
+      phone_number: "***",
     });
 
-    const response = await fetch(GOOGLE_APPS_SCRIPT_ENDPOINT, {
+    const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json",
       },
-      body: new URLSearchParams({
-        full_name: fullName,
-        business_email: businessEmail,
-        phone_number: phoneNumber,
-        company_name: companyName,
-        industry,
-        biggest_lead_bottleneck: biggestLeadBottleneck,
-        systems_interested_in: systemsInterestedIn,
-        message: message || "",
-        sms_consent: String(smsConsent),
-        ready_to_book: String(readyToBook),
-        booking_start_time: bookingStartTime || "",
-        booking_end_time: bookingEndTime || "",
-        booking_event_id: bookingEventId || "",
-        source: "Website Contact Form",
-      }).toString(),
-      redirect: "follow",
+      body: JSON.stringify(payload),
     });
 
-    let providerData: Record<string, unknown> | null = null;
-    let providerText = "";
-    try {
-      providerText = await response.text();
-      if (providerText) {
-        providerData = JSON.parse(providerText) as Record<string, unknown>;
-      }
-    } catch {
-      providerData = null;
-    }
-
     if (!response.ok) {
-      throw new Error(
-        getProviderErrorMessage(providerData) || "Form submission failed. Please verify Google Apps Script settings."
+      const errorText = await response.text().catch(() => "No response body");
+      console.error(
+        `[submit-lead] Make.com webhook returned ${response.status}: ${errorText}`
+      );
+      return NextResponse.json(
+        { error: "Failed to process submission. Please try again." },
+        { status: 502 }
       );
     }
 
-    const providerErrorMessage = getProviderErrorMessage(providerData);
-    if (providerErrorMessage) {
-      throw new Error(providerErrorMessage);
-    }
+    console.log("[submit-lead] Successfully forwarded to Make.com");
 
     return NextResponse.json({
       success: true,
-      contact_id: null,
-      demo_requested: readyToBook,
-      event_id: bookingEventId || null,
-      booking_time: bookingStartTime || null,
-      stage_name: null,
-      stage_assigned: false,
-      provider: "google-apps-script",
-      google_apps_script_ok: response.ok,
-      provider_response: providerData ?? (providerText || null),
+      booked_call: bookedCall,
+      call_date: callDate || null,
     });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unexpected server error.";
+    console.error("[submit-lead] Error:", message);
 
     return NextResponse.json({ error: message }, { status: 500 });
   }
