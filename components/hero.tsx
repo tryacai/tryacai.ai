@@ -1,1051 +1,493 @@
 "use client";
 
-import Balancer from "react-wrap-balancer";
-import { motion } from "framer-motion";
-import { Mic } from "lucide-react";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { RetellWebClient } from "retell-client-js-sdk";
-import { Link } from "next-view-transitions";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
-import { Badge } from "./badge";
-import { Zap } from "lucide-react";
-import { useRouter } from "next/navigation";
-type DemoId = "main" | "plumbing" | "barber";
-
-type DemoScenario = "acai" | "plumbing" | "barber";
-
-type DemoConfig = {
-  scenario: DemoScenario;
-  agentId: string;
-  voiceId: string;
-  promptConfig: string;
-};
-
-const demoConfigs: Record<DemoId, DemoConfig> = {
-  main: {
-    scenario: "acai",
-    agentId: process.env.NEXT_PUBLIC_RETELL_AGENT_ID_ACAI || "acai-agent",
-    voiceId: "acai-concierge-voice",
-    promptConfig: "acai-concierge",
-  },
-  plumbing: {
-    scenario: "plumbing",
-    agentId: process.env.NEXT_PUBLIC_RETELL_AGENT_ID_PLUMBING || "plumbing-agent",
-    voiceId: "plumbing-hvac-voice",
-    promptConfig: "plumbing-hvac",
-  },
-  barber: {
-    scenario: "barber",
-    agentId: process.env.NEXT_PUBLIC_RETELL_AGENT_ID_BARBER || "barber-agent",
-    voiceId: "barbershop-voice",
-    promptConfig: "barbershop",
-  },
-};
-
-const TypewriterText = ({
-  syncCycle,
-  deleteSignal,
-  onWithAcaiHoldComplete,
-}: {
-  syncCycle: number;
-  deleteSignal: number;
-  onWithAcaiHoldComplete: () => void;
-}) => {
+// ─── Typewriter: "Booked Jobs." line ───
+const TypewriterBookedJobs = () => {
+  const phrase = "Booked Jobs.";
   const [text, setText] = useState("");
-  const secondaryPhrases = ["24/7 AI Call Answering", "Instant Scheduling", "Guaranteed ROI"];
-  const [phase, setPhase] = useState<
-    | "typing-with-acai"
-    | "holding-with-acai"
-    | "waiting-delete"
-    | "deleting-with-acai"
-    | "typing-secondary"
-    | "holding-secondary"
-    | "deleting-secondary"
-  >("typing-with-acai");
-  const [secondaryPhraseIndex, setSecondaryPhraseIndex] = useState(0);
-  const lastDeleteSignalRef = useRef(deleteSignal);
-  const lastCycleRef = useRef(syncCycle);
+  const [phase, setPhase] = useState<"typing" | "holding" | "deleting">("typing");
 
   useEffect(() => {
-    if (lastCycleRef.current !== syncCycle) {
-      lastCycleRef.current = syncCycle;
-      setText("");
-      setPhase("typing-with-acai");
-      setSecondaryPhraseIndex(0);
-    }
-
-    if (lastDeleteSignalRef.current !== deleteSignal && phase === "waiting-delete") {
-      lastDeleteSignalRef.current = deleteSignal;
-      setPhase("deleting-with-acai");
-    }
-  }, [syncCycle, deleteSignal, phase]);
-
-  useEffect(() => {
-    const withAcai = "With ACAI";
-    const secondaryPhrase = secondaryPhrases[secondaryPhraseIndex];
-    const withAcaiTypingSpeed = 105;
-    const normalTypingSpeed = 125;
+    const typingSpeed = 105;
     const deletingSpeed = 90;
-    const withAcaiHold = 3500;
-    const secondaryHold = 1000;
-
+    const holdDuration = 3500;
     let timer: NodeJS.Timeout;
 
-    if (phase === "typing-with-acai") {
-      if (text.length < withAcai.length) {
-        timer = setTimeout(
-          () => setText(withAcai.slice(0, text.length + 1)),
-          withAcaiTypingSpeed
-        );
+    if (phase === "typing") {
+      if (text.length < phrase.length) {
+        timer = setTimeout(() => setText(phrase.slice(0, text.length + 1)), typingSpeed);
       } else {
-        timer = setTimeout(() => {
-          setPhase("holding-with-acai");
-        }, withAcaiHold);
+        timer = setTimeout(() => setPhase("holding"), holdDuration);
       }
-    } else if (phase === "holding-with-acai") {
-      onWithAcaiHoldComplete();
-      setPhase("waiting-delete");
-    } else if (phase === "deleting-with-acai") {
+    } else if (phase === "holding") {
+      timer = setTimeout(() => setPhase("deleting"), 200);
+    } else if (phase === "deleting") {
       if (text.length > 0) {
         timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
       } else {
-        setPhase("typing-secondary");
-      }
-    } else if (phase === "typing-secondary") {
-      if (text.length < secondaryPhrase.length) {
-        timer = setTimeout(
-          () => setText(secondaryPhrase.slice(0, text.length + 1)),
-          normalTypingSpeed
-        );
-      } else {
-        timer = setTimeout(() => setPhase("holding-secondary"), secondaryHold);
-      }
-    } else if (phase === "holding-secondary") {
-      setPhase("deleting-secondary");
-    } else if (phase === "deleting-secondary") {
-      if (text.length > 0) {
-        timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
-      } else {
-        const nextIdx = (secondaryPhraseIndex + 1) % secondaryPhrases.length;
-        setSecondaryPhraseIndex(nextIdx);
-        setPhase("typing-secondary");
+        setPhase("typing");
       }
     }
 
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [
-    phase,
-    secondaryPhraseIndex,
-    text,
-    onWithAcaiHoldComplete,
-    secondaryPhrases,
-  ]);
+    return () => { if (timer) clearTimeout(timer); };
+  }, [text, phase]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, delay: 0.8 }}
-      className="text-center mt-4 relative z-10 px-4"
+    <span className="inline-block bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+      style={{
+        filter: "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
+      }}
     >
-      <p className="text-xl md:text-3xl lg:text-5xl font-semibold inline-block max-w-full mx-auto tracking-wider bg-gradient-to-r from-red-500 via-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent whitespace-normal md:whitespace-nowrap"
-        style={{
-          filter: "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
-        }}
-      >
-        {text.split("").map((char, index) => (
-          <motion.span
-            key={index}
-            className="inline-block"
-            style={{
-              marginLeft: char === " " ? "0.5em" : undefined,
-            }}
-            whileHover={{
-              y: -4,
-              scale: 1.1,
-              transition: { duration: 0.2 },
-            }}
-          >
-            {char}
-          </motion.span>
-        ))}
+      {text.split("").map((char, index) => (
         <motion.span
-          className="inline-block ml-1"
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+          key={index}
+          className="inline-block"
+          style={{ marginLeft: char === " " ? "0.5em" : undefined }}
+          whileHover={{ y: -4, scale: 1.1, transition: { duration: 0.2 } }}
         >
-          |
+          {char}
         </motion.span>
+      ))}
+      <motion.span
+        className="inline-block ml-1"
+        animate={{ opacity: [1, 0, 1] }}
+        transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        |
+      </motion.span>
+    </span>
+  );
+};
+
+// ─── Pain-point orbs (flow right, fade/shrink at right edge) ───
+const painPoints = [
+  "Wasting Budget on Ads That Don\u2019t Convert",
+  "Chasing Low-Quality Leads That Ghost You",
+  "Losing Jobs to Competitors Who Reply Faster",
+];
+
+const PainPointOrbs = () => (
+  <div className="relative mt-8 flex flex-col gap-4 md:gap-3">
+    {painPoints.map((text, i) => (
+      <motion.div
+        key={text}
+        initial={{ x: -40, opacity: 0, scale: 0.92 }}
+        animate={{ x: [0, 60, 120], opacity: [1, 0.85, 0], scale: [1, 0.95, 0.7] }}
+        transition={{
+          duration: 5,
+          delay: i * 1.4,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="flex items-center gap-3"
+      >
+        <span className="shrink-0 h-3 w-3 rounded-full bg-gradient-to-r from-red-500 to-purple-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+        <span className="text-sm md:text-base text-neutral-300 font-medium whitespace-nowrap">{text}</span>
+      </motion.div>
+    ))}
+  </div>
+);
+
+// ─── Harvard stats bubbles ───
+const StatBubble = ({ icon, source, quote, delay }: { icon: string; source: string; quote: string; delay: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.3 }}
+    transition={{ duration: 0.6, delay, ease: "easeOut" }}
+    className="relative flex-1 min-w-[260px] rounded-2xl p-[1px] bg-gradient-to-r from-red-500 via-purple-500 to-blue-500"
+  >
+    {/* Speech-bubble pointer */}
+    <div className="absolute -top-2 left-8 h-4 w-4 rotate-45 bg-gradient-to-br from-red-500/60 to-purple-500/60" />
+    <div className="relative rounded-2xl bg-black/80 backdrop-blur-sm p-5">
+      <p className="text-xs font-semibold uppercase tracking-wider text-purple-300/80 mb-2">
+        {icon} {source}
       </p>
-    </motion.div>
-  );
-};
+      <p className="text-sm text-neutral-200 leading-relaxed">&ldquo;{quote}&rdquo;</p>
+    </div>
+  </motion.div>
+);
 
-const TypewriterHeadline = ({
-  canDelete,
-  onWordTyped,
-  onDeleteStarted,
-}: {
-  canDelete: boolean;
-  onWordTyped: () => void;
-  onDeleteStarted: () => void;
-}) => {
-  const [text, setText] = useState("");
-  const [phase, setPhase] = useState<
-    "typing-call" |
-    "pause-call" |
-    "waiting-delete-call" |
-    "deleting-call" |
-    "typing-job" |
-    "pause-job" |
-    "waiting-delete-job" |
-    "deleting-job"
-  >("typing-call");
+// ─── Qualification Modal ───
+type QualStep = 1 | 2 | 3;
 
-  useEffect(() => {
-    const typingSpeed = 120;
-    const deletingSpeed = 95;
-    const pauseAfterTyping = 2500;
+const industryOptions = ["Plumbing", "HVAC", "Roofing", "Electrical", "Restoration", "Landscaping", "Pest Control", "Cleaning", "Other"] as const;
+const jobsPerMonthOptions = ["Under 20", "20\u201350", "50\u2013100", "100+"] as const;
+const adStatusOptions = ["Yes", "No", "Planning to"] as const;
+const adSpendOptions = ["Not yet", "Under $1K", "$1K\u2013$3K", "$3K\u2013$7K", "$7K\u2013$15K", "$15K+"] as const;
+const foundFromOptions = ["Google", "Facebook Ad", "Instagram", "Referral", "Cold Outreach", "Other"] as const;
 
-    const fullPhraseCall = "Never Miss a Lead Again";
-    const fullPhraseJob = "Never Miss a Job Again";
-    const basePhrase = "Never Miss a ";
+const CAL_URL = "https://cal.com/tryacai.ai/30min";
 
-    let timer: NodeJS.Timeout;
+const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [step, setStep] = useState<QualStep>(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-    if (phase === "typing-call") {
-      if (text.length < fullPhraseCall.length) {
-        timer = setTimeout(
-          () => setText(fullPhraseCall.slice(0, text.length + 1)),
-          typingSpeed
-        );
-      } else {
-        onWordTyped();
-        timer = setTimeout(() => setPhase("pause-call"), pauseAfterTyping);
-      }
-    } else if (phase === "pause-call") {
-      setPhase("waiting-delete-call");
-    } else if (phase === "waiting-delete-call") {
-      if (canDelete) {
-        onDeleteStarted();
-        setPhase("deleting-call");
-      }
-    } else if (phase === "deleting-call") {
-      if (text.length > basePhrase.length) {
-        timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
-      } else {
-        setPhase("typing-job");
-      }
-    } else if (phase === "typing-job") {
-      if (text.length < fullPhraseJob.length) {
-        timer = setTimeout(
-          () => setText(fullPhraseJob.slice(0, text.length + 1)),
-          typingSpeed
-        );
-      } else {
-        onWordTyped();
-        timer = setTimeout(() => setPhase("pause-job"), pauseAfterTyping);
-      }
-    } else if (phase === "pause-job") {
-      setPhase("waiting-delete-job");
-    } else if (phase === "waiting-delete-job") {
-      if (canDelete) {
-        onDeleteStarted();
-        setPhase("deleting-job");
-      }
-    } else if (phase === "deleting-job") {
-        if (text.length > 0) {
-        if (text.length > basePhrase.length) {
-          timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
-        } else {
-          setPhase("typing-call");
-        }
-      }
-    }
+  // Step 1
+  const [industry, setIndustry] = useState("");
+  const [jobsPerMonth, setJobsPerMonth] = useState("");
+  // Step 2
+  const [runningAds, setRunningAds] = useState("");
+  const [adSpend, setAdSpend] = useState("");
+  // Step 3
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [challenge, setChallenge] = useState("");
+  const [foundFrom, setFoundFrom] = useState("");
+  // Honeypot
+  const [honeypot, setHoneypot] = useState("");
 
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [text, phase, canDelete, onWordTyped, onDeleteStarted]);
+  const canAdvance1 = industry && jobsPerMonth;
+  const canAdvance2 = runningAds && adSpend;
+  const canSubmit = fullName && phone && email && companyName;
 
-  return (
-    <motion.h1
-      initial={{
-        y: 40,
-        opacity: 0,
-      }}
-      animate={{
-        y: 0,
-        opacity: 1,
-      }}
-      transition={{
-        ease: "easeOut",
-        duration: 0.5,
-      }}
-      className="text-2xl md:text-4xl lg:text-8xl font-semibold max-w-6xl mx-auto text-center mt-6 relative z-10 whitespace-nowrap min-h-[1.2em]"
-    >
-      {/* Render prefix in solid white and suffix with one continuous gradient span */}
-      {(() => {
-        const base = "Never Miss a ";
-        const baseLen = base.length;
-        const fixedPhrase = "Never Miss a Lead Again";
-        const prefix = text.slice(0, Math.min(text.length, baseLen)).replace(/ /g, "\u00A0");
-        const suffix = text.length > baseLen ? text.slice(baseLen).replace(/ /g, "\u00A0") : "";
-        return (
-          <span className="relative inline-block">
-            <span className="invisible inline-block">{fixedPhrase.replace(/ /g, "\u00A0")}</span>
-            <span className="absolute left-0 top-0">
-              <span className="text-white inline-block">{prefix}</span>
-              {suffix && (
-                <span
-                  className="inline-block bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
-                  style={{
-                    filter:
-                      "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
-                  }}
-                >
-                  {suffix}
-                </span>
-              )}
-              <motion.span
-                className="inline-block ml-1 align-baseline"
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
-              >
-                |
-              </motion.span>
-            </span>
-          </span>
-        );
-      })()}
-    </motion.h1>
-  );
-};
-
-type EnergyPathProps = {
-  d: string;
-  active: boolean;
-  pulseDuration: number;
-};
-
-const EnergyPath = ({ d, active, pulseDuration }: EnergyPathProps) => {
-  return (
-    <>
-      <path
-        d={d}
-        fill="none"
-        stroke="rgba(37,99,235,0.26)"
-        strokeWidth={active ? 11 : 9}
-        strokeLinecap="round"
-        className="transition-all duration-300"
-      />
-      <motion.path
-        d={d}
-        fill="none"
-        stroke="url(#energyGradient)"
-        strokeWidth={active ? 5.4 : 4.2}
-        strokeLinecap="round"
-        animate={{ opacity: active ? [0.85, 1, 0.85] : [0.62, 0.82, 0.62] }}
-        transition={{ duration: active ? 1.1 : 1.8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.path
-        d={d}
-        fill="none"
-        stroke="rgba(255,255,255,0.72)"
-        strokeWidth={active ? 1.9 : 1.2}
-        strokeLinecap="round"
-        animate={{ opacity: active ? [0.2, 0.65, 0.2] : [0.06, 0.25, 0.06] }}
-        transition={{ duration: active ? 0.9 : 1.4, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      <g>
-        <circle r={active ? 2.8 : 2.2} fill="#ffffff" opacity={active ? 0.95 : 0.75}>
-          <animateMotion dur={`${pulseDuration}s`} repeatCount="indefinite" path={d} />
-        </circle>
-        <circle r={active ? 6.6 : 5.1} fill="url(#energyGradient)" opacity={active ? 0.28 : 0.18}>
-          <animateMotion dur={`${pulseDuration}s`} repeatCount="indefinite" path={d} />
-        </circle>
-      </g>
-    </>
-  );
-};
-
-type UseIsolatedDemoParams = {
-  demoId: DemoId;
-  activeDemo: DemoId | null;
-  setActiveDemo: (demo: DemoId | null) => void;
-  terminateOtherDemo: (demo: DemoId) => Promise<void>;
-  registerTerminator: (demo: DemoId, terminateFn: (() => Promise<void>) | null) => void;
-};
-
-const useIsolatedDemo = ({
-  demoId,
-  activeDemo,
-  setActiveDemo,
-  terminateOtherDemo,
-  registerTerminator,
-}: UseIsolatedDemoParams) => {
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [isLive, setIsLive] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [hasEnded, setHasEnded] = useState(false);
-
-  const sessionRef = useRef<{ accessToken: string; startedAt: number } | null>(null);
-  const audioStreamRef = useRef<{ startedAt: number; state: "streaming" | "stopped" } | null>(null);
-  const clientRef = useRef<RetellWebClient | null>(null);
-  const connectAbortRef = useRef<AbortController | null>(null);
-  const connectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const prewarmedTokenRef = useRef<{ token: string; timestamp: number } | null>(null);
-
-  const config = demoConfigs[demoId];
-
-  const clearConnectionTimeout = useCallback(() => {
-    if (connectTimeoutRef.current) {
-      clearTimeout(connectTimeoutRef.current);
-      connectTimeoutRef.current = null;
-    }
-  }, []);
-
-  const resetLocalState = useCallback(() => {
-    setIsConnecting(false);
-    setIsLive(false);
-    setIsMuted(false);
-    sessionRef.current = null;
-    audioStreamRef.current = null;
-    clearConnectionTimeout();
-    if (connectAbortRef.current) {
-      connectAbortRef.current.abort();
-      connectAbortRef.current = null;
-    }
-  }, [clearConnectionTimeout]);
-
-  const prewarmSession = useCallback(async () => {
-    if (
-      prewarmedTokenRef.current &&
-      Date.now() - prewarmedTokenRef.current.timestamp < 45000
-    ) {
-      return;
-    }
-
+  const handleSubmit = async () => {
+    if (honeypot) return;
+    setIsSubmitting(true);
     try {
-      const response = await fetch("/api/retell/create-web-call", {
+      const payload = {
+        full_name: fullName.trim(),
+        business_email: email.trim(),
+        phone_number: phone.replace(/\D/g, ""),
+        company_name: companyName.trim(),
+        industry,
+        biggest_lead_bottleneck: challenge.trim(),
+        systems_interested_in: runningAds,
+        message: challenge.trim(),
+        source: "hero-cta",
+        found_from: foundFrom,
+        booked_call: false,
+        call_date: "",
+        sms_consent: false,
+        jobs_per_month: jobsPerMonth,
+        ad_spend: adSpend,
+      };
+
+      await fetch("/api/submit-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          scenario: config.scenario,
-        }),
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) return;
-      const data: { access_token?: string } = await response.json();
-      if (data.access_token) {
-        prewarmedTokenRef.current = {
-          token: data.access_token,
-          timestamp: Date.now(),
-        };
+      // Fire Facebook Pixel
+      if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
+        (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead");
       }
+
+      setSubmitted(true);
     } catch {
-      return;
+      // Silently handle — redirect anyway
+      setSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [config.scenario]);
-
-  const ensureClient = useCallback(() => {
-    if (clientRef.current) return clientRef.current;
-
-    const client = new RetellWebClient();
-    clientRef.current = client;
-
-    client.on("call_started", () => {
-      clearConnectionTimeout();
-      setIsConnecting(false);
-      setIsLive(true);
-      setHasEnded(false);
-      audioStreamRef.current = { startedAt: Date.now(), state: "streaming" };
-    });
-
-    client.on("call_ended", () => {
-      setHasEnded(true);
-      resetLocalState();
-      if (activeDemo === demoId) {
-        setActiveDemo(null);
-      }
-    });
-
-    client.on("error", () => {
-      setHasEnded(true);
-      resetLocalState();
-      if (activeDemo === demoId) {
-        setActiveDemo(null);
-      }
-    });
-
-    return client;
-  }, [activeDemo, clearConnectionTimeout, demoId, resetLocalState, setActiveDemo]);
-
-  const terminate = useCallback(async () => {
-    const client = clientRef.current;
-    if (client) {
-      try {
-        client.stopCall();
-      } catch {
-        // no-op
-      }
-    }
-    setHasEnded(true);
-    resetLocalState();
-    if (activeDemo === demoId) {
-      setActiveDemo(null);
-    }
-  }, [activeDemo, demoId, resetLocalState, setActiveDemo]);
-
-  const startConnection = useCallback(async () => {
-    if (isConnecting || isLive) return;
-
-    setHasEnded(false);
-    if (activeDemo && activeDemo !== demoId) {
-      await terminateOtherDemo(demoId);
-    }
-
-    setActiveDemo(demoId);
-    setIsConnecting(true);
-
-    try {
-      const client = ensureClient();
-      connectTimeoutRef.current = setTimeout(() => {
-        setHasEnded(true);
-        resetLocalState();
-        if (activeDemo === demoId) setActiveDemo(null);
-      }, 7000);
-
-      let accessToken = prewarmedTokenRef.current?.token;
-      const isPrewarmedFresh =
-        !!prewarmedTokenRef.current &&
-        Date.now() - prewarmedTokenRef.current.timestamp < 45000;
-
-      if (!isPrewarmedFresh || !accessToken) {
-        const abortController = new AbortController();
-        connectAbortRef.current = abortController;
-
-        const response = await fetch("/api/retell/create-web-call", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          signal: abortController.signal,
-          body: JSON.stringify({
-            scenario: config.scenario,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to start call session");
-        }
-
-        const data: { access_token?: string } = await response.json();
-        if (!data.access_token) {
-          throw new Error("Missing access token");
-        }
-        accessToken = data.access_token;
-      }
-
-      sessionRef.current = { accessToken, startedAt: Date.now() };
-      connectAbortRef.current = null;
-
-      await client.startCall({ accessToken });
-
-      prewarmedTokenRef.current = null;
-      void prewarmSession();
-    } catch {
-      setHasEnded(true);
-      resetLocalState();
-      if (activeDemo === demoId) {
-        setActiveDemo(null);
-      }
-    }
-  }, [
-    activeDemo,
-    config.scenario,
-    demoId,
-    ensureClient,
-    isConnecting,
-    isLive,
-    prewarmSession,
-    resetLocalState,
-    setActiveDemo,
-    terminateOtherDemo,
-  ]);
-
-  const cancelConnecting = useCallback(async () => {
-    setHasEnded(true);
-    resetLocalState();
-    const client = clientRef.current;
-    if (client) {
-      try {
-        client.stopCall();
-      } catch {
-        // no-op
-      }
-    }
-    if (activeDemo === demoId) {
-      setActiveDemo(null);
-    }
-  }, [activeDemo, demoId, resetLocalState, setActiveDemo]);
-
-  const handleMicClick = useCallback(async () => {
-    if (isLive) {
-      await terminate();
-      return;
-    }
-    if (isConnecting) {
-      await cancelConnecting();
-      return;
-    }
-    await startConnection();
-  }, [cancelConnecting, isConnecting, isLive, startConnection, terminate]);
-
-  useEffect(() => {
-    void prewarmSession();
-  }, [prewarmSession]);
-
-  useEffect(() => {
-    registerTerminator(demoId, terminate);
-    return () => {
-      registerTerminator(demoId, null);
-      const client = clientRef.current;
-      if (client) {
-        try {
-          client.stopCall();
-        } catch {
-          // no-op
-        }
-      }
-      resetLocalState();
-    };
-  }, [demoId, registerTerminator, resetLocalState, terminate]);
-
-  return {
-    isConnecting,
-    isLive,
-    isMuted,
-    setIsMuted,
-    hasEnded,
-    sessionRef,
-    audioStreamRef,
-    handleMicClick,
   };
-};
 
-type BaseDemoCardProps = {
-  demoId: DemoId;
-  delay: number;
-  activeDemo: DemoId | null;
-  setActiveDemo: (demo: DemoId | null) => void;
-  terminateOtherDemo: (demo: DemoId) => Promise<void>;
-  registerTerminator: (demo: DemoId, terminateFn: (() => Promise<void>) | null) => void;
-};
-
-type PrimaryDemoCardProps = BaseDemoCardProps;
-
-const PrimaryDemoCard = ({
-  delay,
-  demoId,
-  activeDemo,
-  setActiveDemo,
-  terminateOtherDemo,
-  registerTerminator,
-}: PrimaryDemoCardProps) => {
-  const { isConnecting, isLive, hasEnded, handleMicClick } = useIsolatedDemo({
-    demoId,
-    activeDemo,
-    setActiveDemo,
-    terminateOtherDemo,
-    registerTerminator,
-  });
-
-  const micStyle = isLive
-    ? "bg-green-500 shadow-[0_0_24px_rgba(34,197,94,0.45)]"
-    : isConnecting
-    ? "bg-yellow-500 animate-pulse"
-    : hasEnded
-    ? "bg-neutral-700 ring-2 ring-red-500"
-    : "bg-neutral-600";
-
-  const statusText = isLive ? "LIVE" : isConnecting ? "Connecting..." : hasEnded ? "Ended" : "Click to start call";
-  const statusColor = isLive
-    ? "text-green-400"
-    : isConnecting
-    ? "text-yellow-400"
-    : hasEnded
-    ? "text-red-400"
-    : "text-neutral-400";
-
-  return (
-    <motion.div
-      initial={{ y: 60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ ease: "easeOut", duration: 0.5, delay }}
-      className="flex flex-col items-center justify-center max-w-2xl mx-auto w-full px-4"
-    >
-      <div className="relative w-full p-[2px] rounded-2xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] animate-gradient-flow">
-        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-2xl p-8 md:p-10 transition-all duration-300 ${
-          isLive ? "shadow-[0_0_60px_rgba(123,0,255,0.6)]" : "shadow-lg"
-        }`}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
-              🎙 Voice Receptionist Example
-            </h3>
-            {isLive && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
-                className="px-4 py-2 bg-green-500 text-white text-sm font-bold rounded-full flex items-center gap-2 shadow-[0_0_20px_rgba(34,197,94,0.6)]"
-              >
-                <span className="w-3 h-3 bg-white rounded-full animate-pulse"></span>
-                LIVE
-              </motion.span>
-            )}
-          </div>
-          <p className="text-base md:text-lg text-neutral-300 dark:text-neutral-400 mb-8">
-            See how ACAI handles missed inbound calls, captures lead details, and keeps opportunities moving to booked jobs.
-          </p>
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <button
-                onClick={handleMicClick}
-                className={`w-24 h-24 rounded-full ${micStyle} flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-purple-500/50 active:scale-95 relative z-10`}
-                aria-label="Start ACAI voice demo"
-              >
-                <Mic className="w-12 h-12 text-white" />
-              </button>
-              {isLive && (
-                <>
-                  <div className="absolute inset-0 rounded-full bg-green-500 opacity-30 animate-pulse scale-125" />
-                  <div className="absolute inset-0 rounded-full bg-green-500/30 blur-2xl scale-150 animate-pulse" />
-                </>
-              )}
-            </div>
-            <div className={`text-center font-semibold transition-all duration-150 ease-out ${statusColor}`}>{statusText}</div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-interface SecondaryDemoCardProps extends BaseDemoCardProps {
-  title: string;
-  subtitle?: string;
-  large?: boolean;
-  planLabel?: string;
-}
-
-const SecondaryDemoCard = ({
-  title,
-  subtitle,
-  large = false,
-  planLabel,
-  demoId,
-  delay,
-  activeDemo,
-  setActiveDemo,
-  terminateOtherDemo,
-  registerTerminator,
-}: SecondaryDemoCardProps) => {
-  const { isConnecting, isLive, hasEnded, handleMicClick } = useIsolatedDemo({
-    demoId,
-    activeDemo,
-    setActiveDemo,
-    terminateOtherDemo,
-    registerTerminator,
-  });
-
-  const micStyle = isLive
-    ? "bg-green-500 shadow-[0_0_18px_rgba(34,197,94,0.45)]"
-    : isConnecting
-    ? "bg-yellow-500 animate-pulse"
-    : hasEnded
-    ? "bg-neutral-700 ring-2 ring-red-500"
-    : "bg-neutral-600";
-
-  const statusText = isLive ? "LIVE" : isConnecting ? "Connecting..." : hasEnded ? "Ended" : "Click to start";
-  const statusColor = isLive
-    ? "text-green-400"
-    : isConnecting
-    ? "text-yellow-400"
-    : hasEnded
-    ? "text-red-400"
-    : "text-neutral-400";
-
-  return (
-    <motion.div
-      initial={{ y: 40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ ease: "easeOut", duration: 0.5, delay }}
-      className="flex w-full flex-col items-center justify-center"
-    >
-      <div className={`relative w-full p-[1.5px] rounded-xl bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] ${
-        large ? "max-w-3xl" : "max-w-xl"
-      }`}>
-        <div className={`w-full bg-black/70 dark:bg-neutral-900/90 backdrop-blur-sm rounded-xl transition-all duration-300 ${
-          large ? "p-7 md:p-8" : "p-5"
-        } ${
-          isLive ? "shadow-[0_0_30px_rgba(123,0,255,0.4)]" : "shadow-md"
-        }`}>
-          <h4 className={`${large ? "text-xl md:text-2xl" : "text-base"} font-semibold text-white mb-3 text-center`}>
-            {title}
-          </h4>
-          {subtitle && (
-            <p className="mb-5 text-center text-sm text-neutral-300 md:text-base">
-              {subtitle}
-            </p>
-          )}
-          {planLabel && (
-            <div className="mb-5 flex justify-center">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-200 transition-all duration-150 ease-out hover:border-white/35 hover:text-white"
-              >
-                {planLabel}
-              </Link>
-            </div>
-          )}
-          <div className="flex flex-col items-center gap-3">
-            <div className="relative">
-              <button
-                onClick={handleMicClick}
-                className={`${large ? "h-20 w-20" : "w-14 h-14"} rounded-full ${micStyle} flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-purple-500/50 active:scale-95 relative z-10`}
-                aria-label={`Start ${title} demo`}
-              >
-                <Mic className={`${large ? "h-10 w-10" : "w-7 h-7"} text-white`} />
-              </button>
-              {isLive && <div className="absolute inset-0 rounded-full bg-green-500/30 blur-xl scale-150 animate-pulse" />}
-            </div>
-            <div className={`${large ? "text-sm" : "text-xs"} font-medium transition-all duration-150 ease-out ${statusColor}`}>
-              {statusText}
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-export const Hero = () => {
-  const router = useRouter();
-  const heroCards = [
-    "Stop Running to the Phone",
-    "Stop Losing Emergency Calls",
-    "Stop Missing High-Value Leads",
-  ] as const;
-  const [startSublineTyping, setStartSublineTyping] = useState(false);
-  const [typingSyncCycle, setTypingSyncCycle] = useState(0);
-  const [headlineCanDelete, setHeadlineCanDelete] = useState(false);
-  const [headlineDeleteSignal, setHeadlineDeleteSignal] = useState(0);
-
-  const handleHeadlineWordTyped = useCallback(() => {
-    setTypingSyncCycle((previous) => previous + 1);
-    setHeadlineCanDelete(false);
-    if (!startSublineTyping) {
-      setStartSublineTyping(true);
+  useEffect(() => {
+    if (submitted) {
+      const timer = setTimeout(() => {
+        window.open(CAL_URL, "_blank", "noopener,noreferrer");
+        onClose();
+        setStep(1);
+        setSubmitted(false);
+        setIndustry("");
+        setJobsPerMonth("");
+        setRunningAds("");
+        setAdSpend("");
+        setFullName("");
+        setPhone("");
+        setEmail("");
+        setCompanyName("");
+        setChallenge("");
+        setFoundFrom("");
+      }, 1200);
+      return () => clearTimeout(timer);
     }
-  }, [startSublineTyping]);
+  }, [submitted, onClose]);
 
-  const handleWithAcaiHoldComplete = useCallback(() => {
-    setHeadlineCanDelete(true);
-  }, []);
+  const inputClass = "mt-1.5 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2.5 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm";
+  const selectClass = inputClass;
+  const labelClass = "block text-sm font-medium text-neutral-200";
 
-  const handleHeadlineDeleteStarted = useCallback(() => {
-    setHeadlineDeleteSignal((previous) => previous + 1);
-    setHeadlineCanDelete(false);
-  }, []);
+  if (!open) return null;
 
   return (
-    <div className="relative flex min-h-[62vh] flex-col overflow-hidden pt-20 md:min-h-[68vh] md:pt-32">
-      <motion.div
-        initial={{
-          y: 40,
-          opacity: 0,
-        }}
-        animate={{
-          y: 0,
-          opacity: 1,
-        }}
-        transition={{
-          ease: "easeOut",
-          duration: 0.5,
-        }}
-        className="flex justify-center"
-      >
-        <Badge onClick={() => router.push("/blog")}>
-          <span className="flex items-center gap-1.5 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
-            <Zap className="h-3 w-3 text-purple-400 fill-purple-400" />
-            ACAI Reports — Daily
-          </span>
-        </Badge>
-      </motion.div>
-
-      <TypewriterHeadline
-        canDelete={headlineCanDelete}
-        onWordTyped={handleHeadlineWordTyped}
-        onDeleteStarted={handleHeadlineDeleteStarted}
-      />
-
-      {startSublineTyping && (
-        <TypewriterText
-          syncCycle={typingSyncCycle}
-          deleteSignal={headlineDeleteSignal}
-          onWithAcaiHoldComplete={handleWithAcaiHoldComplete}
-        />
-      )}
-
-      <div className="relative z-10 mx-auto mt-7 w-full max-w-5xl px-4 text-center md:mt-10">
-        <div className="pointer-events-none absolute inset-x-10 -top-6 h-[220px] rounded-full bg-black/45 blur-2xl md:inset-x-20 md:h-[260px]" />
-        <div className="pointer-events-none absolute left-1/2 top-8 h-44 w-80 -translate-x-1/2 rounded-full bg-gradient-to-r from-red-500/14 via-purple-500/22 to-blue-500/14 blur-3xl" />
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
-          className="relative mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-xl"
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
-          Reliable AI-powered solutions for service businesses.
-        </motion.p>
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ duration: 0.25 }}
+            className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+          >
+            {/* Close */}
+            <button onClick={onClose} className="absolute right-4 top-4 text-neutral-400 hover:text-white text-xl leading-none">&times;</button>
 
-        <div className="relative mx-auto mt-7 grid w-full max-w-4xl grid-cols-1 gap-3 md:grid-cols-3">
-          {heroCards.map((card, index) => (
-            <motion.div
-              key={card}
-              initial={{ opacity: 0, y: 18, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.45, delay: 0.16 + index * 0.16, ease: "easeOut" }}
-              className="rounded-xl border border-white/10 bg-black/55 px-4 py-3 text-sm font-medium text-neutral-100 shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_0_22px_rgba(91,62,207,0.14)] backdrop-blur"
-            >
-              {card}
-            </motion.div>
-          ))}
-        </div>
+            {/* Progress bar */}
+            <div className="mb-6">
+              <div className="flex gap-2">
+                {[1, 2, 3].map((s) => (
+                  <div key={s} className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${s <= step ? "bg-gradient-to-r from-red-500 via-purple-500 to-blue-500" : "bg-white/10"}`} />
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-neutral-400">Step {step} of 3</p>
+            </div>
 
-        <div
-          style={{
-            width: "38%",
-            height: "1.5px",
-            background: "linear-gradient(to right, rgba(124,58,237,0.6), transparent)",
-            marginBottom: "12px",
-          }}
-        />
+            {submitted ? (
+              <div className="text-center py-8">
+                <p className="text-2xl font-semibold text-white mb-2">You&apos;re in! 🎯</p>
+                <p className="text-sm text-neutral-300">Redirecting you to book your strategy session...</p>
+              </div>
+            ) : step === 1 ? (
+              <div className="space-y-5">
+                <h3 className="text-xl font-semibold text-white">Tell us about your business</h3>
+                <div>
+                  <label className={labelClass}>What type of service business do you run?</label>
+                  <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={selectClass}>
+                    <option value="">Select industry</option>
+                    {industryOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>How many jobs/month are you currently booking?</label>
+                  <select value={jobsPerMonth} onChange={(e) => setJobsPerMonth(e.target.value)} className={selectClass}>
+                    <option value="">Select range</option>
+                    {jobsPerMonthOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                </div>
+                <button disabled={!canAdvance1} onClick={() => setStep(2)}
+                  className="w-full mt-2 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed">
+                  Continue →
+                </button>
+              </div>
+            ) : step === 2 ? (
+              <div className="space-y-5">
+                <h3 className="text-xl font-semibold text-white">Your ad spend</h3>
+                <div>
+                  <label className={labelClass}>Are you currently running paid ads?</label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {adStatusOptions.map((o) => (
+                      <button key={o} type="button" onClick={() => setRunningAds(o)}
+                        className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${runningAds === o ? "border-transparent bg-gradient-to-r from-red-500/35 via-purple-500/35 to-blue-500/35 text-white shadow-[0_0_14px_rgba(168,85,247,0.32)]" : "border-white/20 bg-neutral-950 text-neutral-200 hover:border-white/35"}`}>
+                        {o}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>What&apos;s your current monthly ad spend?</label>
+                  <select value={adSpend} onChange={(e) => setAdSpend(e.target.value)} className={selectClass}>
+                    <option value="">Select range</option>
+                    {adSpendOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                </div>
+                <div className="flex gap-3 mt-2">
+                  <button onClick={() => setStep(1)} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">&larr; Back</button>
+                  <button disabled={!canAdvance2} onClick={() => setStep(3)} className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed">Continue →</button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-white">Contact info</h3>
+                {/* Honeypot */}
+                <input type="text" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
-        <div className="pointer-events-none relative mx-auto mt-2 h-16 w-full max-w-4xl overflow-hidden">
-          <svg viewBox="0 0 900 170" className="h-full w-full" fill="none" aria-hidden>
-            <defs>
-              <linearGradient id="heroSignalGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.65" />
-                <stop offset="50%" stopColor="#a855f7" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#ef4444" stopOpacity="0.65" />
-              </linearGradient>
-            </defs>
-            {[
-              "M150 0 C 170 80, 260 120, 290 170",
-              "M450 0 C 455 78, 455 120, 450 170",
-              "M750 0 C 730 80, 640 120, 610 170",
-            ].map((path, index) => (
-              <g key={path}>
-                <path d={path} stroke="url(#heroSignalGradient)" strokeWidth="2" strokeLinecap="round" className="opacity-60" />
-                <circle r="3" fill="#fff" className="opacity-85">
-                  <animateMotion dur={`${1.8 + index * 0.35}s`} repeatCount="indefinite" path={path} />
-                </circle>
-              </g>
-            ))}
-          </svg>
-        </div>
-      </div>
-
-      <div className="h-1 md:h-2" />
-    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Full Name</label>
+                    <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className={inputClass} placeholder="John Smith" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Phone Number</label>
+                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))} className={inputClass} placeholder="5551234567" inputMode="numeric" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Business Email</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} placeholder="you@company.com" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Company Name</label>
+                    <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className={inputClass} placeholder="Your Company LLC" />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>What&apos;s your biggest challenge right now?</label>
+                  <textarea value={challenge} onChange={(e) => setChallenge(e.target.value)} rows={3} maxLength={300} className={inputClass} placeholder="E.g. leads come in but we can't follow up fast enough..." />
+                </div>
+                <div>
+                  <label className={labelClass}>How did you hear about us?</label>
+                  <select value={foundFrom} onChange={(e) => setFoundFrom(e.target.value)} className={selectClass}>
+                    <option value="">Select (optional)</option>
+                    {foundFromOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                </div>
+                <div className="flex gap-3 mt-2">
+                  <button onClick={() => setStep(2)} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">&larr; Back</button>
+                  <button disabled={!canSubmit || isSubmitting} onClick={handleSubmit}
+                    className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed">
+                    {isSubmitting ? "Submitting..." : "Claim My Strategy Session \u2192"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
-export const OurVoiceAISection = () => {
-  const [activeDemo, setActiveDemo] = useState<null | "main" | "plumbing" | "barber">(null);
-  const terminatorsRef = useRef<Partial<Record<DemoId, () => Promise<void>>>>({});
-
-  const registerTerminator = useCallback((demo: DemoId, terminateFn: (() => Promise<void>) | null) => {
-    if (terminateFn) {
-      terminatorsRef.current[demo] = terminateFn;
-      return;
-    }
-    delete terminatorsRef.current[demo];
-  }, []);
-
-  const terminateOtherDemo = useCallback(
-    async (selectedDemo: DemoId) => {
-      if (!activeDemo || activeDemo === selectedDemo) return;
-      const terminateActive = terminatorsRef.current[activeDemo];
-      if (terminateActive) {
-        await terminateActive();
-      }
-    },
-    [activeDemo]
-  );
+// ─── Main Hero export ───
+export const Hero = () => {
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <section className="relative z-20 mt-14 w-full max-w-7xl px-4 md:mt-20">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.55, ease: "easeOut" }}
-        className="mx-auto max-w-6xl"
-      >
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/55 p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_0_35px_rgba(96,70,255,0.18)] backdrop-blur-xl md:p-10">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-red-500/6 via-purple-500/8 to-blue-500/6" />
-          <div className="relative z-10 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-purple-300/70 md:text-sm">OUR VOICE AI</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">Our Voice AI</h2>
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
-              ACAI answers when your team cannot get to the phone, captures lead information, qualifies the caller, and helps turn missed opportunities into booked customers.
-            </p>
-          </div>
+    <div className="relative flex flex-col overflow-hidden pt-20 md:pt-32">
+      {/* ── Two-column hero ── */}
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
 
-          <div className="relative z-10 mt-10">
-            <PrimaryDemoCard
-              delay={0.05}
-              demoId="main"
-              activeDemo={activeDemo}
-              setActiveDemo={setActiveDemo}
-              terminateOtherDemo={terminateOtherDemo}
-              registerTerminator={registerTerminator}
-            />
+        {/* ── LEFT COLUMN ── */}
+        <div className="flex flex-col order-2 md:order-1">
 
-            <div className="mt-7 grid grid-cols-1 gap-5 md:grid-cols-2">
-              <SecondaryDemoCard
-                title="Epoxy Flooring Reception Demo"
-                subtitle="Example: qualify floor size, project urgency, and timeline before routing to your calendar."
-                planLabel="See Epoxy Plan"
-                demoId="plumbing"
-                delay={0.14}
-                activeDemo={activeDemo}
-                setActiveDemo={setActiveDemo}
-                terminateOtherDemo={terminateOtherDemo}
-                registerTerminator={registerTerminator}
-              />
-              <SecondaryDemoCard
-                title="Garage Installation Reception Demo"
-                subtitle="Example: capture build scope, confirm fit, and move the caller to a booked estimate faster."
-                planLabel="See Garage Installation Plan"
-                demoId="barber"
-                delay={0.2}
-                activeDemo={activeDemo}
-                setActiveDemo={setActiveDemo}
-                terminateOtherDemo={terminateOtherDemo}
-                registerTerminator={registerTerminator}
-              />
+          {/* Headline */}
+          <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ ease: "easeOut", duration: 0.5 }}>
+            <h1 className="text-3xl md:text-4xl lg:text-6xl font-semibold text-white leading-tight">
+              Turn Your Ad Spend Into
+            </h1>
+            <div className="text-3xl md:text-4xl lg:text-6xl font-semibold mt-1 min-h-[1.3em]">
+              <TypewriterBookedJobs />
             </div>
+            <p className="mt-2 text-lg md:text-2xl font-medium bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+              style={{
+                filter: "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2))",
+              }}
+            >
+              Fill Your Calendar With ACAI
+            </p>
+          </motion.div>
+
+          {/* Subheadline */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
+            className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-neutral-300"
+          >
+            Custom marketing systems built for service companies &mdash; not cookie-cutter campaigns.
+            We fill your calendar with high-quality leads using your existing ad budget.
+          </motion.p>
+
+          {/* Pain-point orbs */}
+          <PainPointOrbs />
+
+          {/* Harvard Stats */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:-mr-3">
+            <StatBubble
+              icon="📊"
+              source="Harvard Business Review"
+              quote="Companies that respond to leads within 60 seconds see a 391% increase in sales conversions."
+              delay={0.1}
+            />
+            <StatBubble
+              icon="⚡"
+              source="Speed-to-Lead Research"
+              quote="78% of buyers choose the first business that responds. Reply instantly — or lose the job."
+              delay={0.25}
+            />
           </div>
+
+          {/* CTA Block */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ease: "easeOut", duration: 0.5, delay: 0.3 }}
+            className="mt-10"
+          >
+            <button
+              onClick={() => setModalOpen(true)}
+              className="w-full md:w-auto px-10 py-4 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white text-lg font-bold transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] active:scale-[0.98]"
+            >
+              Claim Your Free Strategy Session &rarr;
+            </button>
+            <p className="mt-3 text-sm text-neutral-400 max-w-md">
+              No contracts. No retainers. We only get paid when you get results.
+            </p>
+
+            {/* Trust icons */}
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-neutral-300">
+              <span className="flex items-center gap-1.5">✅ Performance-Based Only</span>
+              <span className="flex items-center gap-1.5">✅ No Results = Deposit Back</span>
+              <span className="flex items-center gap-1.5">✅ Custom-Built, Not Cookie-Cutter</span>
+            </div>
+          </motion.div>
+
+          {/* Risk reversal badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="mt-6 max-w-md rounded-xl border border-white/10 bg-black/50 px-5 py-4 backdrop-blur"
+          >
+            <p className="text-sm text-neutral-200 leading-relaxed">
+              🛡️ <span className="font-semibold text-white">Zero-Risk Guarantee:</span> If we don&apos;t book you more qualified
+              jobs in your pilot, you get your deposit back. No questions asked.
+            </p>
+          </motion.div>
         </div>
+
+        {/* ── RIGHT COLUMN — Hero Image ── */}
+        <div className="relative flex items-start justify-center order-1 md:order-2 md:sticky md:top-32">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.25),0_0_80px_rgba(239,68,68,0.15)]"
+          >
+            <div className="absolute inset-0 rounded-2xl ring-2 ring-inset ring-purple-500/30 pointer-events-none z-10" />
+            <Image
+              src="/mainlandingpagehero.png"
+              alt="ACAI AI marketing funnel for service businesses"
+              width={600}
+              height={800}
+              priority
+              className="w-full h-auto object-cover rounded-2xl"
+              style={{ aspectRatio: "3/4" }}
+            />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ── Social proof bar ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="relative z-10 mx-auto mt-14 w-full max-w-5xl px-4 text-center"
+      >
+        <p className="text-xs md:text-sm text-neutral-400 tracking-wide leading-relaxed">
+          Powered by the same speed-to-lead principles trusted by enterprise sales teams &mdash; now built for local service businesses.
+        </p>
       </motion.div>
-    </section>
+
+      <div className="h-4 md:h-6" />
+
+      {/* Qualification Modal */}
+      <QualificationModal open={modalOpen} onClose={() => setModalOpen(false)} />
+    </div>
   );
 };
