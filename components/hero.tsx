@@ -169,15 +169,17 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
         ad_spend: adSpend,
       };
 
-      await fetch("/api/submit-lead", {
+      const response = await fetch("/api/submit-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      // Fire Facebook Pixel
-      if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
-        (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead");
+      if (response.ok) {
+        // Fire Facebook Pixel Lead event only on successful submission
+        if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
+          (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead");
+        }
       }
 
       setSubmitted(true);

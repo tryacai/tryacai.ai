@@ -297,6 +297,11 @@ export function ContactForm() {
         throw new Error(failed?.error || "Failed to submit form. Please try again.");
       }
 
+      // Fire Facebook Pixel Lead event only on successful submission
+      if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
+        (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead");
+      }
+
       setSubmitted(true);
       setBooking(null);
       setIsCalendarModalOpen(false);
