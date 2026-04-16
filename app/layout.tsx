@@ -72,6 +72,10 @@ export default function RootLayout({
                 'https://connect.facebook.net/en_US/fbevents.js');
                 fbq('init', '${META_PIXEL_ID}');
                 fbq('track', 'PageView');
+                console.log('[Meta Pixel] Initialized with ID ${META_PIXEL_ID}');
+                console.log('[Meta Pixel] PageView fired');
+                fbq('track', 'TestEvent');
+                console.log('[Meta Pixel] TestEvent fired — remove after verifying in Events Manager');
               `,
             }}
           />

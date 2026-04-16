@@ -111,111 +111,191 @@ const StatBubble = ({ icon, source, quote, delay }: { icon: string; source: stri
   </motion.div>
 );
 
-// ─── Qualification Modal ───
-type QualStep = 1 | 2 | 3;
+// ─── Qualification Modal (Floor Coating Only) ───
 
-const industryOptions = ["Plumbing", "HVAC", "Roofing", "Electrical", "Restoration", "Landscaping", "Pest Control", "Cleaning", "Other"] as const;
-const jobsPerMonthOptions = ["Under 20", "20\u201350", "50\u2013100", "100+"] as const;
-const adStatusOptions = ["Yes", "No", "Planning to"] as const;
-const adSpendOptions = ["Not yet", "Under $1K", "$1K\u2013$3K", "$3K\u2013$7K", "$7K\u2013$15K", "$15K+"] as const;
-const foundFromOptions = ["Google", "Facebook Ad", "Instagram", "Referral", "Cold Outreach", "Other"] as const;
+type ModalStep =
+  | "qualify"
+  | "disqualified"
+  | "company_name"
+  | "full_name"
+  | "business_email"
+  | "phone_number"
+  | "urgency"
+  | "booking"
+  | "submitting"
+  | "thank_you"
+  | "booked";
 
+const APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycby6UXqt3SZxDEHNR6hUCgTwDuo7Ii6Er1AJ91jJ10E9svxuMsPJwHakE7x4ECln9r02mQ/exec";
 const CAL_URL = "https://cal.com/tryacai.ai/30min";
 
-const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
-  const [step, setStep] = useState<QualStep>(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+/** Fire a Meta Pixel event if fbq is available */
+function fireFbq(eventName: string) {
+  if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
+    (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", eventName);
+    console.log(`[Meta Pixel] Fired: ${eventName}`);
+  }
+}
 
-  // Step 1
-  const [industry, setIndustry] = useState("");
-  const [jobsPerMonth, setJobsPerMonth] = useState("");
-  // Step 2
-  const [runningAds, setRunningAds] = useState("");
-  const [adSpend, setAdSpend] = useState("");
-  // Step 3
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [challenge, setChallenge] = useState("");
-  const [foundFrom, setFoundFrom] = useState("");
-  // Honeypot
-  const [honeypot, setHoneypot] = useState("");
+/** Detect Cal.com booking success from postMessage */
+function isBookingSuccessfulCalEvent(rawData: unknown): boolean {
+  let data: Record<string, unknown> = {};
+  if (typeof rawData === "string") {
+    try { data = JSON.parse(rawData); } catch { return false; }
+  } else if (rawData && typeof rawData === "object") {
+    data = rawData as Record<string, unknown>;
+  } else {
+    return false;
+  }
+  const candidates = [
+    data.event, data.eventType, data.type,
+    ...(data.payload && typeof data.payload === "object" ? [
+      (data.payload as Record<string, unknown>).event,
+      (data.payload as Record<string, unknown>).eventType,
+      (data.payload as Record<string, unknown>).type,
+    ] : []),
+    ...(data.data && typeof data.data === "object" ? [
+      (data.data as Record<string, unknown>).event,
+      (data.data as Record<string, unknown>).eventType,
+      (data.data as Record<string, unknown>).type,
+    ] : []),
+  ].filter(Boolean).map(String);
+  return candidates.some((v) => v === "bookingSuccessful");
+}
 
-  const canAdvance1 = industry && jobsPerMonth;
-  const canAdvance2 = runningAds && adSpend;
-  const canSubmit = fullName && phone && email && companyName;
+/** Extract call_date from Cal.com postMessage */
+function extractCallDate(rawData: unknown): string {
+  let data: Record<string, unknown> = {};
+  if (typeof rawData === "string") {
+    try { data = JSON.parse(rawData); } catch { return ""; }
+  } else if (rawData && typeof rawData === "object") {
+    data = rawData as Record<string, unknown>;
+  } else {
+    return "";
+  }
+  const payload = (data.payload || data.data || data) as Record<string, unknown>;
+  const booking = (payload.booking || payload) as Record<string, unknown>;
+  return String(booking.startTime || booking.start_time || booking.start || booking.startsAt || "");
+}
 
-  const handleSubmit = async () => {
-    if (honeypot) return;
-    setIsSubmitting(true);
-    try {
-      const payload = {
-        full_name: fullName.trim(),
-        business_email: email.trim(),
-        phone_number: phone.replace(/\D/g, ""),
-        company_name: companyName.trim(),
-        industry,
-        biggest_lead_bottleneck: challenge.trim(),
-        systems_interested_in: runningAds,
-        message: challenge.trim(),
-        source: "hero-cta",
-        found_from: foundFrom,
-        booked_call: false,
-        call_date: "",
-        sms_consent: false,
-        jobs_per_month: jobsPerMonth,
-        ad_spend: adSpend,
-      };
-
-      const response = await fetch("/api/submit-lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        // Fire Facebook Pixel Lead event only on successful submission
-        if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
-          (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "Lead");
-        }
-      }
-
-      setSubmitted(true);
-    } catch {
-      // Silently handle — redirect anyway
-      setSubmitted(true);
-    } finally {
-      setIsSubmitting(false);
+/** Submit lead payload to Google Apps Script */
+async function submitToAppsScript(payload: Record<string, unknown>): Promise<boolean> {
+  try {
+    // Do NOT set Content-Type: application/json — that triggers a CORS preflight
+    // that Apps Script cannot handle. Sending as text/plain avoids the preflight,
+    // and Apps Script can still read the JSON body via e.postData.contents.
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      console.error("[Apps Script] Non-OK response:", res.status);
+      return false;
     }
+    console.log("[Apps Script] Submission confirmed, status:", res.status);
+    return true;
+  } catch (err) {
+    console.error("[Apps Script] Submission failed:", err);
+    return false;
+  }
+}
+
+const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [step, setStep] = useState<ModalStep>("qualify");
+  const [companyName, setCompanyName] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [businessEmail, setBusinessEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Build the Cal.com iframe URL with prefilled data
+  const calEmbedUrl = (() => {
+    const params = new URLSearchParams();
+    if (fullName) params.set("name", fullName);
+    if (businessEmail) params.set("email", businessEmail);
+    if (phoneNumber) params.set("phone", phoneNumber);
+    // Cal.com supports "notes" or "metadata" for custom fields — pass company name in notes
+    if (companyName) params.set("notes", `Company: ${companyName}`);
+    return `${CAL_URL}?embed=true&${params.toString()}`;
+  })();
+
+  const buildPayload = (bookedCall: boolean, callDate: string) => ({
+    submitted_at: new Date().toISOString(),
+    qualification_status: "qualified",
+    company_name: companyName.trim(),
+    full_name: fullName.trim(),
+    business_email: businessEmail.trim(),
+    phone_number: phoneNumber.replace(/\D/g, ""),
+    source: "claim-free-strategy-session",
+    booked_call: bookedCall,
+    call_date: callDate,
+  });
+
+  // Listen for Cal.com booking confirmation
+  useEffect(() => {
+    if (step !== "booking") return;
+
+    function handleCalMessage(event: MessageEvent) {
+      if (!event.origin?.includes("cal.com")) return;
+      if (!isBookingSuccessfulCalEvent(event.data)) return;
+
+      const callDate = extractCallDate(event.data);
+
+      // Submit to Apps Script with booked_call = true
+      setIsSubmitting(true);
+      setStep("submitting");
+
+      submitToAppsScript(buildPayload(true, callDate)).then((success) => {
+        if (success) {
+          fireFbq("Lead");
+          fireFbq("Schedule");
+          console.log("[Meta Pixel] Lead + Schedule fired after booking confirmation");
+        }
+        setIsSubmitting(false);
+        setStep("booked");
+      });
+    }
+
+    window.addEventListener("message", handleCalMessage);
+    return () => window.removeEventListener("message", handleCalMessage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, companyName, fullName, businessEmail, phoneNumber]);
+
+  // Handle "Not now" — submit without booking
+  const handleNotNow = async () => {
+    setIsSubmitting(true);
+    setStep("submitting");
+
+    const success = await submitToAppsScript(buildPayload(false, ""));
+    if (success) {
+      fireFbq("Lead");
+      console.log("[Meta Pixel] Lead fired after non-booking submission");
+    }
+    setIsSubmitting(false);
+    setStep("thank_you");
   };
 
-  useEffect(() => {
-    if (submitted) {
-      const timer = setTimeout(() => {
-        window.open(CAL_URL, "_blank", "noopener,noreferrer");
-        onClose();
-        setStep(1);
-        setSubmitted(false);
-        setIndustry("");
-        setJobsPerMonth("");
-        setRunningAds("");
-        setAdSpend("");
-        setFullName("");
-        setPhone("");
-        setEmail("");
-        setCompanyName("");
-        setChallenge("");
-        setFoundFrom("");
-      }, 1200);
-      return () => clearTimeout(timer);
-    }
-  }, [submitted, onClose]);
+  const resetAndClose = () => {
+    onClose();
+    // Reset after animation
+    setTimeout(() => {
+      setStep("qualify");
+      setCompanyName("");
+      setFullName("");
+      setBusinessEmail("");
+      setPhoneNumber("");
+    }, 300);
+  };
 
-  const inputClass = "mt-1.5 block w-full rounded-lg border border-white/10 bg-neutral-950 px-4 py-2.5 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm";
-  const selectClass = inputClass;
-  const labelClass = "block text-sm font-medium text-neutral-200";
+  const inputClass =
+    "mt-2 block w-full rounded-xl border border-white/10 bg-neutral-950 px-4 py-3.5 text-white text-base placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500";
+  const labelClass = "block text-sm font-medium text-neutral-300";
+
+  // Progress calculation
+  const stepOrder: ModalStep[] = ["qualify", "company_name", "full_name", "business_email", "phone_number", "urgency"];
+  const progressIndex = stepOrder.indexOf(step);
+  const progressPercent = progressIndex >= 0 ? Math.round(((progressIndex + 1) / stepOrder.length) * 100) : 100;
 
   if (!open) return null;
 
@@ -227,7 +307,7 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
-          onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+          onClick={(e) => { if (e.target === e.currentTarget) resetAndClose(); }}
         >
           <motion.div
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -236,115 +316,244 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
             transition={{ duration: 0.25 }}
             className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
           >
-            {/* Close */}
-            <button onClick={onClose} className="absolute right-4 top-4 text-neutral-400 hover:text-white text-xl leading-none">&times;</button>
+            {/* Close button */}
+            <button onClick={resetAndClose} className="absolute right-4 top-4 text-neutral-400 hover:text-white text-xl leading-none">&times;</button>
 
-            {/* Progress bar */}
-            <div className="mb-6">
-              <div className="flex gap-2">
-                {[1, 2, 3].map((s) => (
-                  <div key={s} className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${s <= step ? "bg-gradient-to-r from-red-500 via-purple-500 to-blue-500" : "bg-white/10"}`} />
-                ))}
+            {/* Progress bar — only show during input steps */}
+            {progressIndex >= 0 && (
+              <div className="mb-6">
+                <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-gradient-to-r from-red-500 via-purple-500 to-blue-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  />
+                </div>
               </div>
-              <p className="mt-2 text-xs text-neutral-400">Step {step} of 3</p>
-            </div>
+            )}
 
-            {submitted ? (
-              <div className="text-center py-8">
-                <p className="text-2xl font-semibold text-white mb-2">You&apos;re in! 🎯</p>
-                <p className="text-sm text-neutral-300">Redirecting you to book your strategy session...</p>
-              </div>
-            ) : step === 1 ? (
-              <div className="space-y-5">
-                <h3 className="text-xl font-semibold text-white">Tell us about your business</h3>
-                <div>
-                  <label className={labelClass}>What type of service business do you run?</label>
-                  <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={selectClass}>
-                    <option value="">Select industry</option>
-                    {industryOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className={labelClass}>How many jobs/month are you currently booking?</label>
-                  <select value={jobsPerMonth} onChange={(e) => setJobsPerMonth(e.target.value)} className={selectClass}>
-                    <option value="">Select range</option>
-                    {jobsPerMonthOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                </div>
-                <button disabled={!canAdvance1} onClick={() => setStep(2)}
-                  className="w-full mt-2 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed">
-                  Continue →
-                </button>
-              </div>
-            ) : step === 2 ? (
-              <div className="space-y-5">
-                <h3 className="text-xl font-semibold text-white">Your ad spend</h3>
-                <div>
-                  <label className={labelClass}>Are you currently running paid ads?</label>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {adStatusOptions.map((o) => (
-                      <button key={o} type="button" onClick={() => setRunningAds(o)}
-                        className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${runningAds === o ? "border-transparent bg-gradient-to-r from-red-500/35 via-purple-500/35 to-blue-500/35 text-white shadow-[0_0_14px_rgba(168,85,247,0.32)]" : "border-white/20 bg-neutral-950 text-neutral-200 hover:border-white/35"}`}>
-                        {o}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className={labelClass}>What&apos;s your current monthly ad spend?</label>
-                  <select value={adSpend} onChange={(e) => setAdSpend(e.target.value)} className={selectClass}>
-                    <option value="">Select range</option>
-                    {adSpendOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                </div>
-                <div className="flex gap-3 mt-2">
-                  <button onClick={() => setStep(1)} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">&larr; Back</button>
-                  <button disabled={!canAdvance2} onClick={() => setStep(3)} className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed">Continue →</button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-white">Contact info</h3>
-                {/* Honeypot */}
-                <input type="text" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Full Name</label>
-                    <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className={inputClass} placeholder="John Smith" />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Phone Number</label>
-                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))} className={inputClass} placeholder="5551234567" inputMode="numeric" />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Business Email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} placeholder="you@company.com" />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Company Name</label>
-                    <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className={inputClass} placeholder="Your Company LLC" />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelClass}>What&apos;s your biggest challenge right now?</label>
-                  <textarea value={challenge} onChange={(e) => setChallenge(e.target.value)} rows={3} maxLength={300} className={inputClass} placeholder="E.g. leads come in but we can't follow up fast enough..." />
-                </div>
-                <div>
-                  <label className={labelClass}>How did you hear about us?</label>
-                  <select value={foundFrom} onChange={(e) => setFoundFrom(e.target.value)} className={selectClass}>
-                    <option value="">Select (optional)</option>
-                    {foundFromOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                </div>
-                <div className="flex gap-3 mt-2">
-                  <button onClick={() => setStep(2)} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">&larr; Back</button>
-                  <button disabled={!canSubmit || isSubmitting} onClick={handleSubmit}
-                    className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed">
-                    {isSubmitting ? "Submitting..." : "Claim My Strategy Session \u2192"}
+            {/* ── Step: Qualify ── */}
+            {step === "qualify" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 text-center py-4">
+                <h3 className="text-2xl font-semibold text-white">Are you a floor coating business?</h3>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setStep("company_name")}
+                    className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-4 text-lg font-bold text-white transition hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(168,85,247,0.35)]"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => setStep("disqualified")}
+                    className="flex-1 rounded-xl border border-white/15 bg-neutral-900 py-4 text-lg font-semibold text-neutral-300 transition hover:border-white/30 hover:text-white"
+                  >
+                    No
                   </button>
                 </div>
-              </div>
+              </motion.div>
+            )}
+
+            {/* ── Step: Disqualified ── */}
+            {step === "disqualified" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 text-center py-8">
+                <p className="text-lg text-neutral-200 leading-relaxed">
+                  At the moment, we only work with floor coating companies.<br />Thank you for your interest.
+                </p>
+                <button onClick={resetAndClose} className="rounded-xl border border-white/15 bg-neutral-900 px-8 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">
+                  Close
+                </button>
+              </motion.div>
+            )}
+
+            {/* ── Step: Company Name ── */}
+            {step === "company_name" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                <h3 className="text-xl font-semibold text-white">What&apos;s your company name?</h3>
+                <div>
+                  <label className={labelClass}>Company Name</label>
+                  <input
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className={inputClass}
+                    placeholder="E.g. Elite Floor Coatings LLC"
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === "Enter" && companyName.trim()) setStep("full_name"); }}
+                  />
+                </div>
+                <button
+                  disabled={!companyName.trim()}
+                  onClick={() => setStep("full_name")}
+                  className="w-full rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Continue →
+                </button>
+              </motion.div>
+            )}
+
+            {/* ── Step: Full Name ── */}
+            {step === "full_name" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                <h3 className="text-xl font-semibold text-white">What&apos;s your full name?</h3>
+                <div>
+                  <label className={labelClass}>Full Name</label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className={inputClass}
+                    placeholder="Chris Moreno"
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === "Enter" && fullName.trim()) setStep("business_email"); }}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setStep("company_name")} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">← Back</button>
+                  <button
+                    disabled={!fullName.trim()}
+                    onClick={() => setStep("business_email")}
+                    className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Continue →
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── Step: Business Email ── */}
+            {step === "business_email" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                <h3 className="text-xl font-semibold text-white">What&apos;s your email?</h3>
+                <div>
+                  <label className={labelClass}>Business Email</label>
+                  <input
+                    type="email"
+                    value={businessEmail}
+                    onChange={(e) => setBusinessEmail(e.target.value)}
+                    className={inputClass}
+                    placeholder="chris@yourcompany.com"
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === "Enter" && businessEmail.includes("@")) setStep("phone_number"); }}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setStep("full_name")} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">← Back</button>
+                  <button
+                    disabled={!businessEmail.includes("@")}
+                    onClick={() => setStep("phone_number")}
+                    className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Continue →
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── Step: Phone Number ── */}
+            {step === "phone_number" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
+                <h3 className="text-xl font-semibold text-white">What&apos;s your phone number?</h3>
+                <div>
+                  <label className={labelClass}>Phone Number</label>
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+                    className={inputClass}
+                    placeholder="5551234567"
+                    inputMode="numeric"
+                    autoFocus
+                    onKeyDown={(e) => { if (e.key === "Enter" && phoneNumber.replace(/\D/g, "").length >= 10) setStep("urgency"); }}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setStep("business_email")} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">← Back</button>
+                  <button
+                    disabled={phoneNumber.replace(/\D/g, "").length < 10}
+                    onClick={() => setStep("urgency")}
+                    className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-3.5 text-sm font-semibold text-white transition hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Continue →
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── Step: Urgency + Book? ── */}
+            {step === "urgency" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 text-center py-4">
+                <div className="rounded-xl border border-purple-500/30 bg-purple-500/5 p-5">
+                  <p className="text-sm text-neutral-200 leading-relaxed">
+                    🚀 We&apos;re launching this cohort at the end of this week. Book your free call now for priority access.
+                    After this round, the next opening may not be until next month.
+                  </p>
+                </div>
+                <h3 className="text-xl font-semibold text-white">Would you like to book your free 15-minute call now?</h3>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setStep("booking")}
+                    className="flex-1 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 py-4 text-lg font-bold text-white transition hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(168,85,247,0.35)]"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={handleNotNow}
+                    className="flex-1 rounded-xl border border-white/15 bg-neutral-900 py-4 text-base font-semibold text-neutral-300 transition hover:border-white/30 hover:text-white"
+                  >
+                    Not now
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── Step: Cal.com Booking Embed ── */}
+            {step === "booking" && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
+                <h3 className="text-xl font-semibold text-white text-center">Pick a time that works</h3>
+                <p className="text-sm text-neutral-400 text-center">Select your preferred date &amp; time below.</p>
+                <div className="rounded-xl overflow-hidden border border-white/10" style={{ minHeight: 450 }}>
+                  <iframe
+                    src={calEmbedUrl}
+                    className="w-full border-0"
+                    style={{ height: 500, colorScheme: "dark" }}
+                    title="Book your free strategy call"
+                  />
+                </div>
+                <button onClick={handleNotNow} className="w-full rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-400 hover:text-white transition">
+                  Skip — submit without booking
+                </button>
+              </motion.div>
+            )}
+
+            {/* ── Step: Submitting ── */}
+            {(step === "submitting" || isSubmitting) && step !== "booking" && step !== "urgency" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-purple-500" />
+                <p className="mt-4 text-sm text-neutral-400">Submitting your information...</p>
+              </motion.div>
+            )}
+
+            {/* ── Step: Thank You (no booking) ── */}
+            {step === "thank_you" && (
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10 space-y-4">
+                <p className="text-2xl font-semibold text-white">Thanks! ✅</p>
+                <p className="text-base text-neutral-300">We received your info and will follow up shortly.</p>
+                <button onClick={resetAndClose} className="mt-2 rounded-xl border border-white/15 bg-neutral-900 px-8 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">
+                  Close
+                </button>
+              </motion.div>
+            )}
+
+            {/* ── Step: Booked confirmation ── */}
+            {step === "booked" && (
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10 space-y-4">
+                <p className="text-2xl font-semibold text-white">Your call is booked! 📅</p>
+                <p className="text-base text-neutral-300">Check your email for confirmation.</p>
+                <button onClick={resetAndClose} className="mt-2 rounded-xl border border-white/15 bg-neutral-900 px-8 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">
+                  Close
+                </button>
+              </motion.div>
             )}
           </motion.div>
         </motion.div>
