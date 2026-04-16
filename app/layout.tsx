@@ -10,7 +10,7 @@ const META_PIXEL_ID = "1215596613789536";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tryacai.ai"),
-  title: "Try ACAI AI | Never Miss a Lead Again",
+  title: "Try ACAI Marketing | Never Miss a Lead Again",
   description:
     "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
   icons: {
@@ -19,24 +19,24 @@ export const metadata: Metadata = {
     apple: "/apple-icon.jpg",
   },
   openGraph: {
-    title: "Try ACAI AI | Never Miss a Lead Again",
+    title: "Try ACAI Marketing | Never Miss a Lead Again",
     description:
       "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
     url: "https://tryacai.ai",
-    siteName: "ACAI AI",
+    siteName: "ACAI Marketing",
     images: [
       {
         url: "https://tryacai.ai/nevermissaleadpreviewimage.png",
         width: 1200,
         height: 630,
-        alt: "Try ACAI AI | Never Miss a Lead Again",
+        alt: "Try ACAI Marketing | Never Miss a Lead Again",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Try ACAI AI | Never Miss a Lead Again",
+    title: "Try ACAI Marketing | Never Miss a Lead Again",
     description:
       "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
     images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],

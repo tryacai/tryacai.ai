@@ -2,7 +2,7 @@ import { IndustryPlaceholderPage } from "@/components/industry-placeholder-page"
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Industry Solutions | ACAI AI",
+  title: "Industry Solutions | ACAI Marketing",
   description: "Lead conversion and follow-up automation for service businesses.",
   robots: {
     index: false,

@@ -6,7 +6,7 @@ import { Pricing } from "@/components/pricing";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing | ACAI AI",
+  title: "Pricing | ACAI Marketing",
   description:
     "Flexible ACAI plans built to improve lead response speed, automate follow up, and convert more demand into booked revenue.",
   openGraph: {

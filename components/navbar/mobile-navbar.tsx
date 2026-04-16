@@ -98,7 +98,7 @@ export const MobileNavbar = ({ navItems }: any) => {
           <div className="flex flex-row w-full items-start gap-2.5  px-8 py-4 ">
             <Button 
               as={Link} 
-              href="/contact"
+              href="/#contact"
               className="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 hover:from-blue-600 hover:via-purple-600 hover:to-red-600 text-white flex items-center gap-2 border-0 shadow-none"
             >
               <Phone className="h-4 w-4" />

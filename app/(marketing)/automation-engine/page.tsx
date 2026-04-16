@@ -4,7 +4,7 @@ import { Link } from "next-view-transitions";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Automation Engine | ACAI AI",
+  title: "Automation Engine | ACAI Marketing",
   description:
     "ACAI Automation Engine connects capture, qualification, routing, and booking so your team can convert more leads without response delays.",
 };

@@ -51,7 +51,7 @@ export const Logo = () => {
         <div className="relative w-8 h-8 transition-transform duration-300 ease-out group-hover:rotate-3 group-hover:scale-105">
           <Image
             src={logoImage}
-            alt="ACAI AI Logo"
+            alt="ACAI Marketing Logo"
             fill
             className="object-contain"
             style={{ background: 'transparent' }}
@@ -59,7 +59,7 @@ export const Logo = () => {
           />
         </div>
       </div>
-      <span className="font-medium text-black dark:text-white">ACAI AI</span>
+      <span className="font-medium text-black dark:text-white">ACAI Marketing</span>
     </Link>
   );
 };

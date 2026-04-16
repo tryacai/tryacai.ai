@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { HorizontalGradient } from "@/components/horizontal-gradient";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | ACAI AI",
+  title: "Privacy Policy | ACAI Marketing",
   description:
-    "ACAI AI's Privacy Policy. Learn how we collect, use, and protect your data when you use our lead conversion and automation platform.",
+    "ACAI Marketing's Privacy Policy. Learn how we collect, use, and protect your data when you use our lead conversion and automation platform.",
   robots: {
     index: false,
     follow: false,
@@ -42,10 +42,10 @@ export default function PrivacyPolicyPage() {
               Our Commitment
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              Thank you for choosing ACAI AI. ACAI AI is an AI-powered virtual receptionist and messaging automation platform built specifically for plumbing and HVAC professionals. We understand that your data represents your business reputation and customer trust.
+              Thank you for choosing ACAI Marketing. ACAI Marketing is an AI-powered virtual receptionist and messaging automation platform built specifically for plumbing and HVAC professionals. We understand that your data represents your business reputation and customer trust.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              This Privacy Policy explains how ACAI AI, operated by ACAI Enterprises LLC ("we," "our," or "us"), collects, uses, and protects information processed through our platform.
+              This Privacy Policy explains how ACAI Marketing, operated by ACAI Enterprises LLC ("we," "our," or "us"), collects, uses, and protects information processed through our platform.
             </p>
           </section>
 

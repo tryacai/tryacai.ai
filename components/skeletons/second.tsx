@@ -34,7 +34,7 @@ export const SkeletonTwo = () => {
             className="content mt-4 w-[90%] mx-auto"
           >
             <AIMessage>
-              Hi Sarah, this is ACAI AI calling on behalf of Johnson Plumbing. You have a water heater maintenance appointment tomorrow at 9 AM. Does that still work for you?
+              Hi Sarah, this is ACAI Marketing calling on behalf of Johnson Plumbing. You have a water heater maintenance appointment tomorrow at 9 AM. Does that still work for you?
             </AIMessage>
             <CustomerMessage>
               Yes, that works.

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Voice AI | ACAI AI",
+  title: "Voice AI | ACAI Marketing",
   description:
     "Use ACAI Voice AI to answer, qualify, and route high-intent calls quickly as part of your lead conversion and automation system.",
 };

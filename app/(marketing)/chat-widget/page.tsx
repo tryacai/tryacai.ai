@@ -4,7 +4,7 @@ import { Link } from "next-view-transitions";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Chat Widget | ACAI AI",
+  title: "Chat Widget | ACAI Marketing",
   description:
     "ACAI Chat Widget helps service businesses convert more leads with instant engagement, qualification, and routing into booked workflows.",
 };

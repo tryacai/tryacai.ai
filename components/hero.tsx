@@ -4,16 +4,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-// ─── Typewriter: "Booked Jobs." line ───
-const TypewriterBookedJobs = () => {
-  const phrase = "Booked Jobs.";
+// ─── Typewriter: "with ACAI" only ───
+const TypewriterWithACAI = () => {
+  const phrase = "with ACAI";
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<"typing" | "holding" | "deleting">("typing");
 
   useEffect(() => {
-    const typingSpeed = 105;
+    const typingSpeed = 120;
     const deletingSpeed = 90;
-    const holdDuration = 3500;
+    const holdDuration = 5000;
     let timer: NodeJS.Timeout;
 
     if (phase === "typing") {
@@ -32,27 +32,24 @@ const TypewriterBookedJobs = () => {
       }
     }
 
-    return () => { if (timer) clearTimeout(timer); };
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [text, phase]);
 
   return (
-    <span className="inline-block bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
-      style={{
-        filter: "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.1))",
-      }}
-    >
+    <span className="inline-block">
       {text.split("").map((char, index) => (
         <motion.span
           key={index}
-          className="inline-block"
-          style={{ marginLeft: char === " " ? "0.5em" : undefined }}
-          whileHover={{ y: -4, scale: 1.1, transition: { duration: 0.2 } }}
+          className="inline-block text-white"
+          style={{ marginLeft: char === " " ? "0.25em" : undefined }}
         >
           {char}
         </motion.span>
       ))}
       <motion.span
-        className="inline-block ml-1"
+        className="inline-block ml-0.5 text-white"
         animate={{ opacity: [1, 0, 1] }}
         transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -62,52 +59,25 @@ const TypewriterBookedJobs = () => {
   );
 };
 
-// ─── Pain-point orbs (flow right, fade/shrink at right edge) ───
-const painPoints = [
-  "Wasting Budget on Ads That Don\u2019t Convert",
-  "Chasing Low-Quality Leads That Ghost You",
-  "Losing Jobs to Competitors Who Reply Faster",
-];
-
-const PainPointOrbs = () => (
-  <div className="relative mt-8 flex flex-col gap-4 md:gap-3">
-    {painPoints.map((text, i) => (
-      <motion.div
-        key={text}
-        initial={{ x: -40, opacity: 0, scale: 0.92 }}
-        animate={{ x: [0, 60, 120], opacity: [1, 0.85, 0], scale: [1, 0.95, 0.7] }}
-        transition={{
-          duration: 5,
-          delay: i * 1.4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="flex items-center gap-3"
-      >
-        <span className="shrink-0 h-3 w-3 rounded-full bg-gradient-to-r from-red-500 to-purple-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-        <span className="text-sm md:text-base text-neutral-300 font-medium whitespace-nowrap">{text}</span>
-      </motion.div>
-    ))}
-  </div>
-);
-
-// ─── Harvard stats bubbles ───
-const StatBubble = ({ icon, source, quote, delay }: { icon: string; source: string; quote: string; delay: number }) => (
+// ─── Floating Pill Banner ───
+const PillBanner = ({ text, delay }: { text: string; delay: number }) => (
   <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{ duration: 0.6, delay, ease: "easeOut" }}
-    className="relative flex-1 min-w-[260px] rounded-2xl p-[1px] bg-gradient-to-r from-red-500 via-purple-500 to-blue-500"
+    initial={{ opacity: 0, y: 16 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay, ease: "easeOut" }}
+    className="relative flex items-center gap-3 rounded-full border border-amber-500/30 bg-neutral-950/80 px-5 py-3 backdrop-blur-sm"
+    style={{
+      boxShadow: "0 0 20px rgba(212, 175, 55, 0.08), inset 0 0 20px rgba(212, 175, 55, 0.03)",
+    }}
   >
-    {/* Speech-bubble pointer */}
-    <div className="absolute -top-2 left-8 h-4 w-4 rotate-45 bg-gradient-to-br from-red-500/60 to-purple-500/60" />
-    <div className="relative rounded-2xl bg-black/80 backdrop-blur-sm p-5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-purple-300/80 mb-2">
-        {icon} {source}
-      </p>
-      <p className="text-sm text-neutral-200 leading-relaxed">&ldquo;{quote}&rdquo;</p>
-    </div>
+    {/* Glowing gold dot */}
+    <span
+      className="shrink-0 h-2.5 w-2.5 rounded-full bg-amber-400"
+      style={{
+        boxShadow: "0 0 8px rgba(212, 175, 55, 0.6), 0 0 16px rgba(212, 175, 55, 0.3)",
+      }}
+    />
+    <span className="text-sm md:text-base text-neutral-200 font-medium">{text}</span>
   </motion.div>
 );
 
@@ -403,7 +373,7 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className={inputClass}
-                    placeholder="Chris Moreno"
+                    placeholder="Name"
                     autoFocus
                     onKeyDown={(e) => { if (e.key === "Enter" && fullName.trim()) setStep("business_email"); }}
                   />
@@ -432,7 +402,7 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
                     value={businessEmail}
                     onChange={(e) => setBusinessEmail(e.target.value)}
                     className={inputClass}
-                    placeholder="chris@yourcompany.com"
+                    placeholder="Your business email"
                     autoFocus
                     onKeyDown={(e) => { if (e.key === "Enter" && businessEmail.includes("@")) setStep("phone_number"); }}
                   />
@@ -566,6 +536,20 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
 export const Hero = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Open modal when #contact hash is detected
+  useEffect(() => {
+    const checkHash = () => {
+      if (window.location.hash === "#contact") {
+        setModalOpen(true);
+        // Clean up the hash
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+    };
+    checkHash();
+    window.addEventListener("hashchange", checkHash);
+    return () => window.removeEventListener("hashchange", checkHash);
+  }, []);
+
   return (
     <div className="relative flex flex-col overflow-hidden pt-20 md:pt-32">
       {/* ── Two-column hero ── */}
@@ -576,110 +560,124 @@ export const Hero = () => {
 
           {/* Headline */}
           <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ ease: "easeOut", duration: 0.5 }}>
-            <h1 className="text-3xl md:text-4xl lg:text-6xl font-semibold text-white leading-tight">
-              Turn Your Ad Spend Into
-            </h1>
-            <div className="text-3xl md:text-4xl lg:text-6xl font-semibold mt-1 min-h-[1.3em]">
-              <TypewriterBookedJobs />
-            </div>
-            <p className="mt-2 text-lg md:text-2xl font-medium bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent"
+            {/* Big gradient "4–5" */}
+            <h1
+              className="text-7xl md:text-8xl lg:text-9xl font-extrabold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent leading-none"
               style={{
-                filter: "blur(0.4px) drop-shadow(0 0 8px rgba(239, 68, 68, 0.3)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.2))",
+                filter: "drop-shadow(0 0 20px rgba(239, 68, 68, 0.35)) drop-shadow(0 0 40px rgba(168, 85, 247, 0.25)) drop-shadow(0 0 60px rgba(59, 130, 246, 0.15))",
               }}
             >
-              Fill Your Calendar With ACAI
+              4&ndash;5
+            </h1>
+
+            {/* Subtitle with typewriter */}
+            <p className="mt-3 text-xl md:text-2xl lg:text-3xl font-semibold text-white leading-snug">
+              booked floor coating appointments<br />
+              in your first month{" "}
+              <TypewriterWithACAI />
+            </p>
+
+            {/* "If not — next month is FREE." */}
+            <p className="mt-3 text-lg md:text-xl font-bold text-red-500">
+              If not &mdash; next month is FREE.
             </p>
           </motion.div>
 
-          {/* Subheadline */}
+          {/* Muted subline */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ease: "easeOut", duration: 0.55, delay: 0.2 }}
-            className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-neutral-300"
+            className="mt-6 max-w-xl text-sm md:text-base leading-relaxed text-neutral-500"
           >
-            Custom marketing systems built for service companies &mdash; not cookie-cutter campaigns.
-            We fill your calendar with high-quality leads using your existing ad budget.
+            We run your ads and handle your leads. You only pay when it works.
           </motion.p>
 
-          {/* Pain-point orbs */}
-          <PainPointOrbs />
-
-          {/* Harvard Stats */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:-mr-3">
-            <StatBubble
-              icon="📊"
-              source="Harvard Business Review"
-              quote="Companies that respond to leads within 60 seconds see a 391% increase in sales conversions."
-              delay={0.1}
-            />
-            <StatBubble
-              icon="⚡"
-              source="Speed-to-Lead Research"
-              quote="78% of buyers choose the first business that responds. Reply instantly — or lose the job."
-              delay={0.25}
-            />
+          {/* Floating pill banners */}
+          <div className="mt-8 flex flex-col gap-3">
+            <PillBanner text="Performance-based — we win when you win" delay={0.3} />
+            <PillBanner text="24/7 support — call us anytime" delay={0.4} />
+            <PillBanner text="SMS chatbots included — leads get a response instantly" delay={0.5} />
           </div>
 
-          {/* CTA Block */}
+          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ ease: "easeOut", duration: 0.5, delay: 0.3 }}
+            transition={{ ease: "easeOut", duration: 0.5, delay: 0.6 }}
             className="mt-10"
           >
             <button
               onClick={() => setModalOpen(true)}
               className="w-full md:w-auto px-10 py-4 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white text-lg font-bold transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] active:scale-[0.98]"
             >
-              Claim Your Free Strategy Session &rarr;
+              Claim Your Free 15-Min Strategy Call &rarr;
             </button>
-            <p className="mt-3 text-sm text-neutral-400 max-w-md">
-              No contracts. No retainers. We only get paid when you get results.
-            </p>
-
-            {/* Trust icons */}
-            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-neutral-300">
-              <span className="flex items-center gap-1.5">✅ Performance-Based Only</span>
-              <span className="flex items-center gap-1.5">✅ No Results = Deposit Back</span>
-              <span className="flex items-center gap-1.5">✅ Custom-Built, Not Cookie-Cutter</span>
-            </div>
-          </motion.div>
-
-          {/* Risk reversal badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="mt-6 max-w-md rounded-xl border border-white/10 bg-black/50 px-5 py-4 backdrop-blur"
-          >
-            <p className="text-sm text-neutral-200 leading-relaxed">
-              🛡️ <span className="font-semibold text-white">Zero-Risk Guarantee:</span> If we don&apos;t book you more qualified
-              jobs in your pilot, you get your deposit back. No questions asked.
+            <p className="mt-3 text-sm text-neutral-500">
+              Just to see if it&apos;s a fit. No pressure, no pitch.
             </p>
           </motion.div>
         </div>
 
-        {/* ── RIGHT COLUMN — Hero Image ── */}
-        <div className="relative flex items-start justify-center order-1 md:order-2 md:sticky md:top-32">
+        {/* ── RIGHT COLUMN — Hero Image + Stat Cards ── */}
+        <div className="relative flex flex-col items-center order-1 md:order-2">
+          {/* Hero Image — pushed to top, taller aspect ratio */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="relative rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.25),0_0_80px_rgba(239,68,68,0.15)]"
+            className="relative w-full rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.25),0_0_80px_rgba(239,68,68,0.15)]"
           >
             <div className="absolute inset-0 rounded-2xl ring-2 ring-inset ring-purple-500/30 pointer-events-none z-10" />
             <Image
               src="/mainlandingpagehero.png"
-              alt="ACAI AI marketing funnel for service businesses"
+              alt="ACAI Marketing funnel for service businesses"
               width={600}
-              height={800}
+              height={900}
               priority
               className="w-full h-auto object-cover rounded-2xl"
-              style={{ aspectRatio: "3/4" }}
+              style={{ aspectRatio: "9/14" }}
             />
           </motion.div>
+
+          {/* Stat Cards — side by side */}
+          <div className="mt-6 grid grid-cols-2 gap-4 w-full">
+            {/* Card 1 — Harvard */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="rounded-2xl border border-white/10 bg-neutral-950/80 backdrop-blur-sm p-5"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
+                Harvard Business Review
+              </p>
+              <p className="mt-2 text-4xl md:text-5xl font-extrabold text-purple-500">391%</p>
+              <p className="mt-2 text-xs text-neutral-400 leading-relaxed">
+                more conversions when you respond within 60 seconds.
+              </p>
+              <p className="mt-2 text-xs font-bold text-red-500">We handle that.</p>
+            </motion.div>
+
+            {/* Card 2 — Speed-to-Lead */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="rounded-2xl border border-white/10 bg-neutral-950/80 backdrop-blur-sm p-5"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
+                Speed-to-Lead Research
+              </p>
+              <p className="mt-2 text-4xl md:text-5xl font-extrabold text-purple-500">78%</p>
+              <p className="mt-2 text-xs text-neutral-400 leading-relaxed">
+                of buyers choose whoever responds first.
+              </p>
+              <p className="mt-2 text-xs font-bold text-red-500">That&apos;s us &mdash; for you.</p>
+            </motion.div>
+          </div>
         </div>
       </div>
 

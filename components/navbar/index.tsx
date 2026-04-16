@@ -10,7 +10,7 @@ const navItems = [
   },
   {
     title: "Contact",
-    link: "/contact",
+    link: "/#contact",
   },
   {
     title: "The ACAI System",

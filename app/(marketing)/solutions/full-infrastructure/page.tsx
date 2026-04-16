@@ -7,7 +7,7 @@ import { Link } from "next-view-transitions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Full AI Infrastructure | ACAI AI",
+  title: "Full AI Infrastructure | ACAI Marketing",
   description:
     "Complete AI operations platform with quote routing, multi-location support, and advanced automation.",
   openGraph: {

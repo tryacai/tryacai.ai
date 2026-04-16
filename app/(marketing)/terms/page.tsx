@@ -4,9 +4,9 @@ import Link from "next/link";
 import { Button } from "@/components/button";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | ACAI AI",
+  title: "Terms of Service | ACAI Marketing",
   description:
-    "ACAI AI's Terms of Service for lead conversion and automation products, including service terms, payment policies, and user obligations.",
+    "ACAI Marketing's Terms of Service for lead conversion and automation products, including service terms, payment policies, and user obligations.",
   robots: {
     index: false,
     follow: false,
@@ -40,7 +40,7 @@ export default function TermsOfServicePage() {
           {/* Introduction */}
           <section>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              Welcome to ACAI AI, a service operated by ACAI Enterprises LLC ("ACAI," "we," or "us"). These Terms of Service ("Terms") govern your use of our software-as-a-service platform and related services ("Services").
+              Welcome to ACAI Marketing, a service operated by ACAI Enterprises LLC ("ACAI," "we," or "us"). These Terms of Service ("Terms") govern your use of our software-as-a-service platform and related services ("Services").
             </p>
           </section>
 
