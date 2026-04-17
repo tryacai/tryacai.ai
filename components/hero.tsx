@@ -693,10 +693,9 @@ export const Hero = () => {
           {" "}JOBS
         </p>
 
-        {/* Line 3 — ACAI MARKETING FILLS YOUR CALENDAR */}
-        <div className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold min-h-[1.3em] flex flex-wrap items-center justify-center gap-x-3">
+        {/* Line 3 — Typewriter ACAI MARKETING */}
+        <div className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold min-h-[1.3em]">
           <TypewriterACAI />
-          <span className="text-white font-black uppercase tracking-tight">FILLS YOUR CALENDAR</span>
         </div>
 
         {/* Line 4 — IMMEDIATE QUALIFIED JOBS */}
@@ -704,12 +703,7 @@ export const Hero = () => {
           IMMEDIATE QUALIFIED JOBS
         </p>
 
-        {/* Line 5 — WE BUILD IT. WE FILL IT. YOU JUST SHOW UP. */}
-        <p className="mt-3 text-lg sm:text-xl md:text-2xl font-bold text-white uppercase tracking-wide">
-          WE BUILD IT. WE FILL IT. YOU JUST SHOW UP.
-        </p>
-
-        {/* Line 6-7 — RESULTS + FREE guarantee */}
+        {/* Line 5 — RESULTS + FREE guarantee */}
         <p className="mt-4 text-lg sm:text-xl md:text-2xl font-bold text-white">
           RESULTS in first month.
         </p>
