@@ -6,9 +6,9 @@ import { CallRevenueFlowSection } from "@/components/call-revenue-flow-section";
 export default function Home() {
   return (
     <div className="relative overflow-hidden">
-      <h1 className="sr-only">Never Miss a Lead Again</h1>
+      <h1 className="sr-only">Try ACAI Marketing | Floor Coating Marketing Agency</h1>
       <p className="sr-only">
-        ACAI helps service businesses improve response speed, automate follow up, and convert more inbound demand into booked revenue.
+        ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.
       </p>
 
       {/* Top background */}

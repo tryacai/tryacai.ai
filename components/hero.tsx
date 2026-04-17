@@ -85,12 +85,50 @@ const TypewriterACAI = () => {
   );
 };
 
-// ─── "GUARANTEED" with shine sparkle animation ───
+// ─── "GUARANTEED" with diamond sparkle star animation ───
 const GuaranteedText = () => {
-  const textRef = useRef<HTMLSpanElement>(null);
+  const word = "GUARANTEED";
+  const [sparkles, setSparkles] = useState<Array<{ id: number; leftPct: number; topPct: number; size: number; rotation: number }>>([]);
+  const sparkleIdRef = useRef(0);
+  const recentLettersRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    const letterCount = word.length;
+    let timeoutId: NodeJS.Timeout;
+    let mounted = true;
+
+    const spawnSparkle = () => {
+      if (!mounted) return;
+      const recent = new Set(recentLettersRef.current);
+      const available = Array.from({ length: letterCount }, (_, i) => i).filter(i => !recent.has(i));
+      const pool = available.length > 0 ? available : Array.from({ length: letterCount }, (_, i) => i);
+      const letterPos = pool[Math.floor(Math.random() * pool.length)];
+
+      recentLettersRef.current.push(letterPos);
+      if (recentLettersRef.current.length > 4) recentLettersRef.current.shift();
+
+      const id = sparkleIdRef.current++;
+      const letterCenterPct = ((letterPos + 0.5) / letterCount) * 100;
+      const offsetX = (Math.random() - 0.5) * (100 / letterCount) * 0.5;
+      const leftPct = Math.max(2, Math.min(98, letterCenterPct + offsetX));
+      const edgeBias = Math.random();
+      const topPct = edgeBias < 0.35 ? Math.random() * 20 : edgeBias < 0.7 ? 80 + Math.random() * 20 : 20 + Math.random() * 60;
+      const size = 0.2 + Math.random() * 0.15;
+      const rotation = Math.random() * 45;
+
+      setSparkles(prev => [...prev, { id, leftPct, topPct, size, rotation }]);
+      setTimeout(() => {
+        if (mounted) setSparkles(prev => prev.filter(s => s.id !== id));
+      }, 700);
+      timeoutId = setTimeout(spawnSparkle, 150 + Math.random() * 200);
+    };
+
+    timeoutId = setTimeout(spawnSparkle, 100);
+    return () => { mounted = false; clearTimeout(timeoutId); };
+  }, []);
 
   return (
-    <span ref={textRef} className="relative inline-block">
+    <span className="relative inline-block">
       <span
         className="font-black uppercase tracking-tight bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent"
         style={{
@@ -99,73 +137,67 @@ const GuaranteedText = () => {
       >
         GUARANTEED
       </span>
-      {/* Traveling shine overlay */}
-      <motion.span
-        className="absolute inset-0 overflow-hidden pointer-events-none"
-        aria-hidden
-      >
+      {/* Diamond sparkle stars — scattered across random letters */}
+      {sparkles.map(sparkle => (
         <motion.span
-          className="absolute top-0 h-full w-[40%]"
+          key={sparkle.id}
+          className="absolute pointer-events-none"
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)",
+            left: `${sparkle.leftPct}%`,
+            top: `${sparkle.topPct}%`,
+            width: `${sparkle.size}em`,
+            height: `${sparkle.size}em`,
           }}
-          animate={{ left: ["-40%", "140%"] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
-        />
-      </motion.span>
-      {/* Small sparkle dots that appear and disappear */}
-      {[0, 1, 2].map((i) => (
-        <motion.span
-          key={i}
-          className="absolute h-1 w-1 rounded-full bg-white"
-          style={{
-            top: `${15 + i * 30}%`,
-            left: `${20 + i * 30}%`,
-          }}
+          initial={{ opacity: 0, scale: 0, rotate: sparkle.rotation }}
           animate={{
-            opacity: [0, 1, 0],
-            scale: [0.5, 1.5, 0.5],
+            opacity: [0, 1, 0.9, 0],
+            scale: [0, 1.6, 1.1, 0],
+            rotate: [sparkle.rotation, sparkle.rotation + 20],
           }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            delay: i * 1.2,
-            ease: "easeInOut",
-          }}
-        />
+          transition={{ duration: 0.6, times: [0, 0.15, 0.5, 1], ease: "easeOut" }}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="white"
+            className="w-full h-full"
+            style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.95)) drop-shadow(0 0 8px rgba(255,255,255,0.6))" }}
+          >
+            <path d="M12 0L13.8 9.2L24 12L13.8 14.8L12 24L10.2 14.8L0 12L10.2 9.2Z" />
+          </svg>
+        </motion.span>
       ))}
     </span>
   );
 };
 
-// ─── Gold Shimmer Pill Banner with traveling sparkle ───
+// ─── Gold Luxe Pill Banner with prestige styling ───
 const GoldPill = ({ text, delay }: { text: string; delay: number }) => (
   <motion.div
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay, ease: "easeOut" }}
-    className="relative overflow-hidden flex items-center gap-3 rounded-full border border-amber-400/40 bg-neutral-950/90 px-6 py-3.5 backdrop-blur-sm"
+    className="relative overflow-hidden flex items-center gap-3 rounded-full border border-yellow-500/50 bg-gradient-to-r from-neutral-950 via-neutral-900/95 to-neutral-950 px-7 py-4 backdrop-blur-md"
     style={{
-      boxShadow: "0 0 24px rgba(212, 175, 55, 0.1), inset 0 0 24px rgba(212, 175, 55, 0.04)",
+      boxShadow: "0 0 24px rgba(255, 215, 0, 0.14), 0 0 48px rgba(212, 175, 55, 0.06), inset 0 1px 0 rgba(255, 215, 0, 0.12), inset 0 0 24px rgba(212, 175, 55, 0.05)",
     }}
   >
-    {/* Traveling sparkle */}
+    {/* Traveling shimmer */}
     <motion.span
-      className="absolute top-0 h-full w-[30%] pointer-events-none"
+      className="absolute top-0 h-full w-[25%] pointer-events-none"
       style={{
-        background: "linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent)",
+        background: "linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent)",
       }}
-      animate={{ left: ["-30%", "130%"] }}
-      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5, delay: delay * 2 }}
+      animate={{ left: ["-25%", "125%"] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 2, delay: delay * 2 }}
     />
-    {/* Glowing gold dot */}
+    {/* Glowing gold diamond */}
     <span
-      className="shrink-0 h-2 w-2 rounded-full bg-amber-400"
+      className="shrink-0 h-2.5 w-2.5 rotate-45 rounded-sm bg-gradient-to-br from-yellow-300 to-amber-500"
       style={{
-        boxShadow: "0 0 6px rgba(212, 175, 55, 0.8), 0 0 14px rgba(212, 175, 55, 0.4)",
+        boxShadow: "0 0 8px rgba(255, 215, 0, 0.9), 0 0 18px rgba(255, 215, 0, 0.5), 0 0 32px rgba(212, 175, 55, 0.25)",
       }}
     />
-    <span className="relative text-sm md:text-base text-neutral-100 font-semibold tracking-wide">{text}</span>
+    <span className="relative text-sm md:text-base text-amber-50 font-semibold tracking-wider uppercase">{text}</span>
   </motion.div>
 );
 
@@ -638,7 +670,7 @@ export const Hero = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col overflow-hidden pt-20 md:pt-28">
+    <div className="relative flex flex-col overflow-hidden pt-14 md:pt-18">
 
       {/* ═══════════════════════════════════════════════════
           SECTION 1 — Full Width Centered Headline Block
@@ -654,24 +686,61 @@ export const Hero = () => {
           <GuaranteedText />
         </h1>
 
-        {/* Line 2 — BOOKED FLOOR COATING APPOINTMENTS */}
+        {/* Line 2 — BOOKED FLOOR COATING JOBS */}
         <p className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tight leading-tight">
-          BOOKED FLOOR COATING APPOINTMENTS
+          BOOKED{" "}
+          <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl underline decoration-2 underline-offset-4 decoration-purple-500">FLOOR COATING</span>
+          {" "}JOBS
         </p>
 
-        {/* Line 3 — Typewriter ACAI MARKETING */}
-        <div className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold min-h-[1.3em]">
+        {/* Line 3 — ACAI MARKETING FILLS YOUR CALENDAR */}
+        <div className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold min-h-[1.3em] flex flex-wrap items-center justify-center gap-x-3">
           <TypewriterACAI />
+          <span className="text-white font-black uppercase tracking-tight">FILLS YOUR CALENDAR</span>
         </div>
 
-        {/* Line 4 — IN YOUR FIRST MONTH. */}
+        {/* Line 4 — IMMEDIATE QUALIFIED JOBS */}
         <p className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tight leading-tight">
-          IN YOUR FIRST MONTH.
+          IMMEDIATE QUALIFIED JOBS
         </p>
 
-        {/* Line 5 — If not, your next month FREE */}
+        {/* Line 5 — WE BUILD IT. WE FILL IT. YOU JUST SHOW UP. */}
+        <p className="mt-3 text-lg sm:text-xl md:text-2xl font-bold text-white uppercase tracking-wide">
+          WE BUILD IT. WE FILL IT. YOU JUST SHOW UP.
+        </p>
+
+        {/* Line 6-7 — RESULTS + FREE guarantee */}
         <p className="mt-4 text-lg sm:text-xl md:text-2xl font-bold text-white">
-          If not, your next month <span className="text-red-500 font-black">FREE</span>
+          RESULTS in first month.
+        </p>
+        <p className="mt-1 text-base sm:text-lg md:text-xl font-semibold text-neutral-300">
+          If we miss, your next month is{" "}
+          <span className="text-red-500 font-black text-xl sm:text-2xl md:text-3xl" style={{ textShadow: "0 0 12px rgba(239, 68, 68, 0.6), 0 0 24px rgba(239, 68, 68, 0.3)" }}>FREE</span>
+        </p>
+      </motion.div>
+
+      {/* ═══════════════════════════════════════════════════
+          CTA — Between headline and content sections
+          ═══════════════════════════════════════════════════ */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ease: "easeOut", duration: 0.5, delay: 0.4 }}
+        className="relative z-10 mx-auto mt-6 w-full max-w-5xl px-4 flex flex-col items-center"
+      >
+        <button
+          onClick={() => setModalOpen(true)}
+          className="group relative w-full sm:w-auto px-10 py-5 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] active:scale-[0.98] overflow-hidden"
+        >
+          <span className="block text-lg font-bold tracking-wide">
+            Claim Your Free 15-Min Strategy Call &rarr;
+          </span>
+          <span className="block mt-1 text-xs font-medium text-white/70">
+            Spots for this month closing &mdash; book now.
+          </span>
+        </button>
+        <p className="mt-3 text-sm text-neutral-500 text-center">
+          Just to see if it&apos;s a fit. No pressure, no pitch.
         </p>
       </motion.div>
 
@@ -692,7 +761,7 @@ export const Hero = () => {
           </p>
 
           <div className="mt-6 flex flex-col gap-3 w-full max-w-md">
-            <GoldPill text="Performance based. We win when you win." delay={0.35} />
+            <GoldPill text="Performance based Pay." delay={0.35} />
             <GoldPill text="24/7 support. Call us anytime." delay={0.45} />
             <GoldPill text="SMS chatbots included. Your leads never wait." delay={0.55} />
           </div>
@@ -719,32 +788,9 @@ export const Hero = () => {
       </div>
 
       {/* ═══════════════════════════════════════════════════
-          SECTION 3 — CTA + Stat Cards, Full Width Below
+          SECTION 3 — Stat Cards, Full Width Below
           ═══════════════════════════════════════════════════ */}
       <div className="relative z-10 mx-auto mt-10 md:mt-14 w-full max-w-5xl px-4">
-
-        {/* CTA Button — centered */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: "easeOut", duration: 0.5, delay: 0.6 }}
-          className="flex flex-col items-center md:items-start"
-        >
-          <button
-            onClick={() => setModalOpen(true)}
-            className="group relative w-full md:w-auto px-10 py-5 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] active:scale-[0.98] overflow-hidden"
-          >
-            <span className="block text-lg font-bold tracking-wide">
-              Claim Your Free 15-Min Strategy Call &rarr;
-            </span>
-            <span className="block mt-1 text-xs font-medium text-white/70">
-              Spots for this month closing &mdash; book now.
-            </span>
-          </button>
-          <p className="mt-3 text-sm text-neutral-500 text-center md:text-left">
-            Just to see if it&apos;s a fit. No pressure, no pitch.
-          </p>
-        </motion.div>
 
         {/* Stat Cards — side by side */}
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">

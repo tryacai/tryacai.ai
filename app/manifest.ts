@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Try ACAI Marketing",
     short_name: "ACAI",
     description:
-      "Never miss a lead again. ACAI helps service businesses automate follow-up, qualify leads faster, and turn more demand into booked jobs.",
+      "ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     start_url: "/",
     display: "standalone",
     background_color: "#000000",

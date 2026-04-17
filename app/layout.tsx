@@ -10,18 +10,18 @@ const META_PIXEL_ID = "1215596613789536";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tryacai.ai"),
-  title: "Try ACAI Marketing | Never Miss a Lead Again",
+  title: "Try ACAI Marketing | Floor Coating Marketing Agency | Guaranteed Booked Jobs",
   description:
-    "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+    "ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
   icons: {
     icon: "/icon.jpg",
     shortcut: "/icon.jpg",
     apple: "/apple-icon.jpg",
   },
   openGraph: {
-    title: "Try ACAI Marketing | Never Miss a Lead Again",
+    title: "Try ACAI Marketing | Floor Coating Marketing Agency",
     description:
-      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+      "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     url: "https://tryacai.ai",
     siteName: "ACAI Marketing",
     images: [
@@ -29,16 +29,16 @@ export const metadata: Metadata = {
         url: "https://tryacai.ai/nevermissaleadpreviewimage.png",
         width: 1200,
         height: 630,
-        alt: "Try ACAI Marketing | Never Miss a Lead Again",
+        alt: "Try ACAI Marketing | Floor Coating Marketing Agency",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Try ACAI Marketing | Never Miss a Lead Again",
+    title: "Try ACAI Marketing | Floor Coating Marketing Agency",
     description:
-      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+      "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
 };

@@ -6,17 +6,17 @@ import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "Contact | ACAI Marketing",
   description:
-    "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+    "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
   openGraph: {
-    title: "Try ACAI Marketing | Never Miss a Lead Again",
+    title: "Contact | ACAI Marketing",
     description:
-      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+      "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
     images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
   twitter: {
-    title: "Try ACAI Marketing | Never Miss a Lead Again",
+    title: "Contact | ACAI Marketing",
     description:
-      "Never miss a lead again. ACAI helps service businesses automate follow up, qualify leads faster, and turn more demand into booked jobs.",
+      "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
     images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
   },
 };
