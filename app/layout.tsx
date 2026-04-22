@@ -14,9 +14,7 @@ export const metadata: Metadata = {
   description:
     "ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
   icons: {
-    icon: "/icon.jpg",
-    shortcut: "/icon.jpg",
-    apple: "/apple-icon.jpg",
+    icon: "/Micalogo.png",
   },
   openGraph: {
     title: "Try ACAI Marketing | Floor Coating Marketing Agency",

@@ -58,7 +58,7 @@ export default function StrategyCallPage() {
         <div className="bg-black/30 backdrop-blur-md rounded-2xl shadow-2xl border border-white/10 overflow-hidden p-2 md:p-4">
           {/* TODO: Replace cal link with the strategy-call event type slug (e.g. "mica-growth/strategy-call"). Confirm the event type has a "Redirect on booking" set to /call-confirmed in the Cal.com dashboard. */}
           <iframe
-            src="https://cal.com/micagrowth/30min?embed=true"
+            src="https://cal.com/micagrowth/30min?embed=true&redirectUrl=%2Fcall-confirmed&name=Your%20name&email=your%40bestemail.com&notes=Any%20prior%20questions%3F%20%3A%29"
             title="Schedule your strategy call"
             className="w-full border-0 rounded-xl"
             style={{ height: "680px", overflow: "scroll" }}
