@@ -74,7 +74,7 @@ export default function FloridaEpoxyLeadGenerationPage() {
           <div className="mt-12 border-t border-white/10 pt-8">
             <p className="text-sm text-neutral-500">Related:</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <Link href="/ai" className="text-sm text-purple-400 hover:underline">The ACAI System</Link>
+              <Link href="/ai" className="text-sm text-purple-400 hover:underline">The Mica Growth System</Link>
               <span className="text-neutral-600">·</span>
               <Link href="/garage-floor-lead-management" className="text-sm text-purple-400 hover:underline">Garage Floor Lead Management</Link>
               <span className="text-neutral-600">·</span>

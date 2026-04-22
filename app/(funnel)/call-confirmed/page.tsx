@@ -37,20 +37,20 @@ export default function CallConfirmedPage() {
         transition={{ delay: 0.3, duration: 0.6 }}
       >
         <h1 className="text-3xl md:text-6xl font-extrabold leading-tight max-w-4xl mx-auto">
-          <span className="text-[#FFA340]">Congrats!</span> Your call has been scheduled.
+          <span className="text-[#FFA340]">Congrats!</span> 🎉 Your call has been scheduled.
         </h1>
         <h2 className="text-lg md:text-2xl font-semibold text-white leading-snug mt-4 md:mt-6 max-w-3xl mx-auto">
           <span className="underline decoration-[#2DB4FF] decoration-4 underline-offset-4">
             LAST STEP:
           </span>{" "}
-          Watch and finish the quick video below so we can hit the ground running on your call.
+          Flip through the quick Pre-Call Preview below so you can get more context on your call.
         </h2>
         <p className="text-sm md:text-base italic text-[#FF4D6D] mt-4 max-w-2xl mx-auto">
-          (Mandatory — we&apos;ll have to cancel your call if you don&apos;t watch this video.)
+          (Mandatory: your call will be cancelled if you don&apos;t review these — takes 20 seconds)
         </p>
       </motion.div>
 
-      {/* D. VSL video card */}
+      {/* D. Pre-call preview slideshow */}
       <motion.div
         className="w-full max-w-4xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
@@ -72,10 +72,9 @@ export default function CallConfirmedPage() {
         <div className="bg-black/30 backdrop-blur-md border border-white/15 rounded-xl p-5 md:p-7 text-center">
           <h3 className="text-lg md:text-xl font-bold text-white mb-2">Confirm your call</h3>
           <p className="text-sm md:text-base text-white/85 leading-relaxed">
-            To lock your call onto our team&apos;s calendar, reply &ldquo;YES&rdquo; to the text and email
-            confirmation we just sent. If you don&apos;t see it in the next 2 minutes, check spam or
-            promotions and mark us as safe.
+            To confirm this call on our team&apos;s calendar, please make sure to respond to our email confirmation by replying with &quot;YES&quot;.
           </p>
+          <p className="mt-4 text-sm md:text-base text-white/85">See you then 😊</p>
         </div>
       </motion.div>
 

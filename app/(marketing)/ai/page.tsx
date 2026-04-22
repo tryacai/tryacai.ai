@@ -383,7 +383,7 @@ export default function AcaiSystemPage() {
             transition={{ duration: 0.6 }}
             className="text-5xl font-semibold leading-tight text-white md:text-7xl"
           >
-            The ACAI System
+            The Mica Growth System
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 14 }}

@@ -1,7 +1,7 @@
 import { Link } from "next-view-transitions";
 
 const relatedLinks = [
-  { title: "The ACAI System", href: "/ai" },
+  { title: "The Mica Growth System", href: "/ai" },
   { title: "Tampa Contractor Automation", href: "/tampa-contractor-automation" },
   { title: "AI Voice Agents for Home Services", href: "/ai-voice-agents-home-services" },
 ];

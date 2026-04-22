@@ -271,7 +271,7 @@ export function CallRevenueFlowSection() {
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-5 md:p-6"
               onMouseEnter={() => setIsCardHovered(true)}
               onMouseLeave={() => setIsCardHovered(false)}
-              aria-label="ACAI System cards"
+              aria-label="Mica Growth System cards"
             >
               <AnimatePresence mode="wait">
                 {systemCards.map((card, index) => {
@@ -315,7 +315,7 @@ export function CallRevenueFlowSection() {
                 className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-purple-400/30 bg-gradient-to-r from-purple-600/20 via-purple-500/15 to-blue-500/20 px-8 py-3.5 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300 hover:border-purple-400/50 hover:shadow-[0_0_40px_rgba(168,85,247,0.35)] hover:scale-[1.03] md:px-10 md:py-4 md:text-base"
               >
                 <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/20 to-red-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="relative">Explore The ACAI System</span>
+                <span className="relative">Explore The Mica Growth System</span>
                 <ArrowRight className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 md:h-5 md:w-5" />
               </Link>
             </div>

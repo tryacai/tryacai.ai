@@ -12,8 +12,8 @@ export const Logo = () => {
       <Image
         src="/Micalogo.png"
         alt="Mica logo"
-        width={140}
-        height={56}
+        width={112}
+        height={45}
         style={{ height: "auto" }}
         priority
       />

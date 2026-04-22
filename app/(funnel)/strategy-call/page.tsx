@@ -1,8 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function StrategyCallPage() {
+  useEffect(() => {
+    const handleCalEvent = (e: MessageEvent) => {
+      if (e.data?.type === "bookingSuccessful" || e.data?.type === "booking.created") {
+        window.location.href = "/call-confirmed";
+      }
+    };
+    window.addEventListener("message", handleCalEvent);
+    return () => window.removeEventListener("message", handleCalEvent);
+  }, []);
+
   return (
     <div className="flex flex-col items-center px-4 md:px-6 pb-16">
       {/* A. Top brand strip */}

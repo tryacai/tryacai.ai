@@ -5,6 +5,10 @@ import { motion } from "framer-motion";
 
 const navItems = [
   {
+    title: "Blog",
+    link: "/blog",
+  },
+  {
     title: "FAQ",
     link: "/faq",
   },
@@ -13,7 +17,7 @@ const navItems = [
     link: "/#contact",
   },
   {
-    title: "The ACAI System",
+    title: "The Mica Growth System",
     link: "/ai",
     highlightAI: true,
   },

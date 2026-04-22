@@ -681,17 +681,6 @@ export const Hero = () => {
         transition={{ ease: "easeOut", duration: 0.5 }}
         className="relative z-10 mx-auto w-full max-w-5xl px-4 text-center"
       >
-        <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/5 p-3 shadow-[0_0_30px_rgba(168,85,247,0.18)] backdrop-blur-sm sm:h-24 sm:w-24">
-          <Image
-            src="/justlogowithoutwordsACAI.jpeg"
-            alt="ACAI Marketing logo"
-            width={96}
-            height={96}
-            priority
-            className="h-full w-full object-contain"
-          />
-        </div>
-
         {/* Line 1 — GUARANTEED */}
         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-none">
           <GuaranteedText />

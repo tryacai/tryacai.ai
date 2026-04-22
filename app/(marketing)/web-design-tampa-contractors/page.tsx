@@ -72,7 +72,7 @@ export default function WebDesignTampaPage() {
               Get a Free Website Audit
             </Link>
             <Link href="/ai" className="inline-flex rounded-full border border-white/20 px-7 py-3 text-sm font-semibold text-white transition hover:border-white/40">
-              See The ACAI System
+              See The Mica Growth System
             </Link>
           </div>
 
