@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: "ACAI Insights | Blog",
     description:
       "Real insights on automation, leads, and growing service businesses in Tampa and across Florida.",
-    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },
 };
 

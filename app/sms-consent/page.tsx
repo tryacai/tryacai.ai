@@ -23,7 +23,7 @@ export default function SMSConsentPage() {
             </p>
 
             <p className="text-base leading-relaxed text-neutral-200 md:text-lg">
-              By submitting a form on micagrowth.com and selecting the SMS consent checkbox, you consent to receive SMS messages from ACAI Enterprises LLC.
+              By submitting a form on micagrowth.co and selecting the SMS consent checkbox, you consent to receive SMS messages from ACAI Enterprises LLC.
             </p>
 
             <ul className="list-disc space-y-2 pl-6 text-left text-neutral-200">

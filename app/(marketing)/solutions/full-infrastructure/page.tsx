@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Complete AI operations platform with quote routing, multi-location support, and advanced automation.",
   openGraph: {
-    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },
 };
 

@@ -9,7 +9,7 @@ const META_PIXEL_ID = "1215596613789536";
  
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://micagrowth.com"),
+  metadataBase: new URL("https://micagrowth.co"),
   title: "Try ACAI Marketing | Floor Coating Marketing Agency | Guaranteed Booked Jobs",
   description:
     "ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
@@ -22,11 +22,11 @@ export const metadata: Metadata = {
     title: "Try ACAI Marketing | Floor Coating Marketing Agency",
     description:
       "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
-    url: "https://micagrowth.com",
+    url: "https://micagrowth.co",
     siteName: "ACAI Marketing",
     images: [
       {
-        url: "https://micagrowth.com/nevermissaleadpreviewimage.png",
+        url: "https://micagrowth.co/nevermissaleadpreviewimage.png",
         width: 1200,
         height: 630,
         alt: "Try ACAI Marketing | Floor Coating Marketing Agency",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: "Try ACAI Marketing | Floor Coating Marketing Agency",
     description:
       "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
-    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },
 };
 
