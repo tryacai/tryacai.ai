@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     follow: false,
   },
   openGraph: {
-    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
   },
 };
 
@@ -231,7 +231,7 @@ export default function PrivacyPolicyPage() {
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
                 <strong>ACAI Enterprises LLC</strong><br />
                 Email: <a href="mailto:privacy@tryacai.ai" className="text-blue-600 dark:text-blue-400 hover:underline">privacy@tryacai.ai</a><br />
-                Website: <a href="https://tryacai.ai" className="text-blue-600 dark:text-blue-400 hover:underline">https://tryacai.ai</a>
+                Website: <a href="https://micagrowth.com" className="text-blue-600 dark:text-blue-400 hover:underline">https://micagrowth.com</a>
               </p>
             </div>
           </section>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     "Flexible ACAI plans built to improve lead response speed, automate follow up, and convert more demand into booked revenue.",
   openGraph: {
-    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
   },
 };
 

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     follow: false,
   },
   openGraph: {
-    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
   },
 };
 

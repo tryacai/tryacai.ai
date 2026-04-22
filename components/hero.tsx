@@ -218,7 +218,7 @@ type ModalStep =
 
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycby6UXqt3SZxDEHNR6hUCgTwDuo7Ii6Er1AJ91jJ10E9svxuMsPJwHakE7x4ECln9r02mQ/exec";
-const CAL_URL = "https://cal.com/tryacai.ai/30min";
+const CAL_URL = "https://cal.com/micagrowth/30min";
 
 /** Fire a Meta Pixel event if fbq is available */
 function fireFbq(eventName: string) {

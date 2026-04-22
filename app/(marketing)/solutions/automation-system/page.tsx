@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Automated follow-ups, review generation, and missed call texting to maximize every opportunity.",
   openGraph: {
-    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
   },
 };
 

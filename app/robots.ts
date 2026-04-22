@@ -16,6 +16,6 @@ export default function robots(): MetadataRoute.Robots {
         "/solutions/ai-receptionist",
       ],
     },
-    sitemap: "https://tryacai.ai/sitemap.xml",
+    sitemap: "https://micagrowth.com/sitemap.xml",
   };
 }

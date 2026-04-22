@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     title: "Contact | ACAI Marketing",
     description:
       "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
-    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
   },
   twitter: {
     title: "Contact | ACAI Marketing",
     description:
       "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
-    images: ["https://tryacai.ai/nevermissaleadpreviewimage.png"],
+    images: ["https://micagrowth.com/nevermissaleadpreviewimage.png"],
   },
 };
 

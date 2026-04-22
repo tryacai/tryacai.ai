@@ -741,7 +741,7 @@ export function ContactForm() {
                 ✕
               </button>
               <iframe
-                src="https://cal.com/tryacai.ai/30min?embed=true"
+                src="https://cal.com/micagrowth/30min?embed=true"
                 title="Book your ACAI live demo"
                 className="w-full"
                 style={{ minHeight: "700px" }}
