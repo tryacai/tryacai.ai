@@ -16,6 +16,49 @@ type SubmitLeadPayload = {
   company_website?: string;
 };
 
+type CrmLeadPayload = {
+  submitted_at: string;
+  qualification_status: "new" | "qualified";
+  company_name: string;
+  full_name: string;
+  business_email: string;
+  phone_number: string;
+  source: "website" | "website_booked_call";
+  booked_call: boolean;
+  call_date: string;
+  campaign_name: string;
+  ad_set_name: string;
+  ad_name: string;
+  notes: string;
+};
+
+function buildCrmLeadPayload(params: {
+  companyName: string;
+  fullName: string;
+  businessEmail: string;
+  phoneNumber: string;
+  bookedCall: boolean;
+  callDate: string;
+}): CrmLeadPayload {
+  const hasBookedCall = params.bookedCall && Boolean(params.callDate);
+
+  return {
+    submitted_at: new Date().toISOString(),
+    qualification_status: hasBookedCall ? "qualified" : "new",
+    company_name: params.companyName || "",
+    full_name: params.fullName || "",
+    business_email: params.businessEmail || "",
+    phone_number: params.phoneNumber || "",
+    source: hasBookedCall ? "website_booked_call" : "website",
+    booked_call: hasBookedCall,
+    call_date: hasBookedCall ? params.callDate : "",
+    campaign_name: "",
+    ad_set_name: "",
+    ad_name: "",
+    notes: "",
+  };
+}
+
 const suspiciousTextPattern = /(https?:\/\/|www\.|\b(crypto|bitcoin|casino|viagra|porn|seo|backlink|loan)\b)/i;
 const repeatedCharactersPattern = /(.)\1{4,}/;
 
@@ -75,10 +118,8 @@ export async function POST(request: Request) {
     const companyName = body.company_name?.trim() || "";
     const industry = body.industry?.trim() || "";
     const biggestLeadBottleneck = body.biggest_lead_bottleneck?.trim() || "";
-    const systemsInterestedIn = body.systems_interested_in?.trim() || "";
     const message = body.message?.trim() || "";
     const smsConsent = Boolean(body.sms_consent);
-    const foundFrom = body.found_from?.trim() || "";
     const bookedCall = Boolean(body.booked_call);
     const callDate = body.call_date?.trim() || "";
 
@@ -120,27 +161,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const payload = {
-      submitted_at: new Date().toISOString(),
-      full_name: fullName,
-      business_email: businessEmail,
-      phone_number: phoneNumber,
-      company_name: companyName,
-      industry,
-      biggest_lead_bottleneck: biggestLeadBottleneck,
-      systems_interested_in: systemsInterestedIn,
-      message,
-      source: "website_form",
-      found_from: foundFrom,
-      booked_call: bookedCall ? "yes" : "no",
-      call_date: callDate,
-    };
-
-    console.log("[submit-lead] Forwarding payload to Make.com:", {
-      ...payload,
-      business_email: "***",
-      phone_number: "***",
+    const payload = buildCrmLeadPayload({
+      companyName,
+      fullName,
+      businessEmail,
+      phoneNumber,
+      bookedCall,
+      callDate,
     });
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[submit-lead] Forwarding CRM payload to Make.com:", {
+        ...payload,
+        business_email: "***",
+        phone_number: "***",
+      });
+    }
 
     const response = await fetch(webhookUrl, {
       method: "POST",
@@ -161,12 +197,14 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("[submit-lead] Successfully forwarded to Make.com");
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[submit-lead] Successfully forwarded to Make.com");
+    }
 
     return NextResponse.json({
       success: true,
-      booked_call: bookedCall,
-      call_date: callDate || null,
+      booked_call: payload.booked_call,
+      call_date: payload.call_date || null,
     });
   } catch (error) {
     const message =
