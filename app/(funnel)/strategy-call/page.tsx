@@ -1,18 +1,81 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
+import {
+  buildCalEmbedUrl,
+  buildPostBookingRedirectUrl,
+  isCalBookingSuccessMessage,
+  isCalEmbedOrigin,
+  readCalBookingDetails,
+} from "@/lib/cal-booking";
+
+const CAL_URL = "https://cal.com/micagrowth/30min";
+const POST_BOOKING_PATH = "/post-bookingpage";
 
 export default function StrategyCallPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasRedirectedRef = useRef(false);
+
+  const leadContext = useMemo(() => {
+    return {
+      fullName: searchParams.get("full_name") || searchParams.get("name") || "",
+      businessEmail: searchParams.get("business_email") || searchParams.get("email") || "",
+      phoneNumber: searchParams.get("phone_number") || searchParams.get("phone") || "",
+      companyName: searchParams.get("company_name") || searchParams.get("company") || "",
+    };
+  }, [searchParams]);
+
+  const calEmbedUrl = useMemo(() => {
+    return buildCalEmbedUrl(CAL_URL, {
+      fullName: leadContext.fullName,
+      businessEmail: leadContext.businessEmail,
+      phoneNumber: leadContext.phoneNumber,
+      companyName: leadContext.companyName,
+    });
+  }, [leadContext]);
+
   useEffect(() => {
     const handleCalEvent = (e: MessageEvent) => {
-      if (e.data?.type === "bookingSuccessful" || e.data?.type === "booking.created") {
-        window.location.href = "/call-confirmed";
+      if (!isCalEmbedOrigin(e.origin)) {
+        return;
       }
+
+      if (!isCalBookingSuccessMessage(e.data)) {
+        return;
+      }
+
+      if (hasRedirectedRef.current) {
+        return;
+      }
+
+      const booking = readCalBookingDetails(e.data);
+      const redirectUrl = buildPostBookingRedirectUrl(POST_BOOKING_PATH, {
+        callDate: booking?.startTime || "",
+        eventId: booking?.eventId || "",
+        fullName: leadContext.fullName,
+        businessEmail: leadContext.businessEmail,
+        phoneNumber: leadContext.phoneNumber,
+        companyName: leadContext.companyName,
+      });
+
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[StrategyCall] Cal booking success detected", {
+          booking,
+          redirectUrl,
+        });
+      }
+
+      hasRedirectedRef.current = true;
+      router.push(redirectUrl);
     };
+
     window.addEventListener("message", handleCalEvent);
     return () => window.removeEventListener("message", handleCalEvent);
-  }, []);
+  }, [leadContext, router]);
 
   return (
     <div className="flex flex-col items-center px-4 md:px-6 pb-16">
@@ -67,9 +130,8 @@ export default function StrategyCallPage() {
         transition={{ delay: 0.6, duration: 0.6 }}
       >
         <div className="bg-black/30 backdrop-blur-md rounded-2xl shadow-2xl border border-white/10 overflow-hidden p-2 md:p-4">
-          {/* TODO: Replace cal link with the strategy-call event type slug (e.g. "mica-growth/strategy-call"). Confirm the event type has a "Redirect on booking" set to /call-confirmed in the Cal.com dashboard. */}
           <iframe
-            src="https://cal.com/micagrowth/30min?embed=true&redirectUrl=%2Fcall-confirmed&name=Your%20name&email=your%40bestemail.com&notes=Any%20prior%20questions%3F%20%3A%29"
+            src={calEmbedUrl}
             title="Schedule your strategy call"
             className="w-full border-0 rounded-xl"
             style={{ height: "680px", overflow: "scroll" }}

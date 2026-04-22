@@ -9,6 +9,12 @@ import { z } from "zod";
 
 import { Button } from "@/components/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  buildCalEmbedUrl,
+  isCalBookingSuccessMessage,
+  isCalEmbedOrigin,
+  readCalBookingDetails,
+} from "@/lib/cal-booking";
 
 const industryOptions = ["Plumbing", "HVAC", "Barber", "Detailing", "Roofing", "Other"] as const;
 const leadBottleneckOptions = ["Slow follow-up", "Missed calls", "Low form conversion", "Poor qualification", "Booking drop-off", "Not sure yet"] as const;
@@ -118,80 +124,6 @@ const formSchema = z.object({
 
 type ContactFormValues = z.infer<typeof formSchema>;
 
-function readBookingFromCalMessage(rawData: unknown): BookingDetails | null {
-  let data: any = rawData;
-
-  if (typeof data === "string") {
-    try {
-      data = JSON.parse(data);
-    } catch {
-      return null;
-    }
-  }
-
-  if (!data || typeof data !== "object") {
-    return null;
-  }
-
-  const payload = data.payload || data.data || data;
-  const booking = payload.booking || payload;
-
-  const eventId =
-    booking.eventId ||
-    booking.event_id ||
-    booking.id ||
-    booking.uid ||
-    booking.bookingUid ||
-    "";
-
-  const startTime =
-    booking.startTime || booking.start_time || booking.start || booking.startsAt || "";
-
-  const endTime = booking.endTime || booking.end_time || booking.end || booking.endsAt || "";
-
-  if (!eventId) {
-    return null;
-  }
-
-  return {
-    eventId: String(eventId || ""),
-    startTime: String(startTime || ""),
-    endTime: String(endTime || ""),
-  };
-}
-
-function isBookingSuccessfulCalEvent(rawData: unknown): boolean {
-  let data: any = rawData;
-
-  if (typeof data === "string") {
-    try {
-      data = JSON.parse(data);
-    } catch {
-      return false;
-    }
-  }
-
-  if (!data || typeof data !== "object") {
-    return false;
-  }
-
-  const candidateTypes = [
-    data.event,
-    data.eventType,
-    data.type,
-    data.payload?.event,
-    data.payload?.eventType,
-    data.payload?.type,
-    data.data?.event,
-    data.data?.eventType,
-    data.data?.type,
-  ]
-    .filter(Boolean)
-    .map((value) => String(value));
-
-  return candidateTypes.some((value) => value === "bookingSuccessful");
-}
-
 export function ContactForm() {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(formSchema),
@@ -218,26 +150,47 @@ export function ContactForm() {
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
 
   const readyToBook = form.watch("readyToBook");
+  const leadName = form.watch("name") || "";
+  const leadEmail = form.watch("email") || "";
+  const leadPhone = form.watch("phone") || "";
+  const companyName = form.watch("company") || "";
   const systemsInterestedIn = form.watch("systemsInterestedIn");
   const watchedMessage = form.watch("message") || "";
 
+  const calEmbedUrl = useMemo(() => {
+    return buildCalEmbedUrl("https://cal.com/micagrowth/30min", {
+      fullName: leadName,
+      businessEmail: leadEmail,
+      phoneNumber: leadPhone,
+      companyName,
+    });
+  }, [leadName, leadEmail, leadPhone, companyName]);
+
   useEffect(() => {
     function handleCalMessage(event: MessageEvent) {
-      if (!event.origin?.includes("cal.com")) {
+      if (!isCalEmbedOrigin(event.origin)) {
         return;
       }
 
-      if (!isBookingSuccessfulCalEvent(event.data)) {
+      if (!isCalBookingSuccessMessage(event.data)) {
         return;
       }
 
-      const parsed = readBookingFromCalMessage(event.data);
-      if (!parsed) {
+      const parsed = readCalBookingDetails(event.data);
+      if (!parsed?.eventId) {
         return;
       }
 
-      setBooking(parsed);
+      setBooking({
+        eventId: parsed.eventId,
+        startTime: parsed.startTime,
+        endTime: parsed.endTime,
+      });
       setSubmitError(null);
+
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[ContactForm] Cal booking success detected", parsed);
+      }
     }
 
     window.addEventListener("message", handleCalMessage);
@@ -741,7 +694,7 @@ export function ContactForm() {
                 ✕
               </button>
               <iframe
-                src="https://cal.com/micagrowth/30min?embed=true"
+                src={calEmbedUrl}
                 title="Book your ACAI live demo"
                 className="w-full"
                 style={{ minHeight: "700px" }}

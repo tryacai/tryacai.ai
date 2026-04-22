@@ -3,6 +3,15 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+import {
+  buildCalEmbedUrl,
+  buildPostBookingRedirectUrl,
+  isCalBookingSuccessMessage,
+  isCalEmbedOrigin,
+  readCalBookingDetails,
+} from "@/lib/cal-booking";
 
 // ─── Typewriter: "ACAI MARKETING" with gradient + neon underline ───
 const TypewriterACAI = () => {
@@ -228,47 +237,6 @@ function fireFbq(eventName: string) {
   }
 }
 
-/** Detect Cal.com booking success from postMessage */
-function isBookingSuccessfulCalEvent(rawData: unknown): boolean {
-  let data: Record<string, unknown> = {};
-  if (typeof rawData === "string") {
-    try { data = JSON.parse(rawData); } catch { return false; }
-  } else if (rawData && typeof rawData === "object") {
-    data = rawData as Record<string, unknown>;
-  } else {
-    return false;
-  }
-  const candidates = [
-    data.event, data.eventType, data.type,
-    ...(data.payload && typeof data.payload === "object" ? [
-      (data.payload as Record<string, unknown>).event,
-      (data.payload as Record<string, unknown>).eventType,
-      (data.payload as Record<string, unknown>).type,
-    ] : []),
-    ...(data.data && typeof data.data === "object" ? [
-      (data.data as Record<string, unknown>).event,
-      (data.data as Record<string, unknown>).eventType,
-      (data.data as Record<string, unknown>).type,
-    ] : []),
-  ].filter(Boolean).map(String);
-  return candidates.some((v) => v === "bookingSuccessful");
-}
-
-/** Extract call_date from Cal.com postMessage */
-function extractCallDate(rawData: unknown): string {
-  let data: Record<string, unknown> = {};
-  if (typeof rawData === "string") {
-    try { data = JSON.parse(rawData); } catch { return ""; }
-  } else if (rawData && typeof rawData === "object") {
-    data = rawData as Record<string, unknown>;
-  } else {
-    return "";
-  }
-  const payload = (data.payload || data.data || data) as Record<string, unknown>;
-  const booking = (payload.booking || payload) as Record<string, unknown>;
-  return String(booking.startTime || booking.start_time || booking.start || booking.startsAt || "");
-}
-
 /** Submit lead payload to Google Apps Script */
 async function submitToAppsScript(payload: Record<string, unknown>): Promise<boolean> {
   try {
@@ -292,6 +260,9 @@ async function submitToAppsScript(payload: Record<string, unknown>): Promise<boo
 }
 
 const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const router = useRouter();
+  const hasRedirectedRef = useRef(false);
+
   const [step, setStep] = useState<ModalStep>("qualify");
   const [companyName, setCompanyName] = useState("");
   const [fullName, setFullName] = useState("");
@@ -301,13 +272,12 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
 
   // Build the Cal.com iframe URL with prefilled data
   const calEmbedUrl = (() => {
-    const params = new URLSearchParams();
-    if (fullName) params.set("name", fullName);
-    if (businessEmail) params.set("email", businessEmail);
-    if (phoneNumber) params.set("phone", phoneNumber);
-    // Cal.com supports "notes" or "metadata" for custom fields — pass company name in notes
-    if (companyName) params.set("notes", `Company: ${companyName}`);
-    return `${CAL_URL}?embed=true&${params.toString()}`;
+    return buildCalEmbedUrl(CAL_URL, {
+      fullName,
+      businessEmail,
+      phoneNumber,
+      companyName,
+    });
   })();
 
   const buildPayload = (bookedCall: boolean, callDate: string) => ({
@@ -327,10 +297,12 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
     if (step !== "booking") return;
 
     function handleCalMessage(event: MessageEvent) {
-      if (!event.origin?.includes("cal.com")) return;
-      if (!isBookingSuccessfulCalEvent(event.data)) return;
+      if (!isCalEmbedOrigin(event.origin)) return;
+      if (!isCalBookingSuccessMessage(event.data)) return;
+      if (hasRedirectedRef.current) return;
 
-      const callDate = extractCallDate(event.data);
+      const booking = readCalBookingDetails(event.data);
+      const callDate = booking?.startTime || "";
 
       // Submit to Apps Script with booked_call = true
       setIsSubmitting(true);
@@ -342,15 +314,33 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
           fireFbq("Schedule");
           console.log("[Meta Pixel] Lead + Schedule fired after booking confirmation");
         }
+
+        const redirectUrl = buildPostBookingRedirectUrl("/post-bookingpage", {
+          callDate,
+          eventId: booking?.eventId || "",
+          fullName: fullName.trim(),
+          businessEmail: businessEmail.trim(),
+          phoneNumber: phoneNumber.replace(/\D/g, ""),
+          companyName: companyName.trim(),
+        });
+
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[HeroBooking] Cal booking success detected", {
+            booking,
+            redirectUrl,
+          });
+        }
+
+        hasRedirectedRef.current = true;
         setIsSubmitting(false);
-        setStep("booked");
+        router.push(redirectUrl);
       });
     }
 
     window.addEventListener("message", handleCalMessage);
     return () => window.removeEventListener("message", handleCalMessage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, companyName, fullName, businessEmail, phoneNumber]);
+  }, [step, companyName, fullName, businessEmail, phoneNumber, router]);
 
   // Handle "Not now" — submit without booking
   const handleNotNow = async () => {
