@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
             Your Data, Your Control
           </p>
           <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-4">
-            Last Updated: December 18, 2024
+            Last Updated: April 23, 2026
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export default function PrivacyPolicyPage() {
               Customers may opt out at any time by replying STOP. Customers may reply HELP for assistance.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              We do not sell or share personal information, including phone numbers, with third parties for marketing or promotional purposes.
+              No mobile information will be shared with third parties or affiliates for marketing or promotional purposes.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
               If promotional or re-engagement messaging is introduced in the future (such as service reminders, seasonal offers, or lead revival campaigns), customers will be required to provide separate, explicit opt-in consent before receiving those messages.
@@ -125,13 +125,13 @@ export default function PrivacyPolicyPage() {
               Sharing & Disclosure
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed font-semibold mb-4">
-              We do not sell personal data.
+              We do not sell personal data. We do not share personal data with third parties for marketing purposes.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
               Information may be shared only with:
             </p>
             <ul className="list-disc pl-6 text-neutral-700 dark:text-neutral-300 space-y-2 mt-3">
-              <li>Infrastructure, messaging, analytics, and payment providers required to deliver services</li>
+              <li>Infrastructure, messaging, analytics, and payment providers required to deliver services (e.g., Twilio for SMS delivery, our hosting provider, our scheduling platform). These providers are contractually obligated to use your information only to perform services for us.</li>
               <li>Legal authorities when required by law</li>
               <li>A successor entity in the event of a merger, acquisition, or asset sale</li>
             </ul>
@@ -230,8 +230,9 @@ export default function PrivacyPolicyPage() {
             <div className="mt-4 p-6 bg-neutral-50 dark:bg-neutral-900 rounded-lg">
               <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
                 <strong>ACAI Enterprises LLC</strong><br />
-                Email: <a href="mailto:privacy@tryacai.ai" className="text-blue-600 dark:text-blue-400 hover:underline">privacy@tryacai.ai</a><br />
-                Website: <a href="https://micagrowth.co" className="text-blue-600 dark:text-blue-400 hover:underline">https://micagrowth.co</a>
+                Email: <a href="mailto:privacy@micagrowth.co" className="text-blue-600 dark:text-blue-400 hover:underline">privacy@micagrowth.co</a><br />
+                Phone: (813) 535-4103<br />
+                Website: <a href="https://tryacai.ai" className="text-blue-600 dark:text-blue-400 hover:underline">https://tryacai.ai</a>
               </p>
             </div>
           </section>

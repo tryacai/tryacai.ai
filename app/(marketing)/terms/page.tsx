@@ -30,7 +30,7 @@ export default function TermsOfServicePage() {
             Our Terms. Your Peace of Mind.
           </p>
           <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-4">
-            Effective Date: January 1st, 2025
+            Effective Date: April 23, 2026
           </p>
         </div>
 
@@ -74,25 +74,40 @@ export default function TermsOfServicePage() {
 
           <section>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
-              ACAI Enterprises SMS Notifications Program
+              ACAI Enterprises LLC SMS Notifications Program
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              ACAI Enterprises LLC may send service-related SMS messages including demo confirmations, scheduling updates, onboarding notifications, and account support communications.
+              <strong>Program Name:</strong> ACAI Enterprises LLC SMS Notifications
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              Message frequency varies.
+              <strong>Program Description:</strong> Service-related SMS messages including demo confirmations, scheduling updates, onboarding notifications, appointment reminders, missed-call follow-ups, and account support communications.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              Message and data rates may apply.
+              <strong>How to Opt In:</strong> Consent is obtained through an optional SMS consent checkbox on our contact form at https://tryacai.ai/contact. Checking this box is completely optional and is not a condition of submitting the form or receiving any service.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              Customers may opt out at any time by replying STOP.
+              <strong>Message Frequency:</strong> Message frequency varies based on your interactions with us.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              Customers may reply HELP for assistance.
+              <strong>Cost:</strong> Message and data rates may apply. Contact your wireless carrier for details.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              <strong>How to Opt Out:</strong> Reply <strong>STOP</strong> to any SMS message from us at any time to unsubscribe. You will receive a final confirmation message and no further messages will be sent.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              <strong>How to Get Help:</strong> Reply <strong>HELP</strong> to any SMS message for assistance, or contact us at privacy@micagrowth.co.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              <strong>Supported Carriers:</strong> AT&T, T-Mobile, Verizon Wireless, Sprint, Boost Mobile, U.S. Cellular, Metro PCS, Cricket, and most other U.S. carriers. Carriers are not liable for delayed or undelivered messages.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+              <strong>Privacy:</strong> No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. See our Privacy Policy for full details.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              For support, contact support@tryacai.ai.
+              If promotional or marketing-related messaging is offered in the future, separate and explicit consent will be required prior to sending such messages.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
+              You agree to use ACAI only for lawful, consent-based communications and to comply with all applicable messaging regulations and carrier requirements.
             </p>
           </section>
 
@@ -111,10 +126,10 @@ export default function TermsOfServicePage() {
               Message frequency may vary. Message and data rates may apply.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              Customers may opt out at any time by replying STOP. Customers may reply HELP for assistance.
+              Customers may opt out at any time by replying <strong>STOP</strong>. Customers may reply <strong>HELP</strong> for assistance.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              If promotional or marketing-related messaging is offered in the future, separate and explicit consent will be required prior to sending such messages.
+              No mobile information will be shared with third parties or affiliates for marketing or promotional purposes.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
               You agree to use ACAI only for lawful, consent-based communications and to comply with all applicable messaging regulations and carrier requirements.
@@ -240,8 +255,8 @@ export default function TermsOfServicePage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">Email</p>
-                <a href="mailto:team@tryacai.ai" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
-                  team@tryacai.ai
+                <a href="mailto:privacy@micagrowth.co" className="text-lg text-blue-600 dark:text-blue-400 hover:underline">
+                  privacy@micagrowth.co
                 </a>
               </div>
               <div>
