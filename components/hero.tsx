@@ -225,8 +225,6 @@ type ModalStep =
   | "thank_you"
   | "booked";
 
-const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycby6UXqt3SZxDEHNR6hUCgTwDuo7Ii6Er1AJ91jJ10E9svxuMsPJwHakE7x4ECln9r02mQ/exec";
 const CAL_URL = "https://cal.com/micagrowth/30min";
 
 /** Fire a Meta Pixel event if fbq is available */
@@ -234,28 +232,6 @@ function fireFbq(eventName: string) {
   if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
     (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", eventName);
     console.log(`[Meta Pixel] Fired: ${eventName}`);
-  }
-}
-
-/** Submit lead payload to Google Apps Script */
-async function submitToAppsScript(payload: Record<string, unknown>): Promise<boolean> {
-  try {
-    // Do NOT set Content-Type: application/json — that triggers a CORS preflight
-    // that Apps Script cannot handle. Sending as text/plain avoids the preflight,
-    // and Apps Script can still read the JSON body via e.postData.contents.
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      console.error("[Apps Script] Non-OK response:", res.status);
-      return false;
-    }
-    console.log("[Apps Script] Submission confirmed, status:", res.status);
-    return true;
-  } catch (err) {
-    console.error("[Apps Script] Submission failed:", err);
-    return false;
   }
 }
 
@@ -280,16 +256,19 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
     });
   })();
 
-  const buildPayload = (bookedCall: boolean, callDate: string) => ({
+  const buildPayload = () => ({
+    sheet_name: "Website_Leads",
     submitted_at: new Date().toISOString(),
-    qualification_status: "qualified",
+    qualification_status: "new",
     company_name: companyName.trim(),
     full_name: fullName.trim(),
     business_email: businessEmail.trim(),
     phone_number: phoneNumber.replace(/\D/g, ""),
-    source: "claim-free-strategy-session",
-    booked_call: bookedCall,
-    call_date: callDate,
+    source: "website",
+    campaign_name: "",
+    ad_set_name: "",
+    ad_name: "",
+    notes: "",
   });
 
   // Listen for Cal.com booking confirmation
@@ -304,37 +283,24 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
       const booking = readCalBookingDetails(event.data);
       const callDate = booking?.startTime || "";
 
-      // Submit to Apps Script with booked_call = true
-      setIsSubmitting(true);
-      setStep("submitting");
-
-      submitToAppsScript(buildPayload(true, callDate)).then((success) => {
-        if (success) {
-          fireFbq("Lead");
-          fireFbq("Schedule");
-          console.log("[Meta Pixel] Lead + Schedule fired after booking confirmation");
-        }
-
-        const redirectUrl = buildPostBookingRedirectUrl("/post-bookingpage", {
-          callDate,
-          eventId: booking?.eventId || "",
-          fullName: fullName.trim(),
-          businessEmail: businessEmail.trim(),
-          phoneNumber: phoneNumber.replace(/\D/g, ""),
-          companyName: companyName.trim(),
-        });
-
-        if (process.env.NODE_ENV !== "production") {
-          console.log("[HeroBooking] Cal booking success detected", {
-            booking,
-            redirectUrl,
-          });
-        }
-
-        hasRedirectedRef.current = true;
-        setIsSubmitting(false);
-        router.push(redirectUrl);
+      const redirectUrl = buildPostBookingRedirectUrl("/post-bookingpage", {
+        callDate,
+        eventId: booking?.eventId || "",
+        fullName: fullName.trim(),
+        businessEmail: businessEmail.trim(),
+        phoneNumber: phoneNumber.replace(/\D/g, ""),
+        companyName: companyName.trim(),
       });
+
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[HeroBooking] Cal booking success detected", {
+          booking,
+          redirectUrl,
+        });
+      }
+
+      hasRedirectedRef.current = true;
+      router.push(redirectUrl);
     }
 
     window.addEventListener("message", handleCalMessage);
@@ -347,10 +313,16 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
     setIsSubmitting(true);
     setStep("submitting");
 
-    const success = await submitToAppsScript(buildPayload(false, ""));
-    if (success) {
+    try {
+      await fetch('/api/submit-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildPayload()),
+      });
       fireFbq("Lead");
       console.log("[Meta Pixel] Lead fired after non-booking submission");
+    } catch (err) {
+      console.error("[submit-lead] Submission failed:", err);
     }
     setIsSubmitting(false);
     setStep("thank_you");
