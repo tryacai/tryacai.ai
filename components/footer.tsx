@@ -29,7 +29,7 @@ export const Footer = () => {
     },
     {
       name: "Instagram",
-      href: "https://www.instagram.com/tryacai.ai/?next=%2F&hl=en",
+      href: "https://www.instagram.com/micagrowth.co/?next=%2F&hl=en",
     },
   ];
   return (

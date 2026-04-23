@@ -83,7 +83,7 @@ export default function TermsOfServicePage() {
               <strong>Program Description:</strong> Service-related SMS messages including demo confirmations, scheduling updates, onboarding notifications, appointment reminders, missed-call follow-ups, and account support communications.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              <strong>How to Opt In:</strong> Consent is obtained through an optional SMS consent checkbox on our contact form at https://tryacai.ai/contact. Checking this box is completely optional and is not a condition of submitting the form or receiving any service.
+              <strong>How to Opt In:</strong> Consent is obtained through an optional SMS consent checkbox on our contact form at https://micagrowth.co/contact. Checking this box is completely optional and is not a condition of submitting the form or receiving any service.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
               <strong>Message Frequency:</strong> Message frequency varies based on your interactions with us.

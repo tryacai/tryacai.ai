@@ -232,7 +232,7 @@ export default function PrivacyPolicyPage() {
                 <strong>ACAI Enterprises LLC</strong><br />
                 Email: <a href="mailto:privacy@micagrowth.co" className="text-blue-600 dark:text-blue-400 hover:underline">privacy@micagrowth.co</a><br />
                 Phone: (813) 535-4103<br />
-                Website: <a href="https://tryacai.ai" className="text-blue-600 dark:text-blue-400 hover:underline">https://tryacai.ai</a>
+                Website: <a href="https://micagrowth.co" className="text-blue-600 dark:text-blue-400 hover:underline">https://micagrowth.co</a>
               </p>
             </div>
           </section>
