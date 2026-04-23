@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { HorizontalGradient } from "@/components/horizontal-gradient";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | ACAI Marketing",
+  title: "Privacy Policy | Mica Growth",
   description:
-    "ACAI Marketing's Privacy Policy. Learn how we collect, use, and protect your data when you use our lead conversion and automation platform.",
+    "Mica Growth's Privacy Policy. Learn how we collect, use, and protect your data in connection with our marketing and automation services.",
   robots: {
     index: false,
     follow: false,
@@ -42,10 +42,10 @@ export default function PrivacyPolicyPage() {
               Our Commitment
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              Thank you for choosing ACAI Marketing. ACAI Marketing is an AI-powered virtual receptionist and messaging automation platform built specifically for plumbing and HVAC professionals. We understand that your data represents your business reputation and customer trust.
+              Thank you for choosing Mica Growth. Mica Growth is a marketing and automation services provider that helps service-based businesses generate leads, manage customer communication, and streamline operations using modern tools and automation systems. We understand that your data represents your business reputation and customer trust.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              This Privacy Policy explains how ACAI Marketing, operated by ACAI Enterprises LLC ("we," "our," or "us"), collects, uses, and protects information processed through our platform.
+              This Privacy Policy explains how Mica Growth, operated by ACAI Enterprises LLC ("we," "our," or "us"), collects, uses, and protects information related to our services.
             </p>
           </section>
 
@@ -65,15 +65,15 @@ export default function PrivacyPolicyPage() {
               <li>Business name, owner name, and contact information</li>
               <li>Service areas, business hours, and dispatch preferences</li>
               <li>Billing information processed securely by third-party payment providers</li>
-              <li>Account login activity and platform usage data</li>
+              <li>Account login activity and service usage data</li>
             </ul>
 
             <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-3 mt-6">
               B. Service & Interaction Data
             </h3>
             <ul className="list-disc pl-6 text-neutral-700 dark:text-neutral-300 space-y-2 mt-3">
-              <li>Call recordings and transcripts handled by the AI receptionist</li>
-              <li>SMS messages sent and received through the platform</li>
+              <li>Call recordings and transcripts from communication workflows we help configure and manage</li>
+              <li>SMS messages sent and received through communication tools used to support your services</li>
               <li>Caller phone numbers, timestamps, and call metadata</li>
               <li>Appointment details such as job type, requested time, and service address</li>
             </ul>
@@ -85,7 +85,10 @@ export default function PrivacyPolicyPage() {
               SMS Communications & Consent
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              Our platform enables service-related SMS communications including appointment confirmations, scheduling updates, reminders, missed-call follow-ups, and limited post-service communications such as customer satisfaction or review requests.
+              We support service-related SMS communications including appointment confirmations, scheduling updates, reminders, missed-call follow-ups, and limited post-service communications such as customer satisfaction or review requests.
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
+              SMS messages are only sent to users who have provided explicit, optional consent through our website forms.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
               Message frequency may vary. Message and data rates may apply.
@@ -110,11 +113,11 @@ export default function PrivacyPolicyPage() {
               We use collected information to:
             </p>
             <ul className="list-disc pl-6 text-neutral-700 dark:text-neutral-300 space-y-2 mt-3">
-              <li>Operate AI receptionist and messaging services</li>
-              <li>Schedule appointments and manage customer interactions</li>
-              <li>Improve AI performance and service accuracy</li>
+              <li>Deliver marketing and automation services for service-based businesses</li>
+              <li>Support lead capture, customer communication workflows, and appointment coordination</li>
+              <li>Improve service delivery, workflow reliability, and operational effectiveness</li>
               <li>Provide customer support and account management</li>
-              <li>Detect fraud and ensure platform security</li>
+              <li>Detect fraud and ensure service security</li>
               <li>Comply with legal and regulatory obligations</li>
             </ul>
           </section>
@@ -131,7 +134,7 @@ export default function PrivacyPolicyPage() {
               Information may be shared only with:
             </p>
             <ul className="list-disc pl-6 text-neutral-700 dark:text-neutral-300 space-y-2 mt-3">
-              <li>Infrastructure, messaging, analytics, and payment providers required to deliver services (e.g., Twilio for SMS delivery, our hosting provider, our scheduling platform). These providers are contractually obligated to use your information only to perform services for us.</li>
+              <li>Infrastructure, messaging, analytics, and payment providers required to deliver services (e.g., Twilio for SMS delivery, our hosting provider, and our scheduling tools). These providers are contractually obligated to use your information only to perform services for us.</li>
               <li>Legal authorities when required by law</li>
               <li>A successor entity in the event of a merger, acquisition, or asset sale</li>
             </ul>
