@@ -52,7 +52,7 @@ export default function CallConfirmedPage() {
 
       {/* D. Pre-call preview slideshow */}
       <motion.div
-        className="w-full max-w-4xl mx-auto"
+        className="w-full max-w-5xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.6 }}
