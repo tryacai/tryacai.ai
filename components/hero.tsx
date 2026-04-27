@@ -244,6 +244,7 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
   const [fullName, setFullName] = useState("");
   const [businessEmail, setBusinessEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Build the Cal.com iframe URL with prefilled data
@@ -264,6 +265,7 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
     full_name: fullName.trim(),
     business_email: businessEmail.trim(),
     phone_number: phoneNumber.replace(/\D/g, ""),
+    sms_consent: smsConsent,
     source: "website",
     campaign_name: "",
     ad_set_name: "",
@@ -337,6 +339,7 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
       setFullName("");
       setBusinessEmail("");
       setPhoneNumber("");
+      setSmsConsent(false);
     }, 300);
   };
 
@@ -518,6 +521,26 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
                     autoFocus
                     onKeyDown={(e) => { if (e.key === "Enter" && phoneNumber.replace(/\D/g, "").length >= 10) setStep("urgency"); }}
                   />
+                </div>
+                <div className="mt-3 mb-3 flex flex-col gap-1">
+                  <label className="flex items-start gap-2 cursor-pointer">
+                    <input
+                      id="sms-consent-checkbox"
+                      type="checkbox"
+                      defaultChecked={false}
+                      checked={smsConsent}
+                      onChange={(e) => setSmsConsent(e.target.checked)}
+                      className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-purple-500 cursor-pointer"
+                    />
+                    <span className="text-xs text-neutral-400 leading-relaxed">
+                      By checking this box, I agree to receive SMS messages from ACAI Enterprises LLC (Mica Growth) regarding my inquiry. Message and data rates may apply. Message frequency varies. Reply STOP to unsubscribe at any time. Reply HELP for assistance. Consent is not a condition of any purchase or service.
+                    </span>
+                  </label>
+                  <div className="pl-5 text-xs text-neutral-500">
+                    <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-300 transition-colors">Privacy Policy</a>
+                    {" | "}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-300 transition-colors">Terms of Service</a>
+                  </div>
                 </div>
                 <div className="flex gap-3">
                   <button onClick={() => setStep("business_email")} className="flex-1 rounded-xl border border-white/10 py-3 text-sm font-medium text-neutral-300 hover:text-white transition">← Back</button>
