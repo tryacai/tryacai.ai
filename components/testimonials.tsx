@@ -13,7 +13,7 @@ export const Testimonials = () => {
     <div className="relative z-20 py-10 md:py-40">
       <Heading as="h2">Trusted by service businesses</Heading>
       <Subheading className="text-center max-w-lg mx-auto">
-        ACAI Marketing helps plumbers and HVAC businesses never miss a call and capture more opportunities 24/7.
+        Mica Growth helps plumbers and HVAC businesses never miss a call and capture more opportunities 24/7.
       </Subheading>
       <TestimonialGrid />
     </div>
@@ -31,7 +31,7 @@ const testimonials = [
   {
     name: "Manu Arora",
     quote:
-      "ACAI Marketing has completely transformed how we handle customer calls. It's like having a receptionist who never sleeps and never misses an opportunity.",
+      "Mica Growth has completely transformed how we handle customer calls. It's like having a receptionist who never sleeps and never misses an opportunity.",
     src: "https://i.pravatar.cc/150?img=1",
     designation: "Tech Innovator & Entrepreneur",
   },

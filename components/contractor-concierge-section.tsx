@@ -38,7 +38,7 @@ export function ContractorConciergeSection() {
               Move every conversation from first ring to booked work
             </h2>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-neutral-300 md:text-lg">
-              ACAI runs a consistent handoff sequence for each caller, so your team spends less time chasing details and more time closing jobs.
+              Mica Growth runs a consistent handoff sequence for each caller, so your team spends less time chasing details and more time closing jobs.
             </p>
           </div>
 

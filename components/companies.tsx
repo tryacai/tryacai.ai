@@ -78,7 +78,7 @@ export const Companies = () => {
       </div>
       <Heading as="h2">Works with your existing tools</Heading>
       <Subheading className="text-center max-w-2xl mx-auto">
-        ACAI integrates directly with the calendars and CRM systems you already use.
+        Mica Growth integrates directly with the calendars and CRM systems you already use.
       </Subheading>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-20 max-w-5xl mx-auto mt-20 min-h-[80px] md:min-h-[120px]">
@@ -128,7 +128,7 @@ export const Companies = () => {
       {/* Bridge Section */}
       <div className="max-w-3xl mx-auto mt-16 text-center px-4">
         <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-          ACAI connects with the tools you already use, and if you don&apos;t see one listed, we build it. No rigid systems. No forced changes. Just AI that fits your business.
+          Mica Growth connects with the tools you already use, and if you don&apos;t see one listed, we build it. No rigid systems. No forced changes. Just AI that fits your business.
         </p>
       </div>
     </div>

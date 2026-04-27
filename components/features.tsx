@@ -21,14 +21,14 @@ export const Features = () => {
     {
       title: "Automated Follow-Ups That Keep Clients Coming Back",
       description:
-        "ACAI automates reminders and follow-ups to keep customers engaged and uncover new opportunities.",
+        "Mica Growth automates reminders and follow-ups to keep customers engaged and uncover new opportunities.",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
       title: "Built on Reliable, Proven Technology",
       description:
-        "Behind the scenes, ACAI runs on the same infrastructure trusted by global platforms. That means reliability, security, and performance, without you ever needing to think about it.",
+        "Behind the scenes, Mica Growth runs on the same infrastructure trusted by global platforms. That means reliability, security, and performance, without you ever needing to think about it.",
       skeleton: <SkeletonFour />,
       className: "col-span-1 lg:col-span-3 border-r dark:border-neutral-800",
     },

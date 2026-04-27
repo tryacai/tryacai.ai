@@ -155,7 +155,7 @@ function VoiceUI() {
             <Headphones className="h-4 w-4 text-purple-300" />
           </div>
           <div>
-            <p className="text-xs text-white font-medium">ACAI Voice AI</p>
+            <p className="text-xs text-white font-medium">Mica Growth Voice AI</p>
             <p className="text-[10px] text-emerald-400">Active — 24/7</p>
           </div>
         </div>
@@ -473,7 +473,7 @@ export default function AcaiSystemPage() {
               <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
                 <div className="flex items-center gap-3">
                   <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-sm font-medium text-white">ACAI Dashboard</span>
+                  <span className="text-sm font-medium text-white">Mica Growth Dashboard</span>
                   <span className="text-[10px] text-neutral-500">Live</span>
                 </div>
                 <span className="text-[10px] text-neutral-500">Today · 3:42 PM</span>

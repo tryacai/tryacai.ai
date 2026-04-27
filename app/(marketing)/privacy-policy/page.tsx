@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { HorizontalGradient } from "@/components/horizontal-gradient";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Mica Growth",
+  title: "Privacy Policy",
   description:
     "Mica Growth's Privacy Policy. Learn how we collect, use, and protect your data in connection with our marketing and automation services.",
   robots: {

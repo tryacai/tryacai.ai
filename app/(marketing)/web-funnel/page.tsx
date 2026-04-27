@@ -4,9 +4,9 @@ import { Link } from "next-view-transitions";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Web Funnel | ACAI Marketing",
+  title: "Web Funnel",
   description:
-    "Capture more inbound demand with ACAI Web Funnel, an instant follow up system that prioritizes intent and routes qualified leads faster.",
+    "Capture more inbound demand with Mica Growth Web Funnel, an instant follow up system that prioritizes intent and routes qualified leads faster.",
 };
 
 export default function WebFunnelPage() {
@@ -18,7 +18,7 @@ export default function WebFunnelPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-purple-300/70">Web Funnel</p>
           <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">Convert More Clicks Into Qualified Jobs</h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
-            ACAI Web Funnel captures, prioritizes, and routes leads instantly so your team can focus on closing revenue.
+            Mica Growth Web Funnel captures, prioritizes, and routes leads instantly so your team can focus on closing revenue.
           </p>
         </section>
 

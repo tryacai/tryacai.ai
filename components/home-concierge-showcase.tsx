@@ -34,7 +34,7 @@ export function HomeConciergeShowcase() {
           <div className="group relative min-h-[360px] overflow-hidden rounded-3xl border border-white/10 bg-black/50 md:min-h-[560px]">
             <Image
               src="/NEWcallcenter.png"
-              alt="ACAI live contractor concierge team"
+              alt="Mica Growth live contractor concierge team"
               fill
               priority
               className="object-cover"
@@ -68,7 +68,7 @@ export function HomeConciergeShowcase() {
 
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <span className="acai-logo-shimmer text-5xl font-semibold tracking-[0.35em] text-white/20 md:text-7xl">
-                ACAI
+                Mica Growth
               </span>
             </div>
           </div>

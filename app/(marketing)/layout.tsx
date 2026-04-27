@@ -6,18 +6,21 @@ import { cn } from "@/lib/utils";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "Try ACAI Marketing | Floor Coating Marketing Agency | Guaranteed Booked Jobs",
+  title: {
+    default: "Mica Growth — Floor Coating Marketing Agency",
+    template: "%s | Mica Growth",
+  },
   description:
-    "ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
+    "Mica Growth is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
   openGraph: {
-    title: "Try ACAI Marketing | Floor Coating Marketing Agency",
+    title: "Mica Growth — Floor Coating Marketing Agency",
     description:
       "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Try ACAI Marketing | Floor Coating Marketing Agency",
+    title: "Mica Growth — Floor Coating Marketing Agency",
     description:
       "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],

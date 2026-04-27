@@ -77,7 +77,7 @@ export const DashboardDemo = () => {
           </span>
         </div>
         <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-400">
-          Simplified ACAI preview. Each client receives their own full GoHighLevel CRM with customized reporting.
+          Simplified Mica Growth preview. Each client receives their own full GoHighLevel CRM with customized reporting.
         </p>
       </motion.div>
 

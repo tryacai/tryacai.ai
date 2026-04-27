@@ -4,7 +4,7 @@ import { Background } from "@/components/background";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "AI Voice Agents for Home Services | ACAI",
+  title: "AI Voice Agents for Home Services",
   description:
     "AI voice agents answer calls, qualify leads, and book appointments 24/7 for home service businesses. Never miss another call or job opportunity.",
 };
@@ -43,9 +43,9 @@ export default function AiVoiceAgentsPage() {
             <li className="flex items-start gap-3"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" /> Nobody leaves voicemails anymore — they just call the next company</li>
           </ul>
 
-          <h2 className="mt-12 text-2xl font-semibold text-white">How ACAI Voice AI Works</h2>
+          <h2 className="mt-12 text-2xl font-semibold text-white">How Mica Growth Voice AI Works</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            The ACAI voice agent plugs into your existing phone system and handles calls like a trained receptionist:
+            The Mica Growth voice agent plugs into your existing phone system and handles calls like a trained receptionist:
           </p>
           <ol className="mt-4 space-y-3 text-base text-neutral-300 list-decimal list-inside">
             <li>Customer calls your business number</li>
@@ -64,7 +64,7 @@ export default function AiVoiceAgentsPage() {
             Hiring a full-time receptionist costs $3,000-4,000 per month — and they only cover business hours. An answering service costs $500-1,500 per month and delivers a generic experience that loses leads.
           </p>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            ACAI's voice AI runs 24/7/365. Nights. Weekends. Holidays. It costs a fraction of a human hire and never takes a sick day.
+            Mica Growth's voice AI runs 24/7/365. Nights. Weekends. Holidays. It costs a fraction of a human hire and never takes a sick day.
           </p>
 
           <h2 className="mt-12 text-2xl font-semibold text-white">Built for Tampa and Florida Service Businesses</h2>

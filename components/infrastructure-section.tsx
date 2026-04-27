@@ -25,7 +25,7 @@ export const InfrastructureSection = () => {
       >
         <Globe className="mx-auto" />
         <div className="mt-8 text-center text-sm md:text-base text-neutral-600 dark:text-neutral-400 max-w-lg">
-          <p>ACAI integrates directly into your existing systems. No rigid platforms. No forced changes.</p>
+          <p>Mica Growth integrates directly into your existing systems. No rigid platforms. No forced changes.</p>
         </div>
       </motion.div>
     </section>

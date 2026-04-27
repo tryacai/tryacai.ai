@@ -127,11 +127,11 @@
     </text>
   </g>
   
-  <!-- ACAI Branding Badge -->
+  <!-- Mica Growth Branding Badge -->
   <g transform="translate(475, 485)">
     <rect width="250" height="50" rx="25" fill="url(#accentGrad)" opacity="0.9"/>
     <text x="125" y="33" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#fff" text-anchor="middle">
-      With ACAI
+      With Mica Growth
     </text>
   </g>
   

@@ -4,9 +4,9 @@ import Link from "next/link";
 import { Button } from "@/components/button";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | ACAI Marketing",
+  title: "Terms of Service",
   description:
-    "ACAI Marketing's Terms of Service for lead conversion and automation products, including service terms, payment policies, and user obligations.",
+    "Mica Growth's Terms of Service for lead conversion and automation products, including service terms, payment policies, and user obligations.",
   robots: {
     index: false,
     follow: false,
@@ -40,7 +40,7 @@ export default function TermsOfServicePage() {
           {/* Introduction */}
           <section>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              Welcome to ACAI Marketing, a service operated by ACAI Enterprises LLC ("ACAI," "we," or "us"). These Terms of Service ("Terms") govern your use of our software-as-a-service platform and related services ("Services").
+              Welcome to Mica Growth, a service operated by ACAI Enterprises LLC ("Mica Growth," "we," or "us"). These Terms of Service ("Terms") govern your use of our software-as-a-service platform and related services ("Services").
             </p>
           </section>
 
@@ -50,7 +50,7 @@ export default function TermsOfServicePage() {
               Agreement to Terms
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              By accessing or using ACAI, you agree to be bound by these Terms. If you do not agree, you may not use the Services.
+              By accessing or using Mica Growth, you agree to be bound by these Terms. If you do not agree, you may not use the Services.
             </p>
           </section>
 
@@ -60,7 +60,7 @@ export default function TermsOfServicePage() {
               Use of Services
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-              ACAI provides AI-powered receptionist and messaging automation tools designed for plumbing and HVAC service businesses.
+              Mica Growth provides AI-powered receptionist and messaging automation tools designed for plumbing and HVAC service businesses.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
               You agree to:
@@ -107,7 +107,7 @@ export default function TermsOfServicePage() {
               If promotional or marketing-related messaging is offered in the future, separate and explicit consent will be required prior to sending such messages.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mt-4">
-              You agree to use ACAI only for lawful, consent-based communications and to comply with all applicable messaging regulations and carrier requirements.
+              You agree to use Mica Growth only for lawful, consent-based communications and to comply with all applicable messaging regulations and carrier requirements.
             </p>
           </section>
 
@@ -132,7 +132,7 @@ export default function TermsOfServicePage() {
               No mobile information will be shared with third parties or affiliates for marketing or promotional purposes.
             </p>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              You agree to use ACAI only for lawful, consent-based communications and to comply with all applicable messaging regulations and carrier requirements.
+              You agree to use Mica Growth only for lawful, consent-based communications and to comply with all applicable messaging regulations and carrier requirements.
             </p>
           </section>
 
@@ -162,7 +162,7 @@ export default function TermsOfServicePage() {
               Intellectual Property
             </h2>
             <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              All software, technology, and intellectual property associated with ACAI are owned by ACAI Enterprises LLC or its licensors. Unauthorized use is prohibited.
+              All software, technology, and intellectual property associated with Mica Growth are owned by ACAI Enterprises LLC or its licensors. Unauthorized use is prohibited.
             </p>
           </section>
 

@@ -132,7 +132,7 @@ export function RevenueIntelligenceDashboard({ preview = false }: { preview?: bo
 
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-purple-300/75">REVENUE INTELLIGENCE REPORT</p>
-          <h2 className="mt-4 text-3xl font-semibold text-white md:text-5xl">ACAI Revenue Intelligence Dashboard™</h2>
+          <h2 className="mt-4 text-3xl font-semibold text-white md:text-5xl">Mica Growth Revenue Intelligence Dashboard™</h2>
           <p className="mt-4 text-xl font-medium text-neutral-100 md:text-2xl">Know Exactly What Every Call Is Worth.</p>
           <p className="mx-auto mt-3 max-w-3xl text-base text-neutral-300 md:text-lg">
             Every call. Every emergency. Every booked job. Fully tracked and attributed.
@@ -359,7 +359,7 @@ export function RevenueIntelligenceDashboard({ preview = false }: { preview?: bo
         >
           <h3 className="text-center text-2xl font-semibold text-white md:text-3xl">Built to Work With Your Systems.</h3>
           <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-neutral-300 md:text-base">
-            ACAI integrates directly with your CRM and dispatch platform.
+            Mica Growth integrates directly with your CRM and dispatch platform.
           </p>
 
           <div className="integration-marquee mx-auto mt-7 max-w-5xl rounded-2xl border border-white/10 bg-black/40 px-3 py-4 md:px-4 md:py-5">
@@ -386,14 +386,14 @@ export function RevenueIntelligenceDashboard({ preview = false }: { preview?: bo
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-neutral-300">
               <p className="font-semibold text-white">If you don’t:</p>
-              <p className="mt-1">We provide the ACAI Revenue Tracking Pipeline — structured, tagged, and attributed.</p>
+              <p className="mt-1">We provide the Mica Growth Revenue Tracking Pipeline — structured, tagged, and attributed.</p>
             </div>
           </div>
 
         </motion.div>
 
         <p className="mx-auto mt-6 max-w-4xl text-center text-sm text-neutral-400 md:text-base">
-          Whether powered by AI or live agents, ACAI tracks, qualifies, and attributes every call.
+          Whether powered by AI or live agents, Mica Growth tracks, qualifies, and attributes every call.
         </p>
       </div>
     </section>

@@ -10,7 +10,7 @@ import { Mic } from "lucide-react";
 export default function VoiceAiPage() {
   const { toggleConversation, isConversationActive, isLoading } = useRetellVoiceDemo("acai");
 
-  const statusText = isConversationActive ? "Live call simulation active" : isLoading ? "Connecting concierge..." : "Try the ACAI Concierge";
+  const statusText = isConversationActive ? "Live call simulation active" : isLoading ? "Connecting concierge..." : "Try the Mica Growth Concierge";
 
   return (
     <div className="relative overflow-hidden py-24 md:py-0">
@@ -18,9 +18,9 @@ export default function VoiceAiPage() {
       <Container className="relative z-20 pb-24 md:pt-36">
         <section className="mx-auto max-w-5xl">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-purple-300/70">Voice AI</p>
-          <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">Try the ACAI Concierge™</h1>
+          <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">Try the Mica Growth Concierge™</h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
-            Simulate a real inbound call experience and see how ACAI answers, qualifies, and routes opportunities instantly.
+            Simulate a real inbound call experience and see how Mica Growth answers, qualifies, and routes opportunities instantly.
           </p>
         </section>
 
@@ -45,7 +45,7 @@ export default function VoiceAiPage() {
                 onClick={toggleConversation}
                 disabled={isLoading}
                 className={`relative flex h-24 w-24 items-center justify-center rounded-full text-white transition ${isConversationActive ? "bg-green-500 shadow-[0_0_24px_rgba(34,197,94,0.5)]" : "bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 shadow-[0_0_28px_rgba(122,88,255,0.4)]"}`}
-                aria-label="Try ACAI Concierge demo"
+                aria-label="Try Mica Growth Concierge demo"
               >
                 <Mic className="h-10 w-10" />
               </button>

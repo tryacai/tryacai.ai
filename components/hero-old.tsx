@@ -81,7 +81,7 @@ const TypewriterText = ({
   }, [syncCycle, deleteSignal, phase]);
 
   useEffect(() => {
-    const withAcai = "With ACAI";
+    const withAcai = "With Mica Growth";
     const secondaryPhrase = secondaryPhrases[secondaryPhraseIndex];
     const withAcaiTypingSpeed = 105;
     const normalTypingSpeed = 125;
@@ -709,14 +709,14 @@ const PrimaryDemoCard = ({
             )}
           </div>
           <p className="text-base md:text-lg text-neutral-300 dark:text-neutral-400 mb-8">
-            See how ACAI handles missed inbound calls, captures lead details, and keeps opportunities moving to booked jobs.
+            See how Mica Growth handles missed inbound calls, captures lead details, and keeps opportunities moving to booked jobs.
           </p>
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <button
                 onClick={handleMicClick}
                 className={`w-24 h-24 rounded-full ${micStyle} flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-150 ease-out focus:outline-none focus:ring-4 focus:ring-purple-500/50 active:scale-95 relative z-10`}
-                aria-label="Start ACAI voice demo"
+                aria-label="Start Mica Growth voice demo"
               >
                 <Mic className="w-12 h-12 text-white" />
               </button>
@@ -882,7 +882,7 @@ export const Hero = () => {
         <Badge onClick={() => router.push("/blog")}>
           <span className="flex items-center gap-1.5 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent font-semibold blur-[0.3px]">
             <Zap className="h-3 w-3 text-purple-400 fill-purple-400" />
-            ACAI Reports — Daily
+            Mica Growth Reports — Daily
           </span>
         </Badge>
       </motion.div>
@@ -1005,7 +1005,7 @@ export const OurVoiceAISection = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-purple-300/70 md:text-sm">OUR VOICE AI</p>
             <h2 className="mt-3 text-3xl font-semibold text-white md:text-5xl">Our Voice AI</h2>
             <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
-              ACAI answers when your team cannot get to the phone, captures lead information, qualifies the caller, and helps turn missed opportunities into booked customers.
+              Mica Growth answers when your team cannot get to the phone, captures lead information, qualifies the caller, and helps turn missed opportunities into booked customers.
             </p>
           </div>
 

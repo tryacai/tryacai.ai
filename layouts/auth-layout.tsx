@@ -18,14 +18,14 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
                 "font-semibold text-xl text-center text-muted dark:text-muted-dark"
               )}
             >
-              ACAI Marketing is trusted by service businesses
+              Mica Growth is trusted by service businesses
             </p>
             <p
               className={cn(
                 "font-normal text-base text-center text-neutral-500 dark:text-neutral-400 mt-8"
               )}
             >
-              Never miss a call again. ACAI Marketing answers calls, books jobs, and helps home service businesses capture more opportunities 24/7.
+              Never miss a call again. Mica Growth answers calls, books jobs, and helps home service businesses capture more opportunities 24/7.
             </p>
           </div>
           <HorizontalGradient className="top-20" />

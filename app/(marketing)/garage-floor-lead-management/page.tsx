@@ -4,7 +4,7 @@ import { Background } from "@/components/background";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Garage Floor Lead Management | ACAI",
+  title: "Garage Floor Lead Management",
   description:
     "Automated lead management for garage floor coating and epoxy companies. Capture, qualify, and book more garage floor jobs with AI-powered automation.",
 };
@@ -36,9 +36,9 @@ export default function GarageFloorLeadManagementPage() {
             <li className="flex items-start gap-3"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" /> Revenue gets left on the table every single week</li>
           </ul>
 
-          <h2 className="mt-12 text-2xl font-semibold text-white">How ACAI Automates Garage Floor Leads</h2>
+          <h2 className="mt-12 text-2xl font-semibold text-white">How Mica Growth Automates Garage Floor Leads</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            ACAI's automation engine consolidates every lead source into one pipeline, then works them automatically:
+            Mica Growth's automation engine consolidates every lead source into one pipeline, then works them automatically:
           </p>
           <ol className="mt-4 space-y-3 text-base text-neutral-300 list-decimal list-inside">
             <li><strong className="text-white">Instant capture</strong> — Form fills, calls, and messages flow into one dashboard instantly</li>
@@ -54,12 +54,12 @@ export default function GarageFloorLeadManagementPage() {
             Garage floor jobs are high-ticket ($2,000-8,000+) and homeowners usually get 2-3 quotes. The company that responds first books the estimate. The company that follows up consistently closes the job. This is not theory — it's what the data shows across hundreds of service businesses.
           </p>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            With ACAI, your business responds in under a minute, qualifies the lead, and gets an estimate on the calendar while your competitor is still on a job site with their phone in the truck.
+            With Mica Growth, your business responds in under a minute, qualifies the lead, and gets an estimate on the calendar while your competitor is still on a job site with their phone in the truck.
           </p>
 
           <h2 className="mt-12 text-2xl font-semibold text-white">Serving Epoxy & Coating Companies Across Florida</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            We work with garage floor coating companies across Tampa, Brandon, Riverview, Lakeland, Orlando, Jacksonville, and the entire state of Florida. Whether you're a one-truck operation or running multiple crews, ACAI scales with your business.
+            We work with garage floor coating companies across Tampa, Brandon, Riverview, Lakeland, Orlando, Jacksonville, and the entire state of Florida. Whether you're a one-truck operation or running multiple crews, Mica Growth scales with your business.
           </p>
 
           <div className="mt-12 flex flex-wrap gap-4">

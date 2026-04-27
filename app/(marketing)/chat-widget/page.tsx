@@ -4,9 +4,9 @@ import { Link } from "next-view-transitions";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Chat Widget | ACAI Marketing",
+  title: "Chat Widget",
   description:
-    "ACAI Chat Widget helps service businesses convert more leads with instant engagement, qualification, and routing into booked workflows.",
+    "Mica Growth Chat Widget helps service businesses convert more leads with instant engagement, qualification, and routing into booked workflows.",
 };
 
 export default function ChatWidgetPage() {
@@ -18,7 +18,7 @@ export default function ChatWidgetPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-purple-300/70">Chat Widget</p>
           <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">Engage Instantly, Qualify Before They Bounce</h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
-            ACAI Chat Widget turns passive visits into conversations and routes high-intent prospects to your team fast.
+            Mica Growth Chat Widget turns passive visits into conversations and routes high-intent prospects to your team fast.
           </p>
         </section>
 

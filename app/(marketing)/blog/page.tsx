@@ -3,11 +3,11 @@ import { getAllBlogs } from "@/lib/blog";
 import { BlogIndexClient } from "@/components/blog-index-client";
 
 export const metadata: Metadata = {
-  title: "ACAI Insights | Blog",
+  title: "Mica Growth Insights | Blog",
   description:
     "Real insights on automation, leads, and growing service businesses in Tampa and across Florida.",
   openGraph: {
-    title: "ACAI Insights | Blog",
+    title: "Mica Growth Insights | Blog",
     description:
       "Real insights on automation, leads, and growing service businesses in Tampa and across Florida.",
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],

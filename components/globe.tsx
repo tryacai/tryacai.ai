@@ -160,7 +160,7 @@ export const Globe = ({ className }: { className?: string }) => {
         industry: "Plumbing",
         lat: 40.7357,
         lon: -74.1724,
-        quote: "ACAI made after-hours emergency calls a non-issue for our team. We book jobs while we're still on-site.",
+        quote: "Mica Growth made after-hours emergency calls a non-issue for our team. We book jobs while we're still on-site.",
         metrics: ["281 calls handled/month", "73 emergency bookings/month", "29% faster first-response"],
       },
       {
@@ -501,7 +501,7 @@ export const Globe = ({ className }: { className?: string }) => {
         <div
           className="relative h-full w-full rounded-full border-2 border-purple-300/70"
           style={{
-            backgroundImage: "url('/justlogowithoutwordsACAI.jpeg')",
+            backgroundImage: "url('/Micalogo.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             boxShadow: "0 0 20px rgba(168,85,247,0.9), 0 0 40px rgba(59,130,246,0.5), 0 0 60px rgba(239,68,68,0.2)",

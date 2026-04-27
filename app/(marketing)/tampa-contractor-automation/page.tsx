@@ -4,9 +4,9 @@ import { Background } from "@/components/background";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "AI Automation for Tampa Contractors | ACAI",
+  title: "AI Automation for Tampa Contractors",
   description:
-    "Tampa contractors are losing thousands in missed calls and slow follow-up. ACAI automates lead response, qualification, and booking so you never miss a job.",
+    "Tampa contractors are losing thousands in missed calls and slow follow-up. Mica Growth automates lead response, qualification, and booking so you never miss a job.",
 };
 
 export default function TampaContractorAutomationPage() {
@@ -25,7 +25,7 @@ export default function TampaContractorAutomationPage() {
           </p>
 
           <p className="mt-5 text-lg leading-relaxed text-neutral-300">
-            <strong className="text-white">ACAI is an AI-powered lead automation system built specifically for service businesses in Tampa, Brandon, Riverview, Clearwater, and across the bay area.</strong> It responds to every lead instantly, qualifies them automatically, and books appointments on your calendar — 24/7.
+            <strong className="text-white">Mica Growth is an AI-powered lead automation system built specifically for service businesses in Tampa, Brandon, Riverview, Clearwater, and across the bay area.</strong> It responds to every lead instantly, qualifies them automatically, and books appointments on your calendar — 24/7.
           </p>
 
           <h2 className="mt-12 text-2xl font-semibold text-white">The Problem Every Tampa Contractor Faces</h2>
@@ -36,9 +36,9 @@ export default function TampaContractorAutomationPage() {
             This happens 10, 15, even 20 times per week for busy contractors. At an average job value of $800-4,000, that is $30,000+ per month in lost revenue — just from missed calls and slow follow-up.
           </p>
 
-          <h2 className="mt-12 text-2xl font-semibold text-white">How ACAI Fixes This</h2>
+          <h2 className="mt-12 text-2xl font-semibold text-white">How Mica Growth Fixes This</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            ACAI plugs into your existing workflow and handles the gap between when a lead comes in and when it gets handled.
+            Mica Growth plugs into your existing workflow and handles the gap between when a lead comes in and when it gets handled.
           </p>
           <ul className="mt-4 space-y-3 text-base text-neutral-300">
             <li className="flex items-start gap-3"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" /> <strong className="text-white">Instant response</strong> — Every form fill, missed call, and chat gets a reply in under 60 seconds via call or text</li>
@@ -49,7 +49,7 @@ export default function TampaContractorAutomationPage() {
 
           <h2 className="mt-12 text-2xl font-semibold text-white">Built for Tampa Service Businesses</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            ACAI is not a generic chatbot or call center. It is a full AI system designed for contractors, plumbers, HVAC techs, epoxy companies, roofers, and every other service business that depends on fast response to win jobs.
+            Mica Growth is not a generic chatbot or call center. It is a full AI system designed for contractors, plumbers, HVAC techs, epoxy companies, roofers, and every other service business that depends on fast response to win jobs.
           </p>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
             We work with businesses across Tampa, Brandon, Riverview, Clearwater, St. Pete, and the surrounding areas. We understand the local market, the competition, and what it takes to win leads in this area.
@@ -60,7 +60,7 @@ export default function TampaContractorAutomationPage() {
             Imagine every single lead that comes into your business getting a professional, instant response. No more missed calls. No more leads sitting in an inbox for hours. No more losing jobs to the competitor who just happened to pick up the phone first.
           </p>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            That is what ACAI delivers. One system that captures, qualifies, and books — automatically.
+            That is what Mica Growth delivers. One system that captures, qualifies, and books — automatically.
           </p>
 
           <div className="mt-12 flex flex-wrap gap-4">

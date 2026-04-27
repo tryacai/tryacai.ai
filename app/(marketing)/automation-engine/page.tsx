@@ -4,9 +4,9 @@ import { Link } from "next-view-transitions";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Automation Engine | ACAI Marketing",
+  title: "Automation Engine",
   description:
-    "ACAI Automation Engine connects capture, qualification, routing, and booking so your team can convert more leads without response delays.",
+    "Mica Growth Automation Engine connects capture, qualification, routing, and booking so your team can convert more leads without response delays.",
 };
 
 export default function AutomationEnginePage() {
@@ -18,7 +18,7 @@ export default function AutomationEnginePage() {
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-purple-300/70">Automation Engine</p>
           <h1 className="mt-4 text-4xl font-semibold text-white md:text-6xl">Route Faster. Book Faster. Recover Faster.</h1>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-neutral-300 md:text-lg">
-            ACAI Automation Engine connects lead capture to qualification and scheduling so no opportunity gets stuck in limbo.
+            Mica Growth Automation Engine connects lead capture to qualification and scheduling so no opportunity gets stuck in limbo.
           </p>
         </section>
 

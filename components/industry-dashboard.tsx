@@ -48,7 +48,7 @@ export const IndustryDashboard = () => {
           Our Specialty: Service Businesses
         </h2>
         <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-          ACAI's AI automation is customized to fit the unique needs of service industries
+          Mica Growth's AI automation is customized to fit the unique needs of service industries
         </p>
       </motion.div>
 

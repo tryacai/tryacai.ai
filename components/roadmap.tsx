@@ -7,14 +7,14 @@ export const Roadmap = () => {
   const milestones = [
     {
       date: "Early November 2025",
-      title: "Start of ACAI",
+      title: "Start of Mica Growth",
       description: "Initial experimentation. Learning Retell AI, workflows, and voice automation systems while exploring real-world receptionist use cases.",
       position: "top"
     },
     {
       date: "Mid November 2025",
       title: "Legal Formation",
-      description: "Filing ACAI as an LLC and establishing the company as an official legal business entity.",
+      description: "Filing Mica Growth as an LLC and establishing the company as an official legal business entity.",
       position: "bottom"
     },
     {
@@ -26,13 +26,13 @@ export const Roadmap = () => {
     {
       date: "Mid December 2025",
       title: "Website Platform Launch",
-      description: "Launching the ACAI website so users can review our platform, systems, workflows, and pricing.",
+      description: "Launching the Mica Growth website so users can review our platform, systems, workflows, and pricing.",
       position: "bottom"
     },
     {
       date: "Late December 2025",
       title: "First Live Client",
-      description: "Onboarding and supporting our first real, active client using ACAI's AI receptionist.",
+      description: "Onboarding and supporting our first real, active client using Mica Growth's AI receptionist.",
       position: "top"
     },
   ];

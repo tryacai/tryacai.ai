@@ -27,7 +27,7 @@ export function BlogIndexClient({ blogs }: { blogs: BlogWithSlug[] }) {
             transition={{ duration: 0.6 }}
             className="text-4xl font-semibold leading-tight text-white md:text-6xl"
           >
-            ACAI Insights
+            Mica Growth Insights
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}

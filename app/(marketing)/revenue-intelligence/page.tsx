@@ -4,9 +4,9 @@ import { RevenueIntelligenceDashboard } from "@/components/revenue-intelligence-
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Revenue Intelligence | ACAI Marketing",
+  title: "Revenue Intelligence",
   description:
-    "Measure response speed, qualification quality, and booking outcomes with ACAI Revenue Intelligence for service businesses.",
+    "Measure response speed, qualification quality, and booking outcomes with Mica Growth Revenue Intelligence for service businesses.",
 };
 
 export default function RevenueIntelligencePage() {

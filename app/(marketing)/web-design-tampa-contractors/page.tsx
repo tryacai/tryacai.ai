@@ -4,7 +4,7 @@ import { Background } from "@/components/background";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Web Design for Tampa Contractors | ACAI",
+  title: "Web Design for Tampa Contractors",
   description:
     "High-converting contractor websites built to capture leads, rank locally, and integrate with AI automation. Purpose-built for Tampa and Florida service businesses.",
 };
@@ -53,7 +53,7 @@ export default function WebDesignTampaPage() {
 
           <h2 className="mt-12 text-2xl font-semibold text-white">Web Design + AI Automation = More Jobs</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            A great website alone isn't enough. When you connect it to ACAI's automation engine, every lead gets qualified and booked instantly. A visitor lands on your roofing page, fills out a form, and within 30 seconds gets a call from your AI agent to schedule an estimate — before they even check your competitor's site.
+            A great website alone isn't enough. When you connect it to Mica Growth's automation engine, every lead gets qualified and booked instantly. A visitor lands on your roofing page, fills out a form, and within 30 seconds gets a call from your AI agent to schedule an estimate — before they even check your competitor's site.
           </p>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
             That's the difference between a website and a lead engine. The website captures intent. The AI converts it.

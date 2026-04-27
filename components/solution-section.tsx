@@ -74,7 +74,7 @@ export const SolutionSection = () => {
 
               <div className="rounded-[2rem] bg-neutral-900/90 border border-neutral-800 p-4">
                 <div className="flex items-center justify-between text-xs text-neutral-400 mb-3">
-                  <span>ACAI SMS Automation</span>
+                  <span>Mica Growth SMS Automation</span>
                   <span>Now</span>
                 </div>
 

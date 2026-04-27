@@ -2,9 +2,9 @@ import { SignupForm } from "@/components/signup";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign Up | ACAI Marketing",
+  title: "Sign Up",
   description:
-    "Sign up for ACAI Marketing to automate follow up, improve response speed, and convert more inbound demand into booked jobs.",
+    "Sign up for Mica Growth to automate follow up, improve response speed, and convert more inbound demand into booked jobs.",
   openGraph: {
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },

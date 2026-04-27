@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Voice AI | ACAI Marketing",
+  title: "Voice AI",
   description:
-    "Use ACAI Voice AI to answer, qualify, and route high-intent calls quickly as part of your lead conversion and automation system.",
+    "Use Mica Growth Voice AI to answer, qualify, and route high-intent calls quickly as part of your lead conversion and automation system.",
 };
 
 export default function VoiceAiLayout({

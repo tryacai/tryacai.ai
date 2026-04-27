@@ -329,7 +329,7 @@ export function CallRevenueFlowSection() {
             </p>
 
             <h3 className="mt-10 text-3xl font-semibold leading-tight text-white md:text-5xl">
-              See how ACAI captures this for you
+              See how Mica Growth captures this for you
             </h3>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-300 md:text-lg">
               We&apos;ll map your process and show exactly where revenue is leaking.

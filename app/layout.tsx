@@ -10,31 +10,34 @@ const META_PIXEL_ID = "1215596613789536";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://micagrowth.co"),
-  title: "Try ACAI Marketing | Floor Coating Marketing Agency | Guaranteed Booked Jobs",
+  title: {
+    default: "Mica Growth — Floor Coating Marketing Agency",
+    template: "%s | Mica Growth",
+  },
   description:
-    "ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
+    "Mica Growth is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
   icons: {
     icon: "/Micalogo.png",
   },
   openGraph: {
-    title: "Try ACAI Marketing | Floor Coating Marketing Agency",
+    title: "Mica Growth — Floor Coating Marketing Agency",
     description:
       "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     url: "https://micagrowth.co",
-    siteName: "ACAI Marketing",
+    siteName: "Mica Growth",
     images: [
       {
         url: "https://micagrowth.co/nevermissaleadpreviewimage.png",
         width: 1200,
         height: 630,
-        alt: "Try ACAI Marketing | Floor Coating Marketing Agency",
+        alt: "Mica Growth — Floor Coating Marketing Agency",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Try ACAI Marketing | Floor Coating Marketing Agency",
+    title: "Mica Growth — Floor Coating Marketing Agency",
     description:
       "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],

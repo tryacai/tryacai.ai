@@ -7,7 +7,7 @@ import { Link } from "next-view-transitions";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Lead Response System | ACAI Marketing",
+  title: "Lead Response System",
   description:
     "Lead response automation that captures inbound demand, qualifies opportunities, and books next steps faster.",
   robots: {

@@ -2,9 +2,9 @@ import { LoginForm } from "@/components/login";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login | ACAI Marketing",
+  title: "Login",
   description:
-    "Log in to ACAI Marketing to manage your lead conversion and follow-up automation workflows.",
+    "Log in to Mica Growth to manage your lead conversion and follow-up automation workflows.",
   openGraph: {
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },

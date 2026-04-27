@@ -4,9 +4,9 @@ import { Background } from "@/components/background";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Epoxy Lead Generation in Florida | ACAI",
+  title: "Epoxy Lead Generation in Florida",
   description:
-    "Florida epoxy and garage floor companies are losing leads to slow follow-up. ACAI automates instant response and booking so you close more jobs.",
+    "Florida epoxy and garage floor companies are losing leads to slow follow-up. Mica Growth automates instant response and booking so you close more jobs.",
 };
 
 export default function FloridaEpoxyLeadGenerationPage() {
@@ -40,9 +40,9 @@ export default function FloridaEpoxyLeadGenerationPage() {
             That is not a marketing problem. Your ads are working. Your leads are real. The problem is what happens after the lead comes in.
           </p>
 
-          <h2 className="mt-12 text-2xl font-semibold text-white">How ACAI Captures More Epoxy Leads</h2>
+          <h2 className="mt-12 text-2xl font-semibold text-white">How Mica Growth Captures More Epoxy Leads</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            ACAI is an AI-powered lead automation system that responds to every epoxy lead the moment it comes in. Here is how it works:
+            Mica Growth is an AI-powered lead automation system that responds to every epoxy lead the moment it comes in. Here is how it works:
           </p>
           <ul className="mt-4 space-y-3 text-base text-neutral-300">
             <li className="flex items-start gap-3"><span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" /> Lead comes in from Google Ads, Facebook, website form, or phone call</li>
@@ -54,12 +54,12 @@ export default function FloridaEpoxyLeadGenerationPage() {
 
           <h2 className="mt-12 text-2xl font-semibold text-white">Serving All of Florida</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            We work with epoxy and garage floor companies across Tampa, Clearwater, St. Petersburg, Brandon, Riverview, Lakeland, Sarasota, and throughout Florida. Wherever you operate, ACAI handles your leads the same way — instantly, consistently, and professionally.
+            We work with epoxy and garage floor companies across Tampa, Clearwater, St. Petersburg, Brandon, Riverview, Lakeland, Sarasota, and throughout Florida. Wherever you operate, Mica Growth handles your leads the same way — instantly, consistently, and professionally.
           </p>
 
           <h2 className="mt-12 text-2xl font-semibold text-white">Stop Losing Leads. Start Booking Jobs.</h2>
           <p className="mt-4 text-base leading-relaxed text-neutral-300">
-            If you are running ads and not responding to leads within minutes, you are funding your competition. ACAI makes sure every lead gets a response, every qualified buyer gets booked, and you never miss another opportunity.
+            If you are running ads and not responding to leads within minutes, you are funding your competition. Mica Growth makes sure every lead gets a response, every qualified buyer gets booked, and you never miss another opportunity.
           </p>
 
           <div className="mt-12 flex flex-wrap gap-4">

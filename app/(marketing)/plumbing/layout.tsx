@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Industry Solutions | ACAI Marketing",
+  title: "Industry Solutions",
   description:
     "Lead conversion and follow-up automation for service businesses.",
   robots: {

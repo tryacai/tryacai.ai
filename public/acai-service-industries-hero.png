@@ -59,11 +59,11 @@
     Across Every Industry
   </text>
   
-  <!-- ACAI Branding -->
+  <!-- Mica Growth Branding -->
   <g transform="translate(500, 520)">
     <rect width="200" height="60" rx="30" fill="url(#accent)" opacity="0.2"/>
     <text x="100" y="40" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#fff" text-anchor="middle">
-      ACAI
+      Mica Growth
     </text>
   </g>
   

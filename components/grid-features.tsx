@@ -54,7 +54,7 @@ export const GridFeatures = () => {
     },
     {
       title: "Built to Grow With You",
-      description: "ACAI scales as your business grows with no rework required.",
+      description: "Mica Growth scales as your business grows with no rework required.",
       icon: <IconHeart />,
     },
   ];

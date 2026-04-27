@@ -22,7 +22,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Plumbing: {
     hero: "AI Receptionist Built for Plumbing Companies",
     valueProp:
-      "Capture emergency calls 24/7, qualify urgency in seconds, and dispatch faster without overloading your office staff. ACAI handles repetitive call volume and follow-ups so your techs stay on jobs, not phones.",
+      "Capture emergency calls 24/7, qualify urgency in seconds, and dispatch faster without overloading your office staff. Mica Growth handles repetitive call volume and follow-ups so your techs stay on jobs, not phones.",
     problems: [
       "Emergency calls going unanswered after hours and on weekends.",
       "Technicians interrupted by inbound calls during active jobs.",
@@ -31,7 +31,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Map your emergency vs. standard call routing.",
       "Connect booking calendar and dispatch preferences.",
-      "Train ACAI on service types and call qualification.",
+      "Train Mica Growth on service types and call qualification.",
       "Launch missed-call recovery and estimate follow-up flows.",
       "Go live with KPI tracking for calls, bookings, and response speed.",
     ],
@@ -39,7 +39,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   HVAC: {
     hero: "AI Receptionist Built for HVAC Teams",
     valueProp:
-      "ACAI handles seasonal call spikes, captures after-hours breakdown requests, and keeps your schedule full without adding front desk overhead. Your team gets qualified jobs and faster response cycles.",
+      "Mica Growth handles seasonal call spikes, captures after-hours breakdown requests, and keeps your schedule full without adding front desk overhead. Your team gets qualified jobs and faster response cycles.",
     problems: [
       "Peak season call surges overwhelming your office line.",
       "Urgent no-heat/no-cool jobs missed overnight.",
@@ -56,7 +56,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   "Sewer & Drain": {
     hero: "AI Receptionist Built for Sewer & Drain Contractors",
     valueProp:
-      "ACAI handles urgent backup calls fast, qualifies job urgency, and routes dispatch-ready details so your team can respond without delays.",
+      "Mica Growth handles urgent backup calls fast, qualifies job urgency, and routes dispatch-ready details so your team can respond without delays.",
     problems: [
       "Emergency backup calls missed after hours.",
       "Slow intake causing delayed dispatch.",
@@ -82,7 +82,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Define emergency and routine septic call paths.",
       "Connect booking windows to your service calendar.",
-      "Train ACAI on septic service types and FAQs.",
+      "Train Mica Growth on septic service types and FAQs.",
       "Activate missed-call recovery and reminders.",
       "Track conversion lift from faster response.",
     ],
@@ -141,7 +141,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Barbers: {
     hero: "AI Receptionist Built for Barbershops",
     valueProp:
-      "Never miss haircut bookings while your team is with clients. ACAI answers instantly, books appointments, and follows up with no-show prevention messaging automatically.",
+      "Never miss haircut bookings while your team is with clients. Mica Growth answers instantly, books appointments, and follows up with no-show prevention messaging automatically.",
     problems: [
       "Phone calls ringing while barbers are actively cutting.",
       "New clients dropping off when calls go unanswered.",
@@ -150,7 +150,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Connect your booking calendar and service menu.",
       "Set appointment rules for walk-ins vs. scheduled slots.",
-      "Train ACAI on pricing, durations, and stylist availability.",
+      "Train Mica Growth on pricing, durations, and stylist availability.",
       "Enable reminders and missed-call text-back automation.",
       "Launch with reporting on filled chair time.",
     ],
@@ -158,7 +158,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Roofing: {
     hero: "AI Receptionist Built for Roofing Companies",
     valueProp:
-      "ACAI captures storm-driven inbound demand instantly and qualifies leads before competitors respond. Keep your pipeline organized and your crews focused on inspections and installs.",
+      "Mica Growth captures storm-driven inbound demand instantly and qualifies leads before competitors respond. Keep your pipeline organized and your crews focused on inspections and installs.",
     problems: [
       "Lead surges during storms causing missed opportunities.",
       "Slow callback times reducing win rates on urgent jobs.",
@@ -175,7 +175,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Mechanics: {
     hero: "AI Receptionist Built for Auto Repair Shops",
     valueProp:
-      "ACAI books diagnostics and service appointments while your advisors stay focused at the counter. Recover missed calls and keep bays full with better scheduling consistency.",
+      "Mica Growth books diagnostics and service appointments while your advisors stay focused at the counter. Recover missed calls and keep bays full with better scheduling consistency.",
     problems: [
       "Dropped inbound calls during busy intake periods.",
       "Service advisors pulled away from in-shop customers.",
@@ -184,7 +184,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Map service categories and appointment windows.",
       "Connect scheduling and intake preferences.",
-      "Train ACAI on repair timelines and customer FAQs.",
+      "Train Mica Growth on repair timelines and customer FAQs.",
       "Activate estimate/churn-prevention follow-up sequences.",
       "Track booked jobs and recovered missed calls.",
     ],
@@ -192,7 +192,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Detailing: {
     hero: "AI Receptionist Built for Auto Detailing Teams",
     valueProp:
-      "ACAI handles inbound calls, books detail packages, and follows up on pending quotes automatically. Spend less time answering phones and more time delivering premium service.",
+      "Mica Growth handles inbound calls, books detail packages, and follows up on pending quotes automatically. Spend less time answering phones and more time delivering premium service.",
     problems: [
       "Prospects lost when calls come in during active jobs.",
       "Inconsistent quote follow-up on premium packages.",
@@ -201,7 +201,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Set package-specific booking paths.",
       "Connect availability and turnaround buffers.",
-      "Train ACAI on add-ons and pricing questions.",
+      "Train Mica Growth on add-ons and pricing questions.",
       "Launch reminder + missed-call recovery flows.",
       "Measure booking rates and repeat-customer growth.",
     ],
@@ -209,7 +209,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Electricians: {
     hero: "AI Receptionist Built for Electrical Contractors",
     valueProp:
-      "Capture urgent electrical service calls any time, route by priority, and keep your office from becoming a bottleneck. ACAI helps convert inbound demand into scheduled jobs faster.",
+      "Capture urgent electrical service calls any time, route by priority, and keep your office from becoming a bottleneck. Mica Growth helps convert inbound demand into scheduled jobs faster.",
     problems: [
       "Urgent outage/safety calls missed after hours.",
       "Dispatch delays from manual phone triage.",
@@ -226,7 +226,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Landscaping: {
     hero: "AI Receptionist Built for Landscaping Companies",
     valueProp:
-      "ACAI answers every inquiry, pre-qualifies project scope, and keeps seasonal demand organized. Your team gets cleaner pipelines and fewer missed opportunities.",
+      "Mica Growth answers every inquiry, pre-qualifies project scope, and keeps seasonal demand organized. Your team gets cleaner pipelines and fewer missed opportunities.",
     problems: [
       "Seasonal inbound volume creating callback bottlenecks.",
       "Quote requests slipping through without response.",
@@ -235,7 +235,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Define project vs. recurring service call paths.",
       "Connect quoting and booking workflows.",
-      "Train ACAI on service areas and package tiers.",
+      "Train Mica Growth on service areas and package tiers.",
       "Enable estimate reminders and review automations.",
       "Launch KPI dashboard for booked work volume.",
     ],
@@ -243,7 +243,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   "Pest Control": {
     hero: "AI Receptionist Built for Pest Control Teams",
     valueProp:
-      "Respond instantly to urgent infestations and routine service calls with ACAI. Recover missed calls and automate customer follow-up to keep routes full.",
+      "Respond instantly to urgent infestations and routine service calls with Mica Growth. Recover missed calls and automate customer follow-up to keep routes full.",
     problems: [
       "Urgent infestation calls lost after hours.",
       "Manual intake slowing same-day scheduling.",
@@ -252,7 +252,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Map urgent vs. routine service triage.",
       "Connect route-friendly scheduling preferences.",
-      "Train ACAI on common pest scenarios.",
+      "Train Mica Growth on common pest scenarios.",
       "Activate follow-up and recurrence reminders.",
       "Track booked treatments and retention lift.",
     ],
@@ -260,7 +260,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   "Med Spa": {
     hero: "AI Receptionist Built for Med Spa Teams",
     valueProp:
-      "ACAI books consultations around the clock, qualifies treatment inquiries, and automates follow-up so your staff can focus on client experience and outcomes.",
+      "Mica Growth books consultations around the clock, qualifies treatment inquiries, and automates follow-up so your staff can focus on client experience and outcomes.",
     problems: [
       "Consultation calls missed during peak in-clinic hours.",
       "High-value treatment leads not nurtured consistently.",
@@ -269,7 +269,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Connect consultation calendar and intake requirements.",
       "Configure treatment inquiry qualification workflows.",
-      "Train ACAI on services, prep, and pricing ranges.",
+      "Train Mica Growth on services, prep, and pricing ranges.",
       "Enable no-show prevention and rebooking automations.",
       "Launch with conversion and retention tracking.",
     ],
@@ -277,7 +277,7 @@ const industryContentMap: Record<string, IndustryContent> = {
   Chiropractor: {
     hero: "AI Receptionist Built for Chiropractic Clinics",
     valueProp:
-      "ACAI answers new patient calls instantly, schedules appointments, and automates follow-up to reduce front-desk load. Keep your clinic focused on care while intake runs smoothly.",
+      "Mica Growth answers new patient calls instantly, schedules appointments, and automates follow-up to reduce front-desk load. Keep your clinic focused on care while intake runs smoothly.",
     problems: [
       "New patient calls missed while staff handles in-office flow.",
       "Appointment follow-up and rescheduling done manually.",
@@ -286,7 +286,7 @@ const industryContentMap: Record<string, IndustryContent> = {
     setup: [
       "Connect appointment scheduling and intake preferences.",
       "Define scripts for new patient vs. returning calls.",
-      "Train ACAI on visit types and FAQs.",
+      "Train Mica Growth on visit types and FAQs.",
       "Enable reminders, missed-call text-back, and retention messaging.",
       "Track booked appointments and reactivation outcomes.",
     ],
@@ -365,7 +365,7 @@ export function IndustryPlaceholderPage({ industryName }: IndustryPlaceholderPag
   const content = industryContentMap[industryName] ?? {
     hero: `AI Receptionist Built for ${industryName} Teams`,
     valueProp:
-      "ACAI answers every call, books more jobs, and automates follow-up so your team can focus on delivery instead of phone interruptions.",
+      "Mica Growth answers every call, books more jobs, and automates follow-up so your team can focus on delivery instead of phone interruptions.",
     problems: [
       "Missed calls leading to lost revenue.",
       "Slow response times frustrating inbound leads.",
@@ -416,7 +416,7 @@ export function IndustryPlaceholderPage({ industryName }: IndustryPlaceholderPag
 
         <section className="relative z-20 mx-auto mt-14 w-full max-w-4xl text-center">
           <h2 className="bg-gradient-to-r from-[#ff003c] via-[#7b00ff] to-[#0066ff] bg-clip-text text-2xl font-semibold text-transparent md:text-3xl">
-            How ACAI Solves It
+            How Mica Growth Solves It
           </h2>
           <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
             {solutionCards.map((item) => {

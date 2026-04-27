@@ -11,8 +11,8 @@ import { Link } from "next-view-transitions";
 
 const faqs = [
   {
-    question: "How fast can I get started with ACAI?",
-    answer: "You can get started within a few days. After an onboarding call, we'll work with you to train your AI on your specific services and service areas. Once everything is configured, calls will be instantly routed to your ACAI assistant.",
+    question: "How fast can I get started with Mica Growth?",
+    answer: "You can get started within a few days. After an onboarding call, we'll work with you to train your AI on your specific services and service areas. Once everything is configured, calls will be instantly routed to your Mica Growth assistant.",
   },
   {
     question: "What does it cost?",
@@ -20,15 +20,15 @@ const faqs = [
   },
   {
     question: "Can customers book appointments directly?",
-    answer: "Yes! ACAI integrates with popular calendar systems like Google Calendar and ServiceTitan, checking real-time availability to book appointments without double bookings or back-and-forth hassle.",
+    answer: "Yes! Mica Growth integrates with popular calendar systems like Google Calendar and ServiceTitan, checking real-time availability to book appointments without double bookings or back-and-forth hassle.",
   },
   {
     question: "What if someone wants to speak to a real person?",
-    answer: "If a caller needs a human, ACAI can transfer the call to you in real-time and notify you immediately. You'll always have the option to jump in and speak with the client directly.",
+    answer: "If a caller needs a human, Mica Growth can transfer the call to you in real-time and notify you immediately. You'll always have the option to jump in and speak with the client directly.",
   },
   {
     question: "Does the AI know my pricing and services?",
-    answer: "During onboarding, we train your ACAI assistant with all your service details, pricing, and any special instructions so it can respond just like your best employee would.",
+    answer: "During onboarding, we train your Mica Growth assistant with all your service details, pricing, and any special instructions so it can respond just like your best employee would.",
   },
 ];
 
@@ -46,7 +46,7 @@ export default function FAQPage() {
         <div className="relative z-20 py-10 md:pt-40 max-w-4xl mx-auto">
           <Heading as="h1">Frequently Asked Questions</Heading>
           <Subheading className="text-center">
-            Everything you need to know about ACAI and how it can help your business.
+            Everything you need to know about Mica Growth and how it can help your business.
           </Subheading>
         </div>
 

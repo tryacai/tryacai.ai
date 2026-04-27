@@ -39,7 +39,7 @@ export const BlogCard = ({ blog }: { blog: BlogWithSlug }) => {
               className="h-full w-full aspect-square object-cover object-[center_80%]"
             />
           </div>
-          <p className="text-sm font-normal text-muted">ACAI TEAM</p>
+          <p className="text-sm font-normal text-muted">Mica Growth Team</p>
         </div>
         <p className="text-lg font-bold mb-4">
           <Balancer>{blog.title}</Balancer>

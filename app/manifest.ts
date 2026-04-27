@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Try ACAI Marketing",
-    short_name: "ACAI",
+    name: "Mica Growth",
+    short_name: "Mica Growth",
     description:
-      "ACAI Marketing is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
+      "Mica Growth is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
     start_url: "/",
     display: "standalone",
     background_color: "#000000",

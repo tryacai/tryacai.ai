@@ -41,7 +41,7 @@ export const Footer = () => {
               <Logo />
             </div>
             <div className="mt-2 text-xs sm:text-sm max-w-md">
-              Never miss another lead again with ACAI&apos;s system for Florida service businesses. Your AI front desk that never sleeps.
+              Never miss another lead again with Mica Growth&apos;s system for Florida service businesses. Your AI front desk that never sleeps.
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mt-10 md:mt-0">

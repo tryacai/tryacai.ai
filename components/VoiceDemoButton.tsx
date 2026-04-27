@@ -18,7 +18,7 @@ declare global {
 
 export const VoiceDemoButton: React.FC<VoiceDemoButtonProps> = ({
   onClick,
-  children = "Try ACAI",
+  children = "Try Mica Growth",
   enableLiveAgent = false,
   className,
 }) => {
@@ -40,7 +40,7 @@ export const VoiceDemoButton: React.FC<VoiceDemoButtonProps> = ({
   return (
     <button
       onClick={handleClick}
-      aria-label="Try ACAI voice demo"
+      aria-label="Try Mica Growth voice demo"
       data-live-agent={enableLiveAgent}
       className={cn(
         "relative z-10 px-8 py-3 rounded-full font-medium text-white text-sm md:text-base",

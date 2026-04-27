@@ -6,9 +6,9 @@ import { Pricing } from "@/components/pricing";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing | ACAI Marketing",
+  title: "Pricing",
   description:
-    "Flexible ACAI plans built to improve lead response speed, automate follow up, and convert more demand into booked revenue.",
+    "Flexible Mica Growth plans built to improve lead response speed, automate follow up, and convert more demand into booked revenue.",
   openGraph: {
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },

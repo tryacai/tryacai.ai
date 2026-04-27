@@ -13,9 +13,9 @@ import {
   readCalBookingDetails,
 } from "@/lib/cal-booking";
 
-// ─── Typewriter: "ACAI MARKETING" with gradient + neon underline ───
-const TypewriterACAI = () => {
-  const phrase = "ACAI MARKETING";
+// ─── Typewriter: "MICA GROWTH" with gradient + neon underline ───
+const TypewriterBrand = () => {
+  const phrase = "MICA GROWTH";
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<"typing" | "holding" | "deleting">("typing");
 
@@ -655,9 +655,9 @@ export const Hero = () => {
           {" "}JOBS
         </p>
 
-        {/* Line 3 — Typewriter ACAI MARKETING */}
+        {/* Line 3 — Typewriter MICA GROWTH */}
         <div className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold min-h-[1.3em]">
-          <TypewriterACAI />
+          <TypewriterBrand />
         </div>
 
         {/* Line 4 — IMMEDIATE QUALIFIED JOBS */}
@@ -733,7 +733,7 @@ export const Hero = () => {
           <div className="absolute inset-0 rounded-2xl ring-2 ring-inset ring-purple-500/30 pointer-events-none z-10" />
           <Image
             src="/mainlandingpagehero.png"
-            alt="ACAI Marketing funnel for service businesses"
+            alt="Mica Growth funnel for service businesses"
             width={800}
             height={500}
             priority

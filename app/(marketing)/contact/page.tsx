@@ -4,19 +4,19 @@ import { HorizontalGradient } from "@/components/horizontal-gradient";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Contact | ACAI Marketing",
+  title: "Contact",
   description:
-    "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
+    "Contact Mica Growth — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
   openGraph: {
-    title: "Contact | ACAI Marketing",
+    title: "Contact",
     description:
-      "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
+      "Contact Mica Growth — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },
   twitter: {
-    title: "Contact | ACAI Marketing",
+    title: "Contact",
     description:
-      "Contact ACAI Marketing — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
+      "Contact Mica Growth — the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs and results in your first month.",
     images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },
 };
