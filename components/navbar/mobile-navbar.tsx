@@ -12,7 +12,7 @@ export const MobileNavbar = ({ navItems }: any) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="w-full fixed top-0 left-0 right-0 z-50 bg-black border-b border-white/10">
+    <div className="w-full bg-black border-b border-white/10">
       <div className="h-16 flex items-center justify-between px-4">
         <Logo />
         <IoIosMenu
