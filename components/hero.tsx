@@ -131,7 +131,7 @@ type ModalStep =
   | "thank_you"
   | "booked";
 
-const CAL_URL = "https://cal.com/micagrowth/30min";
+const CAL_URL = "https://cal.com/micagrowth/15min";
 
 function fireFbq(eventName: string) {
   if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {

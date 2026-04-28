@@ -13,7 +13,7 @@ import {
   readCalBookingDetails,
 } from "@/lib/cal-booking";
 
-const CAL_URL = "https://cal.com/micagrowth/30min";
+const CAL_URL = "https://cal.com/micagrowth/15min";
 const POST_BOOKING_PATH = "/post-bookingpage";
 
 export default function StrategyCallClient() {

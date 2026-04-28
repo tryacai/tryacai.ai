@@ -158,7 +158,7 @@ export function ContactForm() {
   const watchedMessage = form.watch("message") || "";
 
   const calEmbedUrl = useMemo(() => {
-    return buildCalEmbedUrl("https://cal.com/micagrowth/30min", {
+    return buildCalEmbedUrl("https://cal.com/micagrowth/15min", {
       fullName: leadName,
       businessEmail: leadEmail,
       phoneNumber: leadPhone,
