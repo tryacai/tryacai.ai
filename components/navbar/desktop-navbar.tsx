@@ -20,7 +20,7 @@ export const DesktopNavbar = ({ navItems }: Props) => {
   const pathname = usePathname();
 
   return (
-    <div className="w-full fixed top-0 z-50 bg-black border-b border-white/10">
+    <div className="w-full fixed top-0 left-0 right-0 z-50 bg-black border-b border-white/10">
       <div className="h-16 md:h-18 flex items-center justify-between px-6">
         {/* Left: Logo */}
         <div className="flex-shrink-0">

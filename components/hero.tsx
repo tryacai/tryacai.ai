@@ -539,7 +539,7 @@ export const Hero = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col overflow-hidden pt-24 md:pt-28 min-h-screen">
+    <div className="relative flex flex-col overflow-hidden pt-20 md:pt-24 min-h-screen">
       {/* Background Image with Opacity Overlay */}
       <div
         className="absolute inset-0 z-0"
@@ -548,17 +548,17 @@ export const Hero = () => {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          opacity: 0.35,
+          opacity: 0.7,
         }}
       />
       
       {/* Dark Overlay for readability */}
-      <div className="absolute inset-0 z-0 bg-black/40" />
+      <div className="absolute inset-0 z-0 bg-black/25" />
 
       {/* Content Container */}
       <div className="relative z-10 flex flex-col">
         {/* Hero Section with padding to push content down */}
-        <div className="flex-1 flex items-center justify-center px-4">
+        <div className="flex-1 flex items-start justify-center px-4 pt-10 md:pt-12">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -583,17 +583,35 @@ export const Hero = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-8 text-lg sm:text-xl md:text-2xl text-white/90 font-normal leading-relaxed max-w-2xl mx-auto"
+              className="mt-8 text-base sm:text-lg md:text-xl text-white/90 font-normal leading-relaxed max-w-4xl mx-auto md:whitespace-nowrap"
             >
-              We give you <span className="font-bold">booked floor-coating jobs</span> delivered straight to your calendar. <span className="font-bold">15+ ready-to-quote projects</span> every month.
+              We give you <span className="font-bold">15+ ready-to-quote projects</span> every month. $<span className="text-3xl md:text-4xl font-black leading-none align-[-0.08em] inline-block">0</span> Set up Fee.
             </motion.p>
-
-            {/* Secondary guarantee line */}
-            <p className="mt-4 text-base sm:text-lg md:text-xl font-semibold text-neutral-300">
-              <span>$0 Set up Fee.</span>
-            </p>
           </motion.div>
         </div>
+
+        {/* CTA Button Above Widgets */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="relative z-10 mx-auto mt-8 md:mt-10 w-full max-w-2xl px-4 flex flex-col items-center"
+        >
+          <button
+            onClick={() => setModalOpen(true)}
+            className="group relative w-full sm:w-auto px-10 py-5 rounded-xl text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_34px_rgba(168,85,247,0.38)] active:scale-[0.98] overflow-hidden"
+            style={{
+              backgroundImage: "linear-gradient(90deg, #facc15 0%, #3b82f6 35%, #a855f7 68%, #ec4899 100%)",
+            }}
+          >
+            <span className="block text-lg font-bold tracking-wide">
+              Claim Your 15+ Projects now
+            </span>
+            <span className="block mt-1 text-xs font-medium text-white/80">
+              Spots for this month closing - book now
+            </span>
+          </button>
+        </motion.div>
 
         {/* 4-Column Glass Card Grid */}
         <motion.div
@@ -601,7 +619,7 @@ export const Hero = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="relative z-10 mx-auto mt-16 md:mt-20 w-full max-w-5xl px-4"
+          className="relative z-10 mx-auto mt-10 md:mt-12 w-full max-w-5xl px-4"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <GlassCard
@@ -688,25 +706,6 @@ export const Hero = () => {
           </div>
         </motion.div>
 
-        {/* CTA Button Below Credibility Strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="relative z-10 mx-auto mt-16 md:mt-20 w-full max-w-2xl px-4 flex flex-col items-center"
-        >
-          <button
-            onClick={() => setModalOpen(true)}
-            className="group relative w-full sm:w-auto px-10 py-5 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] active:scale-[0.98] overflow-hidden"
-          >
-            <span className="block text-lg font-bold tracking-wide">
-              Claim Your Free 15-Min Strategy Call →
-            </span>
-            <span className="block mt-1 text-xs font-medium text-white/70">
-              Spots for this month closing — book now.
-            </span>
-          </button>
-        </motion.div>
       </div>
 
       {/* Marquee Banner Below Hero */}
