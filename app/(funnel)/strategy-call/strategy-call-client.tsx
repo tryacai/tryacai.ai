@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,6 +15,83 @@ import {
 
 const CAL_URL = "https://cal.com/micagrowth/30min";
 const POST_BOOKING_PATH = "/post-bookingpage";
+
+function FaqStrip() {
+  return (
+    // FAQ section wrapper: replace this entire section with VSL embed later.
+    <section className="mt-16 md:mt-20 w-full max-w-6xl">
+      <p className="text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50">
+        COMMON QUESTIONS
+      </p>
+
+      <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <article className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6">
+          <h3 className="text-base font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            Is this call really free?
+          </h3>
+          <p className="mt-3 text-sm text-white/85 leading-relaxed">
+            Yes. No credit card, no contract. We only make money when we deliver booked jobs into your schedule.
+          </p>
+        </article>
+
+        <article className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6">
+          <h3 className="text-base font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            What if my area is already taken?
+          </h3>
+          <p className="mt-3 text-sm text-white/85 leading-relaxed">
+            We will let you know on the call. If your city is gone, we will tell you straight with no runaround.
+          </p>
+        </article>
+
+        <article className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6">
+          <h3 className="text-base font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            How long is the call?
+          </h3>
+          <p className="mt-3 text-sm text-white/85 leading-relaxed">
+            15-30 minutes. You are running a business, so we keep it tight and to the point.
+          </p>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function ThreeStepStrip() {
+  return (
+    <section className="mt-12 w-full max-w-6xl">
+      <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 text-center">
+        <div className="hidden md:block absolute left-[16.66%] right-[16.66%] top-6 h-px bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500" />
+
+        <div className="relative z-10 flex flex-col items-center">
+          <span className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-[0_0_22px_rgba(99,102,241,0.35)]">
+            1
+          </span>
+          <p className="mt-3 text-[15px] text-white">
+            Pick your time - choose any open slot below
+          </p>
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center">
+          <span className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-[0_0_22px_rgba(99,102,241,0.35)]">
+            2
+          </span>
+          <p className="mt-3 text-[15px] text-white">
+            We confirm your territory - quick check your city is still available
+          </p>
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center">
+          <span className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 shadow-[0_0_22px_rgba(99,102,241,0.35)]">
+            3
+          </span>
+          <p className="mt-3 text-[15px] text-white">
+            System goes live - leads start hitting your phone within 7 days
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function StrategyCallClient() {
   const router = useRouter();
@@ -37,6 +115,13 @@ export default function StrategyCallClient() {
       companyName: leadContext.companyName,
     });
   }, [leadContext]);
+
+  const themedCalEmbedUrl = useMemo(() => {
+    const url = new URL(calEmbedUrl);
+    url.searchParams.set("theme", "dark");
+    url.searchParams.set("primaryColor", "6366f1");
+    return url.toString();
+  }, [calEmbedUrl]);
 
   useEffect(() => {
     const handleCalEvent = (e: MessageEvent) => {
@@ -78,91 +163,117 @@ export default function StrategyCallClient() {
   }, [leadContext, router]);
 
   return (
-    <div className="flex flex-col items-center px-4 md:px-6 pb-16">
-      {/* A. Top brand strip */}
-      <div className="pt-6 md:pt-10 text-center">
-        <span className="text-2xl md:text-3xl font-semibold tracking-tight">
-          <span className="text-white">Mica</span>
-          <span className="text-[#2DB4FF]"> Growth</span>
-        </span>
-      </div>
+    <div className="relative min-h-screen overflow-hidden text-white">
+      {/* Background overlay layering: epoxy image + dark mask for legibility. */}
+      <div className="fixed inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed" />
+      <div className="fixed inset-0 -z-10 bg-[rgba(0,0,0,0.65)]" />
 
-      {/* B. Progress bar */}
-      <div className="mt-6 md:mt-10 w-full max-w-3xl mx-auto">
-        <div className="relative h-9 md:h-11 rounded-full bg-white/10 backdrop-blur-sm overflow-hidden border border-white/10">
-          <motion.div
-            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#FFA340] via-[#FF3B8C] to-[#2DB4FF]"
-            initial={{ width: "0%" }}
-            animate={{ width: "50%" }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-          />
-          <div className="absolute inset-0 flex items-center justify-center text-xs md:text-sm font-semibold tracking-wider uppercase text-white">
-            STEP 2/2 — Schedule Your Strategy Call
+      <style jsx>{`
+        /* Pulsing scarcity dot animation. */
+        @keyframes pulse-dot {
+          0% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.3); opacity: 1; }
+          100% { transform: scale(1); opacity: 0.8; }
+        }
+      `}</style>
+
+      <div className="mx-auto w-full max-w-6xl px-4 md:px-6 pb-14 pt-8 md:pt-10">
+        <header className="flex justify-center">
+          <div className="relative h-[44px] w-[170px]">
+            <Image
+              src="/Micalogo.png"
+              alt="Mica Growth"
+              fill
+              sizes="170px"
+              className="object-contain"
+              priority
+            />
           </div>
-        </div>
+        </header>
+
+        <motion.section
+          className="mt-8 md:mt-10 text-center"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+        >
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/80">
+            FLORIDA TERRITORY - LIMITED SPOTS THIS MONTH
+          </p>
+
+          <h1 className="mt-4 text-balance text-white font-extrabold leading-tight text-[clamp(1.9rem,6vw,3.8rem)] md:text-[clamp(2.2rem,6vw,4rem)]">
+            You&apos;re in. Let&apos;s lock in your <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">Florida</span> territory.
+          </h1>
+
+          <p className="mt-5 mx-auto max-w-[680px] text-[18px] text-white leading-[1.6]">
+            We&apos;ll spend 15-30 minutes showing you exactly how we book floor-coating jobs straight into your calendar every month - and confirm your city hasn&apos;t been claimed yet.
+          </p>
+
+          <article className="mt-7 mx-auto max-w-[580px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-7 text-left">
+            <p className="text-center text-[11px] uppercase tracking-[0.16em] text-white/60 font-semibold">
+              IN 15-30 MINUTES YOU&apos;LL KNOW:
+            </p>
+
+            <ul className="mt-4 space-y-3 text-[15px] text-white leading-relaxed">
+              <li className="flex gap-2.5">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent font-bold">✦</span>
+                <span>Whether your city is still open (we only take one contractor per area)</span>
+              </li>
+              <li className="flex gap-2.5">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent font-bold">✦</span>
+                <span>Exactly how many jobs we project for your market</span>
+              </li>
+              <li className="flex gap-2.5">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent font-bold">✦</span>
+                <span>How the system works - live walkthrough, no fluff</span>
+              </li>
+              <li className="flex gap-2.5">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent font-bold">✦</span>
+                <span>If we&apos;re a fit - if not, we&apos;ll tell you straight and point you somewhere better</span>
+              </li>
+            </ul>
+          </article>
+
+          <div className="mt-5 flex items-center justify-center gap-2 text-white text-[16px]">
+            <span
+              aria-hidden="true"
+              className="inline-block h-2.5 w-2.5 rounded-full bg-green-400"
+              style={{ animation: "pulse-dot 1.5s infinite" }}
+            />
+            <p>
+              🟢 <span className="font-bold">3 Florida spots remaining this month.</span> Tampa, Orlando, and one additional city.
+            </p>
+          </div>
+        </motion.section>
+
+        <motion.section
+          className="mt-10 md:mt-12 w-full max-w-[760px] mx-auto"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.1, ease: "easeOut" }}
+        >
+          <p className="mb-3 text-center text-[13px] italic text-white/65">
+            Pick a time below - takes 30 seconds to lock in your spot.
+          </p>
+
+          <div className="rounded-2xl overflow-hidden border border-white/15 shadow-[0_0_40px_rgba(99,102,241,0.2)] bg-black/25 backdrop-blur-sm">
+            <iframe
+              src={themedCalEmbedUrl}
+              title="Schedule your strategy call"
+              className="w-full border-0"
+              style={{ height: "700px", overflow: "scroll", colorScheme: "dark" }}
+            />
+          </div>
+        </motion.section>
+
+        <FaqStrip />
+
+        <ThreeStepStrip />
+
+        <footer className="mt-14 text-center text-xs text-[rgba(255,255,255,0.4)]">
+          © 2026 Mica Growth. All rights reserved.
+        </footer>
       </div>
-
-      {/* C. Hero headline block */}
-      <motion.div
-        className="py-10 md:py-14 text-center w-full max-w-5xl mx-auto"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-      >
-        <h2 className="text-lg md:text-2xl font-semibold text-white/90 leading-snug mb-4 md:mb-6 max-w-3xl mx-auto">
-          Thanks! The system determined we don&apos;t work with anyone in your area.
-        </h2>
-        <h1 className="text-3xl md:text-6xl font-extrabold leading-tight max-w-4xl mx-auto">
-          <span className="text-[#FF4D6D]">Step 2/2</span>
-          {" — "}Schedule Your{" "}
-          <span className="underline decoration-[#FF3B8C] decoration-4 underline-offset-4">
-            Free
-          </span>{" "}
-          Strategy Call With Our Team
-        </h1>
-      </motion.div>
-
-      {/* D. Cal.com embed card */}
-      <motion.div
-        className="w-full max-w-4xl mx-auto"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
-      >
-        <div className="bg-black/30 backdrop-blur-md rounded-2xl shadow-2xl border border-white/10 overflow-hidden p-2 md:p-4">
-          <iframe
-            src={calEmbedUrl}
-            title="Schedule your strategy call"
-            className="w-full border-0 rounded-xl"
-            style={{ height: "680px", overflow: "scroll" }}
-          />
-        </div>
-      </motion.div>
-
-      {/* E. Trust row */}
-      <motion.div
-        className="mt-8 md:mt-12 w-full max-w-3xl mx-auto"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9, duration: 0.6 }}
-      >
-        <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-10 text-white/85 text-sm md:text-base font-medium">
-          <span>
-            <span className="text-[#FFA340] mr-2">✓</span>Florida-based team
-          </span>
-          <span>
-            <span className="text-[#FFA340] mr-2">✓</span>Epoxy &amp; polyaspartic specialists
-          </span>
-          <span>
-            <span className="text-[#FFA340] mr-2">✓</span>One partner per service area
-          </span>
-        </div>
-      </motion.div>
-
-      {/* F. Footer */}
-      <footer className="mt-16 py-8 w-full border-t border-white/10 text-center text-white/50 text-xs md:text-sm">
-        © 2026 Mica Growth · Helping Florida epoxy companies scale.
-      </footer>
     </div>
   );
 }
