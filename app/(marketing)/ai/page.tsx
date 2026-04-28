@@ -1,663 +1,234 @@
 "use client";
 
-import { Background } from "@/components/background";
-import { Container } from "@/components/container";
-import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import {
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Headphones,
-  MessageSquare,
-  Phone,
-  PhoneIncoming,
-  Shield,
-  Zap,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { Link } from "next-view-transitions";
 
-/* ------------------------------------------------------------------ */
-/*  DATA                                                               */
-/* ------------------------------------------------------------------ */
-
-const steps = [
+const systemSteps = [
   {
     number: "01",
-    title: "Speed to Lead",
-    description: "Responds to every inbound lead in seconds via call or text.",
+    category: "ACQUISITION",
+    categoryClass: "from-blue-500/80 to-blue-300/80",
+    title: "PROJECT ACQUISITION FUNNELS",
+    description:
+      "We build funnels engineered to turn Florida traffic into scheduled floor-coating estimates — not form fills that ghost you after 48 hours.",
+    bullets: [
+      "Meta + Google funnels built for floor-coating buyers only",
+      "Pre-qualification before any lead reaches your calendar",
+      "Residential and commercial campaign separation",
+      "Retargeting to capture missed demand from every click",
+    ],
   },
   {
     number: "02",
-    title: "Lead Qualification",
-    description: "AI filters serious buyers automatically. Only hot leads reach you.",
+    category: "TRAFFIC",
+    categoryClass: "from-purple-500/80 to-fuchsia-400/80",
+    title: "PAID TRAFFIC ENGINE (META + GOOGLE)",
+    description:
+      "We run ad systems targeting Florida homeowners and commercial buyers who are actively searching for floor-coating installs — not general audiences.",
+    bullets: [
+      "Google & Meta ads for epoxy flooring only — no generalist targeting",
+      "Budget scaling tied to booked jobs, not impressions",
+      "Pre-qualification filters before any lead reaches you",
+      "Continuous optimization based on cost-per-booked-job",
+    ],
   },
   {
     number: "03",
-    title: "Auto Booking",
-    description: "Appointments land on your calendar. No back-and-forth.",
+    category: "AUTOMATION",
+    categoryClass: "from-amber-500/80 to-orange-400/80",
+    title: "CRM, AUTOMATION & FOLLOW-UPS",
+    description:
+      "Every inbound lead gets an instant response via call or text — in seconds, not hours. AI filters serious buyers. Only hot leads reach you.",
+    bullets: [
+      "Responds to every lead in under 60 seconds automatically",
+      "Missed-call text back fires before they dial a competitor",
+      "Lead scoring filters tire-kickers before they reach your calendar",
+      "Booking confirmations, reminders, and follow-ups all automated",
+    ],
   },
   {
     number: "04",
-    title: "24/7 Voice Receptionist",
-    description: "Never miss a call. Your AI answers, qualifies, and routes.",
+    category: "AUTHORITY",
+    categoryClass: "from-blue-500/80 via-purple-500/80 to-amber-400/80",
+    title: "AUTHORITY, PROOF & CONVERSION ASSETS",
+    description:
+      "We turn your past jobs and installs into content that builds trust, increases close rates, and supports every paid traffic campaign running in your market.",
+    bullets: [
+      "Before/after systems for every completed floor-coating job",
+      "Review generation and management built into your pipeline",
+      "Social proof formatted for ads, sales calls, and your website",
+      "Brand consistency across every platform your buyers see",
+    ],
   },
 ] as const;
 
-const modules = [
-  {
-    label: "AI Receptionist",
-    heading: "Every call answered instantly",
-    body: "Your AI picks up, qualifies, and routes — 24/7.",
-  },
-  {
-    label: "Smart Scheduling",
-    heading: "Calendar fills itself",
-    body: "Qualified leads get booked without back-and-forth.",
-  },
-  {
-    label: "Lead Qualification",
-    heading: "Only hot leads reach you",
-    body: "Budget, timeline, and intent scored automatically.",
-  },
-  {
-    label: "CRM Sync",
-    heading: "Everything in one place",
-    body: "Leads, calls, and status flow into your pipeline.",
-  },
+const badgePills = [
+  "✦ Instant Response",
+  "✦ 24/7 Coverage",
+  "✦ No Missed Opportunities",
 ] as const;
 
-const MODULE_ROTATE_MS = 3500;
-
-/* ------------------------------------------------------------------ */
-/*  MINI UI PANELS (right-side product previews for each step)         */
-/* ------------------------------------------------------------------ */
-
-function SpeedToLeadUI() {
+export default function MicaGrowthSystemPage() {
   return (
-    <div className="space-y-2.5">
-      <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.06] px-3 py-2">
-        <PhoneIncoming className="h-4 w-4 text-emerald-400" />
-        <span className="text-xs text-emerald-300">Incoming Call — Tampa, FL</span>
-        <span className="ml-auto text-[10px] text-emerald-400/70">Just now</span>
-      </div>
-      <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
-        <p className="text-[11px] text-neutral-500">AI Response</p>
-        <p className="mt-1 text-xs text-white">&quot;Hi! Thanks for calling. How can I help you today?&quot;</p>
-      </div>
-      <div className="flex items-center gap-2 text-[10px] text-neutral-500">
-        <Zap className="h-3 w-3 text-purple-400" />
-        <span>Responded in <span className="text-white font-medium">0.8s</span></span>
-      </div>
-    </div>
-  );
-}
+    <div className="relative min-h-screen overflow-hidden pb-24 pt-24 md:pt-28">
+      <div className="fixed inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat bg-fixed opacity-35" />
+      <div className="fixed inset-0 -z-10 bg-[rgba(0,0,0,0.70)]" />
 
-function QualificationUI() {
-  const tags = [
-    { label: "Budget: $3,200", ok: true },
-    { label: "Timeline: This week", ok: true },
-    { label: "Service: AC Repair", ok: true },
-  ];
-  return (
-    <div className="space-y-2.5">
-      <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
-        <p className="text-[11px] text-neutral-500">Lead says</p>
-        <p className="mt-1 text-xs text-neutral-300">&quot;My AC went out, I need someone ASAP.&quot;</p>
-      </div>
-      <div className="flex flex-wrap gap-1.5">
-        {tags.map((t) => (
-          <span key={t.label} className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/[0.06] px-2 py-0.5 text-[10px] text-emerald-300">
-            <CheckCircle2 className="h-2.5 w-2.5" /> {t.label}
-          </span>
-        ))}
-      </div>
-      <div className="flex items-center gap-2 rounded-lg border border-purple-500/20 bg-purple-500/[0.06] px-3 py-1.5 text-[10px] text-purple-300">
-        <Shield className="h-3 w-3" /> Qualified — Routing to team
-      </div>
-    </div>
-  );
-}
+      <main className="relative z-20 px-4 md:px-6">
+        <section className="mx-auto max-w-6xl pt-10 text-center md:pt-[120px]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/55">
+            THE MICA GROWTH SYSTEM
+          </p>
 
-function BookingUI() {
-  const slots = ["9:00 AM", "11:30 AM", "2:00 PM"];
-  return (
-    <div className="space-y-2.5">
-      <div className="flex items-center gap-2 text-[11px] text-neutral-400">
-        <Calendar className="h-3.5 w-3.5 text-purple-400" /> Tomorrow — May 14
-      </div>
-      <div className="grid grid-cols-3 gap-1.5">
-        {slots.map((s, i) => (
-          <div
-            key={s}
-            className={`rounded-lg border px-2 py-1.5 text-center text-[10px] transition ${
-              i === 1
-                ? "border-purple-500/40 bg-purple-500/10 text-white"
-                : "border-white/[0.06] bg-white/[0.02] text-neutral-400"
-            }`}
-          >
-            {s}
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/[0.06] px-3 py-1.5 text-[10px] text-emerald-300">
-        <CheckCircle2 className="h-3 w-3" /> Booked — 11:30 AM confirmed
-      </div>
-    </div>
-  );
-}
+          <h1 className="mt-5 text-[clamp(2.5rem,5vw,4rem)] font-extrabold leading-tight text-white">
+            The Infrastructure Built to Deliver
+          </h1>
+          <p className="mt-2 bg-gradient-to-r from-blue-500 to-amber-400 bg-clip-text text-[clamp(2.5rem,5vw,4rem)] font-extrabold leading-tight text-transparent">
+            15+ Booked Floor-Coating Projects Every Month
+          </p>
 
-function VoiceUI() {
-  return (
-    <div className="space-y-2.5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-purple-500/20 flex items-center justify-center">
-            <Headphones className="h-4 w-4 text-purple-300" />
-          </div>
-          <div>
-            <p className="text-xs text-white font-medium">Mica Growth Voice AI</p>
-            <p className="text-[10px] text-emerald-400">Active — 24/7</p>
-          </div>
-        </div>
-        <span className="text-[10px] text-neutral-500">02:41</span>
-      </div>
-      <div className="flex items-end gap-[3px] h-8 px-1">
-        {Array.from({ length: 24 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="w-1 rounded-full bg-purple-400/60"
-            animate={{ height: [4, 8 + Math.random() * 16, 4] }}
-            transition={{ duration: 0.6 + Math.random() * 0.4, repeat: Infinity, delay: i * 0.04 }}
-          />
-        ))}
-      </div>
-      <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 text-[10px] text-neutral-400">
-        <span className="text-white">AI:</span> &quot;I&apos;ve scheduled a technician for tomorrow at 11:30 AM.&quot;
-      </div>
-    </div>
-  );
-}
+          <p className="mx-auto mt-5 max-w-[720px] text-[17px] leading-[1.7] text-white/75">
+            We combine positioning, conversion assets, paid traffic, and automation into one connected system — built specifically for Florida floor-coating contractors. Not leads. Booked jobs.
+          </p>
 
-const stepVisuals = [SpeedToLeadUI, QualificationUI, BookingUI, VoiceUI];
-
-/* ------------------------------------------------------------------ */
-/*  MODULE TAB PANELS                                                  */
-/* ------------------------------------------------------------------ */
-
-function ReceptionistPanel() {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/15 border border-purple-500/20">
-          <Phone className="h-5 w-5 text-purple-300" />
-        </div>
-        <div className="flex-1">
-          <p className="text-sm text-white font-medium">Incoming — (813) 555-0142</p>
-          <p className="text-xs text-emerald-400">Connected · AI Handling</p>
-        </div>
-        <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-      </div>
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 space-y-2">
-        <p className="text-[10px] uppercase tracking-wider text-neutral-500">Live Transcript</p>
-        <div className="space-y-1.5 text-xs">
-          <p className="text-neutral-400"><span className="text-purple-300">AI:</span> Thanks for calling! What service do you need?</p>
-          <p className="text-neutral-400"><span className="text-white">Caller:</span> My water heater is leaking.</p>
-          <p className="text-neutral-400"><span className="text-purple-300">AI:</span> I can get a technician out tomorrow. Let me check availability.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SchedulingPanel() {
-  const days = ["Mon 12", "Tue 13", "Wed 14", "Thu 15", "Fri 16"];
-  return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-5 gap-1.5">
-        {days.map((d, i) => (
-          <div key={d} className={`rounded-lg border p-2 text-center text-[10px] ${i === 2 ? "border-purple-500/30 bg-purple-500/10 text-white" : "border-white/[0.06] bg-white/[0.02] text-neutral-500"}`}>
-            {d}
-          </div>
-        ))}
-      </div>
-      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 space-y-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-white font-medium">Wed May 14 — 11:30 AM</span>
-          <span className="text-emerald-400 text-[10px]">Auto-booked</span>
-        </div>
-        <p className="text-xs text-neutral-400">AC Repair · John M. · Tampa, FL</p>
-        <div className="flex items-center gap-1.5 text-[10px] text-emerald-300">
-          <CheckCircle2 className="h-3 w-3" /> Confirmation sent via SMS
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QualPanel() {
-  const leads = [
-    { name: "Sarah K.", score: 92, status: "Qualified", color: "emerald" },
-    { name: "Mike T.", score: 45, status: "Nurture", color: "yellow" },
-    { name: "David R.", score: 88, status: "Qualified", color: "emerald" },
-  ];
-  return (
-    <div className="space-y-2">
-      {leads.map((l) => (
-        <div key={l.name} className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5">
-          <div className="h-8 w-8 rounded-full bg-neutral-800 flex items-center justify-center text-[10px] text-white font-medium">{l.name.split(" ").map(w => w[0]).join("")}</div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-white font-medium">{l.name}</p>
-            <p className={`text-[10px] ${l.color === "emerald" ? "text-emerald-400" : "text-yellow-400"}`}>{l.status}</p>
-          </div>
-          <div className="text-right">
-            <p className={`text-sm font-semibold ${l.score >= 80 ? "text-emerald-400" : "text-yellow-400"}`}>{l.score}</p>
-            <p className="text-[9px] text-neutral-500">Score</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function CRMPanel() {
-  const stages = [
-    { name: "New Lead", count: 12, w: "w-full" },
-    { name: "Qualified", count: 8, w: "w-4/5" },
-    { name: "Booked", count: 5, w: "w-3/5" },
-    { name: "Closed", count: 3, w: "w-2/5" },
-  ];
-  return (
-    <div className="space-y-2.5">
-      {stages.map((s, i) => (
-        <div key={s.name} className="space-y-1">
-          <div className="flex items-center justify-between text-[10px]">
-            <span className="text-neutral-400">{s.name}</span>
-            <span className="text-white font-medium">{s.count}</span>
-          </div>
-          <div className="h-1.5 w-full rounded-full bg-white/[0.04]">
-            <motion.div
-              className={`h-full rounded-full ${s.w}`}
-              style={{ background: `linear-gradient(90deg, rgba(96,165,250,${0.6 - i * 0.1}), rgba(168,85,247,${0.6 - i * 0.1}))` }}
-              initial={{ width: 0 }}
-              whileInView={{ width: "100%" }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-            />
-          </div>
-        </div>
-      ))}
-      <div className="mt-1 flex items-center gap-2 text-[10px] text-neutral-500">
-        <CheckCircle2 className="h-3 w-3 text-purple-400" /> Synced 2 min ago
-      </div>
-    </div>
-  );
-}
-
-const modulePanels = [ReceptionistPanel, SchedulingPanel, QualPanel, CRMPanel];
-
-/* ------------------------------------------------------------------ */
-/*  FLOW STEP COMPONENT                                                */
-/* ------------------------------------------------------------------ */
-
-function FlowStep({ step, index }: { step: (typeof steps)[number]; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-  const Visual = stepVisuals[index];
-  const isEven = index % 2 === 0;
-
-  return (
-    <div ref={ref} className="relative">
-      {/* connector line */}
-      {index > 0 && (
-        <motion.div
-          initial={{ scaleY: 0 }}
-          animate={isInView ? { scaleY: 1 } : { scaleY: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="absolute left-1/2 -top-12 h-12 w-px origin-top -translate-x-1/2 md:-top-16 md:h-16"
-          style={{ background: "linear-gradient(to bottom, rgba(168,85,247,0.1), rgba(168,85,247,0.4))" }}
-        />
-      )}
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.55, delay: 0.15 }}
-        className={`grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-10 ${!isEven ? "md:direction-rtl" : ""}`}
-        style={!isEven ? { direction: "rtl" } : undefined}
-      >
-        {/* Text */}
-        <div style={{ direction: "ltr" }}>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-purple-400/70">{step.number}</p>
-          <h3 className="mt-2 text-2xl font-semibold text-white md:text-3xl">{step.title}</h3>
-          <p className="mt-3 max-w-md text-base leading-relaxed text-neutral-300">{step.description}</p>
-        </div>
-
-        {/* Visual card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          style={{ direction: "ltr" }}
-          className="relative rounded-2xl border border-white/[0.08] bg-neutral-950/80 p-4 backdrop-blur-sm"
-        >
-          <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-purple-500/[0.06] to-transparent" />
-          <div className="relative">
-            <Visual />
-          </div>
-        </motion.div>
-      </motion.div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  PAGE                                                               */
-/* ------------------------------------------------------------------ */
-
-export default function AcaiSystemPage() {
-  const pathRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: pathRef, offset: ["start end", "end start"] });
-  const pathHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  const [activeModule, setActiveModule] = useState(0);
-  const [isModuleHovered, setIsModuleHovered] = useState(false);
-
-  useEffect(() => {
-    if (isModuleHovered) return;
-    const timer = setInterval(() => setActiveModule((p) => (p + 1) % modules.length), MODULE_ROTATE_MS);
-    return () => clearInterval(timer);
-  }, [isModuleHovered]);
-
-  const ActiveModulePanel = modulePanels[activeModule];
-
-  return (
-    <div className="relative overflow-hidden py-24 md:py-0">
-      <Background />
-      <Container className="relative z-20 pb-24 md:pt-36">
-
-        {/* ── HERO ── */}
-        <section className="mx-auto max-w-4xl text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-5xl font-semibold leading-tight text-white md:text-7xl"
-          >
-            The Mica Growth System
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="mt-5 text-xl font-medium text-neutral-200 md:text-2xl"
-          >
-            Everything Running. Nothing Missed.
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-3 text-base text-neutral-400 md:text-lg"
-          >
-            Your full AI system from first response to booked job.
-          </motion.p>
-
-          {/* Trust badges */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.45 }}
-            className="mt-8 flex flex-wrap items-center justify-center gap-4"
-          >
-            {[
-              { icon: Zap, text: "Instant response" },
-              { icon: Clock, text: "24/7 coverage" },
-              { icon: Shield, text: "No missed opportunities" },
-            ].map((b) => (
-              <span key={b.text} className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-xs text-neutral-300">
-                <b.icon className="h-3.5 w-3.5 text-purple-400" /> {b.text}
-              </span>
-            ))}
-          </motion.div>
-        </section>
-
-        {/* ── SECTION 1: SYSTEM FLOW ── */}
-        <section ref={pathRef} className="relative mx-auto mt-28 w-full max-w-5xl md:mt-36">
-          {/* Scroll-drawing purple line */}
-          <div className="pointer-events-none absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-white/[0.04]">
-            <motion.div className="w-full origin-top" style={{ height: pathHeight, background: "linear-gradient(to bottom, rgba(168,85,247,0.6), rgba(168,85,247,0.15))" }} />
-          </div>
-
-          <div className="relative space-y-20 md:space-y-28">
-            {steps.map((step, i) => (
-              <FlowStep key={step.number} step={step} index={i} />
-            ))}
-          </div>
-        </section>
-
-        {/* ── SECTION 2: YOUR AI FRONT DESK ── */}
-        <section className="mx-auto mt-32 w-full max-w-5xl md:mt-40">
-          <div className="text-center">
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl font-semibold text-white md:text-5xl"
-            >
-              Your AI Front Desk. Fully Running.
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mx-auto mt-4 max-w-2xl text-base text-neutral-400 md:text-lg"
-            >
-              Every call answered. Every lead handled. Every opportunity captured.
-            </motion.p>
-          </div>
-
-          {/* Dashboard mock */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="relative mt-14"
-          >
-            <div className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-purple-500/[0.05] blur-3xl" />
-
-            <div className="relative rounded-2xl border border-white/[0.08] bg-neutral-950/80 p-5 backdrop-blur-sm md:p-8">
-              {/* Top bar */}
-              <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-sm font-medium text-white">Mica Growth Dashboard</span>
-                  <span className="text-[10px] text-neutral-500">Live</span>
-                </div>
-                <span className="text-[10px] text-neutral-500">Today · 3:42 PM</span>
-              </div>
-
-              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
-                {/* Card 1: Call handled */}
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-neutral-500">
-                    <Phone className="h-3 w-3 text-purple-400" /> Incoming Call
-                  </div>
-                  <p className="mt-2 text-sm text-white font-medium">(813) 555-0142</p>
-                  <p className="mt-1 text-xs text-neutral-400">Water heater replacement</p>
-                  <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[10px] text-emerald-300">
-                    <CheckCircle2 className="h-3 w-3" /> Handled Automatically
-                  </div>
-                </div>
-
-                {/* Card 2: Booking */}
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-neutral-500">
-                    <Calendar className="h-3 w-3 text-purple-400" /> Appointment
-                  </div>
-                  <p className="mt-2 text-sm text-white font-medium">Tomorrow · 11:30 AM</p>
-                  <p className="mt-1 text-xs text-neutral-400">AC Repair — John M.</p>
-                  <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 text-[10px] text-purple-300">
-                    <Calendar className="h-3 w-3" /> Booked & Confirmed
-                  </div>
-                </div>
-
-                {/* Card 3: Lead tagged */}
-                <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-neutral-500">
-                    <MessageSquare className="h-3 w-3 text-purple-400" /> Lead Status
-                  </div>
-                  <p className="mt-2 text-sm text-white font-medium">Sarah K.</p>
-                  <p className="mt-1 text-xs text-neutral-400">Epoxy Flooring · $4,200</p>
-                  <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 text-[10px] text-blue-300">
-                    <Zap className="h-3 w-3" /> Qualified · Score 94
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Floating indicators */}
-            {[
-              { text: "Call Answered in 2.1s", x: "-left-4 md:-left-12", y: "top-12" },
-              { text: "Appointment Booked", x: "-right-4 md:-right-12", y: "top-24" },
-              { text: "Lead Qualified", x: "-left-4 md:-left-8", y: "bottom-16" },
-              { text: "No Missed Calls", x: "-right-4 md:-right-8", y: "bottom-6" },
-            ].map((f, i) => (
-              <motion.div
-                key={f.text}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 + i * 0.12 }}
-                className={`absolute ${f.x} ${f.y} hidden md:block`}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            {badgePills.map((pill) => (
+              <span
+                key={pill}
+                className="rounded-full border border-white/12 bg-white/7 px-[18px] py-2 text-[13px] text-white"
               >
-                <motion.div
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                  className="rounded-full border border-white/[0.08] bg-neutral-950/90 px-3 py-1.5 text-[10px] text-neutral-300 backdrop-blur-sm"
-                >
-                  <CheckCircle2 className="mr-1.5 inline h-3 w-3 text-emerald-400" />
-                  {f.text}
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Value strip */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-6 text-[11px] uppercase tracking-[0.16em] text-neutral-500"
-          >
-            {["14 Day Proof of Value", "Instant Results", "Cancel Anytime", "Built to Replace Missed Calls"].map((v) => (
-              <span key={v} className="flex items-center gap-2">
-                <span className="h-1 w-1 rounded-full bg-purple-400/50" />
-                {v}
+                {pill}
               </span>
             ))}
-          </motion.div>
+          </div>
         </section>
 
-        {/* ── SECTION 3: INTERACTIVE SYSTEM MODULES ── */}
-        <section className="mx-auto mt-32 w-full max-w-5xl md:mt-40">
-          <div className="text-center">
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl font-semibold text-white md:text-5xl"
-            >
-              One System. Multiple Engines Working Together.
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mx-auto mt-4 max-w-2xl text-base text-neutral-400 md:text-lg"
-            >
-              Everything runs together to capture, convert, and book your leads automatically.
-            </motion.p>
-          </div>
+        <section className="mx-auto mt-16 w-full max-w-[900px] md:mt-20">
+          <div className="relative">
+            <div className="pointer-events-none absolute left-[26px] top-8 hidden h-[calc(100%-4rem)] w-[2px] bg-gradient-to-b from-blue-500 via-purple-500 to-amber-400 md:block" />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="mt-12"
-            onMouseEnter={() => setIsModuleHovered(true)}
-            onMouseLeave={() => setIsModuleHovered(false)}
-          >
-            {/* Tabs */}
-            <div className="flex flex-wrap justify-center gap-2">
-              {modules.map((m, i) => (
-                <button
-                  key={m.label}
-                  type="button"
-                  onMouseEnter={() => setActiveModule(i)}
-                  onClick={() => setActiveModule(i)}
-                  className={`rounded-full border px-5 py-2 text-sm font-medium transition-all duration-300 ${
-                    i === activeModule
-                      ? "border-purple-400/40 bg-purple-500/10 text-white shadow-[0_0_16px_rgba(168,85,247,0.15)]"
-                      : "border-white/[0.06] bg-white/[0.02] text-neutral-400 hover:text-white hover:border-white/10"
-                  }`}
+            <div className="space-y-6 md:space-y-7">
+              {systemSteps.map((step, index) => (
+                <motion.article
+                  key={step.number}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.45, delay: index * 0.05, ease: "easeOut" }}
+                  className="rounded-[20px] border border-white/7 bg-[rgba(10,10,10,0.80)] p-7 backdrop-blur-xl transition-all duration-200 hover:scale-[1.01] hover:border-white/15 md:p-10"
                 >
-                  {m.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Active progress bar */}
-            <div className="mx-auto mt-4 flex max-w-md gap-1.5">
-              {modules.map((_, i) => (
-                <div key={i} className="h-0.5 flex-1 rounded-full bg-white/[0.06] overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full bg-purple-400"
-                    initial={{ width: "0%" }}
-                    animate={{ width: i === activeModule ? "100%" : i < activeModule ? "100%" : "0%" }}
-                    transition={i === activeModule ? { duration: MODULE_ROTATE_MS / 1000, ease: "linear" } : { duration: 0.3 }}
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Content panel — only one visible at a time */}
-            <div className="relative mt-8 min-h-[280px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeModule}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.3 }}
-                  className="rounded-2xl border border-white/[0.08] bg-neutral-950/80 p-6 backdrop-blur-sm md:p-8"
-                >
-                  <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[1fr_1.2fr]">
-                    <div>
-                      <h3 className="text-xl font-semibold text-white md:text-2xl">
-                        {modules[activeModule].heading}
-                      </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-neutral-400">
-                        {modules[activeModule].body}
-                      </p>
+                  {/* Step card: update content for this module independently. */}
+                  <div className="flex items-start gap-5">
+                    <div className="relative mt-1 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] text-[22px] font-bold text-white">
+                      {step.number}
                     </div>
-                    <div className="rounded-xl border border-white/[0.06] bg-black/40 p-4">
-                      <ActiveModulePanel />
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <h2 className="text-[22px] font-bold leading-tight text-white">{step.title}</h2>
+                        <span className={`rounded-full bg-gradient-to-r px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white ${step.categoryClass}`}>
+                          {step.category}
+                        </span>
+                      </div>
+
+                      <p className="mt-3 max-w-[600px] text-[15px] leading-[1.6] text-white/70">
+                        {step.description}
+                      </p>
+
+                      <ul className="mt-4 space-y-2.5">
+                        {step.bullets.map((bullet) => (
+                          <li key={bullet} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-white/65">
+                            <span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text font-bold text-transparent">✦</span>
+                            <span>{bullet}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
+                </motion.article>
+              ))}
             </div>
-          </motion.div>
+          </div>
         </section>
 
-      </Container>
+        <section className="mx-auto mt-16 w-full max-w-[1000px] rounded-[24px] bg-[rgba(0,0,0,0.5)] px-4 py-12 md:mt-20 md:px-8 md:py-14">
+          {/* Comparison section: keep this wrapper for easy future content swaps. */}
+          <div className="text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/55">
+              THE DIFFERENCE
+            </p>
+            <h2 className="mt-3 text-[clamp(1.8rem,4vw,3rem)] font-extrabold leading-tight text-white">
+              WHY THE MICA GROWTH SYSTEM
+              <br />
+              STANDS APART
+            </h2>
+            <p className="mx-auto mt-4 max-w-[640px] text-[16px] leading-relaxed text-white/65">
+              Most agencies sell services. We install systems. Built specifically for Florida floor-coating contractors — not generic marketing retainers.
+            </p>
+          </div>
+
+          <div className="relative mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-5">
+            <article className="rounded-2xl border border-red-500/20 bg-[rgba(20,10,10,0.9)] p-8">
+              <div className="mb-5 rounded-lg bg-[#1a0a0a] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-red-300">
+                TRADITIONAL APPROACH
+              </div>
+              <ul className="space-y-3 text-[14px] text-white">
+                <li className="flex items-start gap-2.5"><span className="text-red-500">✕</span><span>Sells PPC, SEO, or ads as isolated services</span></li>
+                <li className="flex items-start gap-2.5"><span className="text-red-500">✕</span><span>Focused on short-term campaigns and retainers</span></li>
+                <li className="flex items-start gap-2.5"><span className="text-red-500">✕</span><span>No integration with real business systems</span></li>
+                <li className="flex items-start gap-2.5"><span className="text-red-500">✕</span><span>Depends on theory, not measurable execution</span></li>
+                <li className="flex items-start gap-2.5"><span className="text-red-500">✕</span><span>Clients rely on ads for temporary growth</span></li>
+              </ul>
+            </article>
+
+            <div className="order-2 md:order-none">
+              <div className="mb-3 flex justify-center md:hidden">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] text-base font-bold text-white">
+                  VS
+                </div>
+              </div>
+
+              <article className="rounded-2xl border border-blue-500/30 bg-[rgba(10,15,25,0.9)] p-8">
+                <div className="mb-5 rounded-lg bg-[linear-gradient(90deg,#3b82f6,#f59e0b)] px-4 py-2 text-[12px] font-bold uppercase tracking-[0.14em] text-white">
+                  MICA GROWTH SYSTEM
+                </div>
+                <ul className="space-y-3 text-[14px] text-white">
+                  <li className="flex items-start gap-2.5"><span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-transparent">✓</span><span>End-to-end system: traffic → booking → closed job</span></li>
+                  <li className="flex items-start gap-2.5"><span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-transparent">✓</span><span>Built specifically for Florida floor-coating contractors</span></li>
+                  <li className="flex items-start gap-2.5"><span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-transparent">✓</span><span>Integrated CRM, automations, and follow-up</span></li>
+                  <li className="flex items-start gap-2.5"><span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-transparent">✓</span><span>Focused on booked projects, not raw leads</span></li>
+                  <li className="flex items-start gap-2.5"><span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-transparent">✓</span><span>Designed for long-term, scalable growth</span></li>
+                </ul>
+              </article>
+            </div>
+
+            <div className="pointer-events-none absolute left-1/2 top-1/2 hidden h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] text-base font-bold text-white md:flex">
+              VS
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto mt-16 w-full max-w-5xl text-center md:mt-20">
+          <h2 className="text-[clamp(1.8rem,4vw,3rem)] font-extrabold leading-tight text-white">
+            EVERYTHING YOUR FLORIDA FLOOR-COATING BUSINESS
+            <br />
+            NEEDS. ALL IN ONE SYSTEM.
+          </h2>
+          <p className="mx-auto mt-4 max-w-[580px] text-[16px] leading-relaxed text-white/65">
+            15+ booked projects a month. Installed, managed, and optimized by our team. Limited availability — one contractor per territory.
+          </p>
+
+          <Link
+            href="/strategy-call"
+            className="mx-auto mt-8 inline-flex h-[60px] min-w-[300px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#f97316,#f59e0b)] px-10 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(245,158,11,0.4)]"
+          >
+            CLAIM YOUR FLORIDA TERRITORY →
+          </Link>
+          <p className="mt-3 text-xs text-white/40">
+            Limited availability for exclusive Florida territories.
+          </p>
+        </section>
+      </main>
     </div>
   );
 }

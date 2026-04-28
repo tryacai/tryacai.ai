@@ -263,12 +263,12 @@ export function CallRevenueFlowSection() {
             >
               <div className="h-full rounded-2xl bg-[rgba(255,255,255,0.03)] p-10 backdrop-blur-md">
                 <div className="flex justify-end">
-                  <p className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-[11px] font-semibold uppercase tracking-[0.18em] text-transparent">
+                  <p className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-[13px] font-bold uppercase tracking-[0.12em] text-transparent">
                     WE FIX THIS
                   </p>
                 </div>
 
-                <h3 className="mt-6 bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-[clamp(1.8rem,3.5vw,2.8rem)] font-black uppercase leading-tight text-transparent">
+                <h3 className="mt-6 bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] bg-clip-text text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold uppercase leading-tight text-transparent">
                   WE GET FLOOR COATING.
                   <br />
                   WE GET FLORIDA.
@@ -345,7 +345,7 @@ export function CallRevenueFlowSection() {
               One system. Built for Florida floor-coating contractors. Nothing pieced together.
             </p>
             <Link
-              href="/#contact"
+              href="/ai"
               className="mx-auto mt-5 inline-flex h-14 w-full max-w-[320px] items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#f97316_0%,#f59e0b_68%,#ec4899_100%)] px-7 text-sm font-bold uppercase tracking-[0.08em] text-white shadow-[0_0_26px_rgba(249,115,22,0.28)] transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_36px_rgba(249,115,22,0.4)]"
             >
               SEE HOW THE SYSTEM WORKS <ArrowRight className="h-4 w-4" />
