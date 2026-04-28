@@ -5,6 +5,15 @@ import { motion } from "framer-motion";
 
 const navItems = [
   {
+    title: "Home",
+    link: "/",
+  },
+  {
+    title: "Mica Growth System",
+    link: "/ai",
+    highlightAI: true,
+  },
+  {
     title: "Blog",
     link: "/blog",
   },
@@ -12,47 +21,17 @@ const navItems = [
     title: "FAQ",
     link: "/faq",
   },
-  {
-    title: "Contact",
-    link: "/#contact",
-  },
-  {
-    title: "The Mica Growth System",
-    link: "/ai",
-    highlightAI: true,
-  },
 ];
 
 export function NavBar() {
   return (
-    <motion.nav
-      initial={{
-        y: -80,
-      }}
-      animate={{
-        y: 0,
-      }}
-      transition={{
-        ease: [0.6, 0.05, 0.1, 0.9],
-        duration: 0.8,
-      }}
-      className="max-w-[90rem] fixed top-2 mx-auto inset-x-0 z-50 w-[95%] lg:w-[98%] xl:w-full"
-    >
+    <>
       <div className="hidden lg:block w-full">
         <DesktopNavbar navItems={navItems} />
       </div>
       <div className="flex h-full w-full items-center lg:hidden ">
         <MobileNavbar navItems={navItems} />
       </div>
-    </motion.nav>
+    </>
   );
-}
-
-{
-  /* <div className="hidden md:block ">
-        <DesktopNavbar />
-      </div>
-      <div className="flex h-full w-full items-center md:hidden ">
-        <MobileNavbar navItems={navItems} />
-      </div> */
 }

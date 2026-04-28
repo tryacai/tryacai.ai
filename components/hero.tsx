@@ -13,87 +13,6 @@ import {
   readCalBookingDetails,
 } from "@/lib/cal-booking";
 
-// ─── Typewriter: "MICA GROWTH" with gradient + neon underline ───
-const TypewriterBrand = () => {
-  const phrase = "MICA GROWTH";
-  const [text, setText] = useState("");
-  const [phase, setPhase] = useState<"typing" | "holding" | "deleting">("typing");
-
-  useEffect(() => {
-    const typingSpeed = 90;
-    const deletingSpeed = 60;
-    const holdDuration = 7500;
-    let timer: NodeJS.Timeout;
-
-    if (phase === "typing") {
-      if (text.length < phrase.length) {
-        timer = setTimeout(() => setText(phrase.slice(0, text.length + 1)), typingSpeed);
-      } else {
-        timer = setTimeout(() => setPhase("holding"), holdDuration);
-      }
-    } else if (phase === "holding") {
-      timer = setTimeout(() => setPhase("deleting"), 200);
-    } else if (phase === "deleting") {
-      if (text.length > 0) {
-        timer = setTimeout(() => setText(text.slice(0, -1)), deletingSpeed);
-      } else {
-        setPhase("typing");
-      }
-    }
-
-    return () => { if (timer) clearTimeout(timer); };
-  }, [text, phase]);
-
-  return (
-    <span className="relative inline-block">
-      <span
-        className="inline-block font-extrabold uppercase bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent"
-        style={{
-          filter: "drop-shadow(0 0 12px rgba(59, 130, 246, 0.4)) drop-shadow(0 0 24px rgba(168, 85, 247, 0.3))",
-        }}
-      >
-        {text.split("").map((char, index) => (
-          <motion.span
-            key={index}
-            className="inline-block"
-            style={{ marginLeft: char === " " ? "0.3em" : undefined }}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.1 }}
-          >
-            {char}
-          </motion.span>
-        ))}
-        <motion.span
-          className="inline-block ml-0.5"
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 0.7, repeat: Infinity, ease: "easeInOut" }}
-        >
-          |
-        </motion.span>
-      </span>
-      {/* Pulsing neon underline */}
-      {text.length > 0 && (
-        <motion.div
-          className="absolute -bottom-1 left-0 h-[3px] rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-red-500"
-          animate={{
-            width: `${(text.length / phrase.length) * 100}%`,
-            boxShadow: [
-              "0 0 8px rgba(168, 85, 247, 0.6), 0 0 20px rgba(168, 85, 247, 0.3)",
-              "0 0 16px rgba(168, 85, 247, 0.9), 0 0 40px rgba(168, 85, 247, 0.5)",
-              "0 0 8px rgba(168, 85, 247, 0.6), 0 0 20px rgba(168, 85, 247, 0.3)",
-            ],
-          }}
-          transition={{
-            width: { duration: 0.1 },
-            boxShadow: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
-          }}
-        />
-      )}
-    </span>
-  );
-};
-
 // ─── "GUARANTEED" with diamond sparkle star animation ───
 const GuaranteedText = () => {
   const word = "GUARANTEED";
@@ -179,39 +98,26 @@ const GuaranteedText = () => {
   );
 };
 
-// ─── Gold Luxe Pill Banner with prestige styling ───
-const GoldPill = ({ text, delay }: { text: string; delay: number }) => (
+// ─── Glass Card Widget ───
+const GlassCard = ({ title, description, delay }: { title: string; description: string; delay: number }) => (
   <motion.div
-    initial={{ opacity: 0, y: 16 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay, ease: "easeOut" }}
-    className="relative overflow-hidden flex items-center gap-3 rounded-full border border-yellow-500/50 bg-gradient-to-r from-neutral-950 via-neutral-900/95 to-neutral-950 px-7 py-4 backdrop-blur-md"
-    style={{
-      boxShadow: "0 0 24px rgba(255, 215, 0, 0.14), 0 0 48px rgba(212, 175, 55, 0.06), inset 0 1px 0 rgba(255, 215, 0, 0.12), inset 0 0 24px rgba(212, 175, 55, 0.05)",
-    }}
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.3 }}
+    transition={{ duration: 0.5, delay }}
+    whileHover={{ scale: 1.02 }}
+    className="group rounded-2xl backdrop-blur-xl border border-white/10 bg-white/5 p-6 hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all hover:border-white/20 cursor-default"
   >
-    {/* Traveling shimmer */}
-    <motion.span
-      className="absolute top-0 h-full w-[25%] pointer-events-none"
-      style={{
-        background: "linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent)",
-      }}
-      animate={{ left: ["-25%", "125%"] }}
-      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 2, delay: delay * 2 }}
-    />
-    {/* Glowing gold diamond */}
-    <span
-      className="shrink-0 h-2.5 w-2.5 rotate-45 rounded-sm bg-gradient-to-br from-yellow-300 to-amber-500"
-      style={{
-        boxShadow: "0 0 8px rgba(255, 215, 0, 0.9), 0 0 18px rgba(255, 215, 0, 0.5), 0 0 32px rgba(212, 175, 55, 0.25)",
-      }}
-    />
-    <span className="relative text-sm md:text-base text-amber-50 font-semibold tracking-wider uppercase">{text}</span>
+    <p className="text-sm font-bold uppercase bg-gradient-to-r from-blue-400 via-purple-500 to-red-500 bg-clip-text text-transparent tracking-wider">
+      {title}
+    </p>
+    <p className="mt-3 text-white/80 text-base font-medium leading-relaxed">
+      {description}
+    </p>
   </motion.div>
 );
 
 // ─── Qualification Modal (Floor Coating Only) ───
-
 type ModalStep =
   | "qualify"
   | "disqualified"
@@ -227,7 +133,6 @@ type ModalStep =
 
 const CAL_URL = "https://cal.com/micagrowth/30min";
 
-/** Fire a Meta Pixel event if fbq is available */
 function fireFbq(eventName: string) {
   if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).fbq) {
     (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", eventName);
@@ -247,7 +152,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
   const [smsConsent, setSmsConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Build the Cal.com iframe URL with prefilled data
   const calEmbedUrl = (() => {
     return buildCalEmbedUrl(CAL_URL, {
       fullName,
@@ -273,7 +177,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
     notes: "",
   });
 
-  // Listen for Cal.com booking confirmation
   useEffect(() => {
     if (step !== "booking") return;
 
@@ -307,10 +210,8 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
 
     window.addEventListener("message", handleCalMessage);
     return () => window.removeEventListener("message", handleCalMessage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, companyName, fullName, businessEmail, phoneNumber, router]);
 
-  // Handle "Not now" — submit without booking
   const handleNotNow = async () => {
     setIsSubmitting(true);
     setStep("submitting");
@@ -332,7 +233,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
 
   const resetAndClose = () => {
     onClose();
-    // Reset after animation
     setTimeout(() => {
       setStep("qualify");
       setCompanyName("");
@@ -347,7 +247,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
     "mt-2 block w-full rounded-xl border border-white/10 bg-neutral-950 px-4 py-3.5 text-white text-base placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-purple-500";
   const labelClass = "block text-sm font-medium text-neutral-300";
 
-  // Progress calculation
   const stepOrder: ModalStep[] = ["qualify", "company_name", "full_name", "business_email", "phone_number", "urgency"];
   const progressIndex = stepOrder.indexOf(step);
   const progressPercent = progressIndex >= 0 ? Math.round(((progressIndex + 1) / stepOrder.length) * 100) : 100;
@@ -371,10 +270,8 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
             transition={{ duration: 0.25 }}
             className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
           >
-            {/* Close button */}
             <button onClick={resetAndClose} className="absolute right-4 top-4 text-neutral-400 hover:text-white text-xl leading-none">&times;</button>
 
-            {/* Progress bar — only show during input steps */}
             {progressIndex >= 0 && (
               <div className="mb-6">
                 <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
@@ -388,7 +285,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </div>
             )}
 
-            {/* ── Step: Qualify ── */}
             {step === "qualify" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 text-center py-4">
                 <h3 className="text-2xl font-semibold text-white">Are you a floor coating business?</h3>
@@ -409,7 +305,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Disqualified ── */}
             {step === "disqualified" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 text-center py-8">
                 <p className="text-lg text-neutral-200 leading-relaxed">
@@ -421,7 +316,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Company Name ── */}
             {step === "company_name" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                 <h3 className="text-xl font-semibold text-white">What&apos;s your company name?</h3>
@@ -447,7 +341,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Full Name ── */}
             {step === "full_name" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                 <h3 className="text-xl font-semibold text-white">What&apos;s your full name?</h3>
@@ -476,7 +369,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Business Email ── */}
             {step === "business_email" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                 <h3 className="text-xl font-semibold text-white">What&apos;s your email?</h3>
@@ -505,7 +397,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Phone Number ── */}
             {step === "phone_number" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-5">
                 <h3 className="text-xl font-semibold text-white">What&apos;s your phone number?</h3>
@@ -555,7 +446,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Urgency + Book? ── */}
             {step === "urgency" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 text-center py-4">
                 <div className="rounded-xl border border-purple-500/30 bg-purple-500/5 p-5">
@@ -582,7 +472,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Cal.com Booking Embed ── */}
             {step === "booking" && (
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
                 <h3 className="text-xl font-semibold text-white text-center">Pick a time that works</h3>
@@ -601,7 +490,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Submitting ── */}
             {(step === "submitting" || isSubmitting) && step !== "booking" && step !== "urgency" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
                 <div className="inline-block h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-purple-500" />
@@ -609,7 +497,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Thank You (no booking) ── */}
             {step === "thank_you" && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10 space-y-4">
                 <p className="text-2xl font-semibold text-white">Thanks! ✅</p>
@@ -620,7 +507,6 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
               </motion.div>
             )}
 
-            {/* ── Step: Booked confirmation ── */}
             {step === "booked" && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10 space-y-4">
                 <p className="text-2xl font-semibold text-white">Your call is booked! 📅</p>
@@ -637,11 +523,9 @@ const QualificationModal = ({ open, onClose }: { open: boolean; onClose: () => v
   );
 };
 
-// ─── Main Hero export ───
 export const Hero = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Open modal when #contact hash is detected
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === "#contact") {
@@ -655,163 +539,213 @@ export const Hero = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col overflow-hidden pt-14 md:pt-18">
+    <div className="relative flex flex-col overflow-hidden pt-24 md:pt-28 min-h-screen">
+      {/* Background Image with Opacity Overlay */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url(/epoxybackground.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.35,
+        }}
+      />
+      
+      {/* Dark Overlay for readability */}
+      <div className="absolute inset-0 z-0 bg-black/40" />
 
-      {/* ═══════════════════════════════════════════════════
-          SECTION 1 — Full Width Centered Headline Block
-          ═══════════════════════════════════════════════════ */}
-      <motion.div
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ ease: "easeOut", duration: 0.5 }}
-        className="relative z-10 mx-auto w-full max-w-5xl px-4 text-center"
-      >
-        {/* Line 1 — GUARANTEED */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-none">
-          <GuaranteedText />
-        </h1>
+      {/* Content Container */}
+      <div className="relative z-10 flex flex-col">
+        {/* Hero Section with padding to push content down */}
+        <div className="flex-1 flex items-center justify-center px-4">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ ease: "easeOut", duration: 0.5 }}
+            className="w-full max-w-4xl text-center"
+          >
+            {/* Line 1 — GUARANTEED */}
+            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl leading-none font-black">
+              <GuaranteedText />
+            </h1>
 
-        {/* Line 2 — BOOKED FLOOR COATING JOBS */}
-        <p className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tight leading-tight">
-          BOOKED{" "}
-          <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl underline decoration-2 underline-offset-4 decoration-purple-500">FLOOR COATING</span>
-          {" "}JOBS
-        </p>
+            {/* Line 2 — EPOXY JOBS / CONTROL YOUR FLORIDA MARKET */}
+            <p className="mt-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tight leading-tight">
+              EPOXY JOBS<br />
+              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl underline decoration-2 underline-offset-4 decoration-purple-500">
+                CONTROL YOUR FLORIDA MARKET
+              </span>
+            </p>
 
-        {/* Line 3 — Typewriter MICA GROWTH */}
-        <div className="mt-3 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold min-h-[1.3em]">
-          <TypewriterBrand />
+            {/* Subheading */}
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mt-8 text-lg sm:text-xl md:text-2xl text-white/90 font-normal leading-relaxed max-w-2xl mx-auto"
+            >
+              We give you <span className="font-bold">booked floor-coating jobs</span> delivered straight to your calendar. <span className="font-bold">15+ ready-to-quote projects</span> every month.
+            </motion.p>
+
+            {/* Secondary guarantee line */}
+            <p className="mt-4 text-base sm:text-lg md:text-xl font-semibold text-neutral-300">
+              <span>$0 Set up Fee.</span>
+            </p>
+          </motion.div>
         </div>
 
-        {/* Line 4 — IMMEDIATE QUALIFIED JOBS */}
-        <p className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tight leading-tight">
-          IMMEDIATE QUALIFIED JOBS
-        </p>
-
-        {/* Line 5 — RESULTS + FREE guarantee */}
-        <p className="mt-4 text-lg sm:text-xl md:text-2xl font-bold text-white">
-          RESULTS in first month.
-        </p>
-        <p className="mt-1 text-base sm:text-lg md:text-xl font-semibold text-neutral-300">
-          If we miss, your next month is{" "}
-          <span className="text-red-500 font-black text-xl sm:text-2xl md:text-3xl" style={{ textShadow: "0 0 12px rgba(239, 68, 68, 0.6), 0 0 24px rgba(239, 68, 68, 0.3)" }}>FREE</span>
-        </p>
-      </motion.div>
-
-      {/* ═══════════════════════════════════════════════════
-          CTA — Between headline and content sections
-          ═══════════════════════════════════════════════════ */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ease: "easeOut", duration: 0.5, delay: 0.4 }}
-        className="relative z-10 mx-auto mt-6 w-full max-w-5xl px-4 flex flex-col items-center"
-      >
-        <button
-          onClick={() => setModalOpen(true)}
-          className="group relative w-full sm:w-auto px-10 py-5 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] active:scale-[0.98] overflow-hidden"
-        >
-          <span className="block text-lg font-bold tracking-wide">
-            Claim Your Free 15-Min Strategy Call &rarr;
-          </span>
-          <span className="block mt-1 text-xs font-medium text-white/70">
-            Spots for this month closing &mdash; book now.
-          </span>
-        </button>
-        <p className="mt-3 text-sm text-neutral-500 text-center">
-          Just to see if it&apos;s a fit. No pressure, no pitch.
-        </p>
-      </motion.div>
-
-      {/* ═══════════════════════════════════════════════════
-          SECTION 2 — Two Columns (Left text + Right image)
-          ═══════════════════════════════════════════════════ */}
-      <div className="relative z-10 mx-auto mt-10 md:mt-14 w-full max-w-7xl px-4 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-center">
-
-        {/* LEFT — Bold text + Gold pills */}
+        {/* 4-Column Glass Card Grid */}
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ ease: "easeOut", duration: 0.5, delay: 0.2 }}
-          className="flex flex-col items-center md:items-start order-2 md:order-1"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="relative z-10 mx-auto mt-16 md:mt-20 w-full max-w-5xl px-4"
         >
-          <p className="text-xl sm:text-2xl md:text-3xl font-black uppercase text-white tracking-tight text-center md:text-left leading-snug">
-            WE GIVE YOU WORK,<br />JUST SHOW UP.
-          </p>
-
-          <div className="mt-6 flex flex-col gap-3 w-full max-w-md">
-            <GoldPill text="Performance based Pay." delay={0.35} />
-            <GoldPill text="24/7 support. Call us anytime." delay={0.45} />
-            <GoldPill text="SMS chatbots included. Your leads never wait." delay={0.55} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <GlassCard
+              title="We Give You Work"
+              description="Just show up."
+              delay={0}
+            />
+            <GlassCard
+              title="Performance-Based Pay"
+              description="Pay only when we deliver."
+              delay={0.1}
+            />
+            <GlassCard
+              title="24/7 Support"
+              description="Call us anytime."
+              delay={0.2}
+            />
+            <GlassCard
+              title="SMS Chatbots Included"
+              description="Your leads never wait on hold."
+              delay={0.3}
+            />
           </div>
         </motion.div>
 
-        {/* RIGHT — Hero Image (landscape, wide & short) */}
+        {/* Credibility Strip — Harvard / Speed-to-Lead */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
-          className="relative w-full rounded-2xl overflow-hidden order-1 md:order-2 shadow-[0_0_40px_rgba(168,85,247,0.25),0_0_80px_rgba(239,68,68,0.15)]"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="relative z-10 mx-auto mt-16 md:mt-20 w-full max-w-5xl px-4"
         >
-          <div className="absolute inset-0 rounded-2xl ring-2 ring-inset ring-purple-500/30 pointer-events-none z-10" />
-          <Image
-            src="/mainlandingpagehero.png"
-            alt="Mica Growth funnel for service businesses"
-            width={800}
-            height={500}
-            priority
-            className="w-full h-auto object-cover rounded-2xl"
-            style={{ aspectRatio: "16/10" }}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            {/* Harvard Card */}
+            <div className="text-center md:text-left">
+              <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">
+                Harvard Business Review
+              </p>
+              <p
+                className="text-5xl md:text-6xl font-black tracking-tight mb-4"
+                style={{
+                  background: "linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ef4444 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 0 12px rgba(168, 85, 247, 0.3))",
+                }}
+              >
+                391%
+              </p>
+              <p className="text-base md:text-lg text-white/80 leading-relaxed font-medium mb-2">
+                More conversions when you respond inside 60 seconds.
+              </p>
+              <p className="text-base md:text-lg text-white/70 italic font-normal">
+                We handle that for you.
+              </p>
+            </div>
+
+            {/* Speed-to-Lead Card */}
+            <div className="text-center md:text-left">
+              <p className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">
+                Speed-to-Lead Research
+              </p>
+              <p
+                className="text-5xl md:text-6xl font-black tracking-tight mb-4"
+                style={{
+                  background: "linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 0 12px rgba(168, 85, 247, 0.3))",
+                }}
+              >
+                78%
+              </p>
+              <p className="text-base md:text-lg text-white/80 leading-relaxed font-medium mb-2">
+                Of homeowners hire whoever calls back first.
+              </p>
+              <p className="text-base md:text-lg text-white/70 italic font-normal">
+                That&apos;s us, working for you.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* CTA Button Below Credibility Strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="relative z-10 mx-auto mt-16 md:mt-20 w-full max-w-2xl px-4 flex flex-col items-center"
+        >
+          <button
+            onClick={() => setModalOpen(true)}
+            className="group relative w-full sm:w-auto px-10 py-5 rounded-xl bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] active:scale-[0.98] overflow-hidden"
+          >
+            <span className="block text-lg font-bold tracking-wide">
+              Claim Your Free 15-Min Strategy Call →
+            </span>
+            <span className="block mt-1 text-xs font-medium text-white/70">
+              Spots for this month closing — book now.
+            </span>
+          </button>
         </motion.div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════
-          SECTION 3 — Stat Cards, Full Width Below
-          ═══════════════════════════════════════════════════ */}
-      <div className="relative z-10 mx-auto mt-10 md:mt-14 w-full max-w-5xl px-4">
+      {/* Marquee Banner Below Hero */}
+      <div className="relative z-10 mt-auto w-full bg-black border-t border-white/10">
+        <style>{`
+          @keyframes scroll-marquee {
+            from {
+              transform: translateX(0);
+            }
+            to {
+              transform: translateX(-50%);
+            }
+          }
 
-        {/* Stat Cards — side by side */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-          {/* Card 1 — Harvard */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="rounded-2xl border border-white/10 bg-neutral-950/80 backdrop-blur-sm p-6"
-          >
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
-              Harvard Business Review.
-            </p>
-            <p className="mt-2 text-5xl md:text-6xl font-black text-purple-500 tracking-tight">391%</p>
-            <p className="mt-2 text-sm text-neutral-400 leading-relaxed font-medium">
-              More conversions when you respond in 60 seconds.
-            </p>
-            <p className="mt-2 text-sm font-bold text-red-500">We handle that.</p>
-          </motion.div>
+          .marquee-track {
+            animation: scroll-marquee 30s linear infinite;
+          }
 
-          {/* Card 2 — Speed-to-Lead */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="rounded-2xl border border-white/10 bg-neutral-950/80 backdrop-blur-sm p-6"
-          >
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
-              Speed-to-Lead Research.
-            </p>
-            <p className="mt-2 text-5xl md:text-6xl font-black text-purple-500 tracking-tight">78%</p>
-            <p className="mt-2 text-sm text-neutral-400 leading-relaxed font-medium">
-              Of buyers choose whoever responds first.
-            </p>
-            <p className="mt-2 text-sm font-bold text-red-500">That&apos;s us, for you.</p>
-          </motion.div>
+          .marquee-track:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
+        
+        <div className="overflow-hidden py-4">
+          <div className="marquee-track flex whitespace-nowrap gap-10">
+            {/* Duplicate content for seamless loop */}
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="flex gap-10 font-medium text-white/80 text-base uppercase tracking-wider">
+                <span>Missed-lead follow-up in seconds</span>
+                <span>◆</span>
+                <span>Full visibility into every interaction</span>
+                <span>◆</span>
+                <span>24/7/365 AI coverage</span>
+                <span>◆</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      <div className="h-6 md:h-10" />
 
       {/* Qualification Modal */}
       <QualificationModal open={modalOpen} onClose={() => setModalOpen(false)} />
