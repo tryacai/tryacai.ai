@@ -1,352 +1,358 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import { ArrowRight, BarChart3, Filter, Star, X, Zap } from "lucide-react";
 import { Link } from "next-view-transitions";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Filter, MessageSquareText, Mic, Settings2, type LucideIcon } from "lucide-react";
 
-const funnelStages = [
+const painPoints = [
   {
-    title: "Ad Clicked",
-    description: "Traffic lands with intent.",
+    title: "YOU'RE LOSING JOBS TO GUYS WITH WORSE WORK",
+    body: "They respond first. You do better floors. Speed wins every time in Florida.",
   },
   {
-    title: "Form Filled",
-    description: "Lead details are captured.",
+    title: "YOUR PHONE RINGS WHILE YOU'RE ON A JOB",
+    body: "You miss it. They call the next guy. That's $3,000-$8,000 gone before you knew it rang.",
   },
   {
-    title: "Instant Follow Up",
-    description: "Response starts in seconds.",
+    title: "THE SLOW SEASON DRAINS YOUR PIPELINE EVERY YEAR",
+    body: "No system to stay booked through summer rain or the January dip. Just hope.",
   },
   {
-    title: "Lead Qualified",
-    description: "Fit and urgency are scored.",
-  },
-  {
-    title: "Appointment Booked",
-    description: "Qualified leads move to calendar.",
-  },
-  {
-    title: "Paying Customer",
-    description: "Revenue closes the loop.",
+    title: "YOU QUOTED 10 JOBS LAST MONTH AND CLOSED 3",
+    body: "Without a qualification and follow-up system, you're doing free estimates for tire-kickers.",
   },
 ] as const;
 
-const stageWidths = ["100%", "92%", "84%", "76%", "68%", "60%"];
-
-type SystemCard = {
-  title: string;
-  body: string;
-  href: string;
-  Icon: LucideIcon;
-  accent: string;
-};
-
 const systemCards = [
   {
-    title: "Automation Engine",
-    body: "Routes qualified leads and books next steps.",
-    href: "/automation-engine",
-    Icon: Settings2,
-    accent: "Flow Core",
-  },
-  {
-    title: "Chat Widget",
-    body: "Engages visitors the moment intent appears.",
-    href: "/chat-widget",
-    Icon: MessageSquareText,
-    accent: "Intent Signal",
-  },
-  {
-    title: "Voice AI",
-    body: "Answers and qualifies when your team can’t.",
-    href: "/voice-ai",
-    Icon: Mic,
-    accent: "Live Response",
-  },
-  {
-    title: "Web Funnel",
-    body: "Captures paid traffic before it drops.",
-    href: "/web-funnel",
+    pill: "ACQUISITION",
+    pillClass: "from-blue-500/30 to-sky-400/30 text-blue-100",
+    title: "PROJECT ACQUISITION FUNNELS",
+    body: "Funnels engineered to convert Florida traffic into scheduled coating estimates - not form fills that ghost you.",
     Icon: Filter,
-    accent: "Capture Layer",
+    iconClass: "text-blue-400",
+    widget: "lead",
   },
-] as const satisfies readonly SystemCard[];
+  {
+    pill: "TRAFFIC",
+    pillClass: "from-purple-500/30 to-fuchsia-400/30 text-purple-100",
+    title: "PAID TRAFFIC ENGINE (META + GOOGLE)",
+    body: "Ad systems targeting Florida floor-coating buyers who are ready to book - residential garage floors, commercial spaces, and metallic installs.",
+    Icon: BarChart3,
+    iconClass: "text-purple-400",
+    widget: "traffic",
+  },
+  {
+    pill: "AUTOMATION",
+    pillClass: "from-amber-500/30 to-orange-400/30 text-amber-50",
+    title: "CRM, AUTOMATION & FOLLOW-UPS",
+    body: "AI follow-ups, missed-call text back, lead pipelines, booking confirmations, and reminders. Every lead touched. Nothing falls through.",
+    Icon: Zap,
+    iconClass: "text-amber-400",
+    widget: "automation",
+  },
+  {
+    pill: "AUTHORITY",
+    pillClass: "from-blue-500/30 via-purple-500/30 to-amber-400/30 text-white",
+    title: "AUTHORITY, PROOF & CONVERSION ASSETS",
+    body: "Reviews, before/afters, and credibility systems built to increase your close rate and justify premium pricing in your Florida market.",
+    Icon: Star,
+    iconClass: "text-amber-300",
+    widget: "authority",
+  },
+] as const;
 
-const SYSTEM_ROTATE_MS = 3500;
-
-type RoiValues = {
-  monthlyLeads: number;
-  averageJobValue: number;
-  missedCallPercent: number;
-};
-
-const initialRoiValues: RoiValues = {
-  monthlyLeads: 120,
-  averageJobValue: 550,
-  missedCallPercent: 22,
-};
-
-export function CallRevenueFlowSection() {
-  const [roiValues, setRoiValues] = useState<RoiValues>(initialRoiValues);
-  const [displayLoss, setDisplayLoss] = useState(0);
-  const [activeCardIndex, setActiveCardIndex] = useState(0);
-  const [isCardHovered, setIsCardHovered] = useState(false);
-  const [activeFunnelIndex, setActiveFunnelIndex] = useState(0);
-
-  useEffect(() => {
-    if (isCardHovered) return;
-    const rotation = setInterval(() => {
-      setActiveCardIndex((prev) => (prev + 1) % systemCards.length);
-    }, SYSTEM_ROTATE_MS);
-    return () => clearInterval(rotation);
-  }, [isCardHovered]);
-
-  useEffect(() => {
-    const ticker = setInterval(() => {
-      setActiveFunnelIndex((previous) => (previous + 1) % funnelStages.length);
-    }, 1300);
-
-    return () => clearInterval(ticker);
-  }, []);
-
-  const lossEstimate = useMemo(() => {
-    const monthlyLeads = Number(roiValues.monthlyLeads) || 0;
-    const averageJobValue = Number(roiValues.averageJobValue) || 0;
-    const missedCallPercent = Number(roiValues.missedCallPercent) || 0;
-    return monthlyLeads * averageJobValue * Math.min(Math.max(missedCallPercent, 0), 100) / 100;
-  }, [roiValues]);
-
-  useEffect(() => {
-    const duration = 380;
-    const startValue = displayLoss;
-    const delta = lossEstimate - startValue;
-    const startedAt = performance.now();
-    let frame = 0;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - startedAt) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayLoss(startValue + delta * eased);
-      if (progress < 1) {
-        frame = requestAnimationFrame(tick);
-      }
-    };
-
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [lossEstimate]);
-
-  const formattedLoss = useMemo(() => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(displayLoss);
-  }, [displayLoss]);
-
+function AcquisitionWidget() {
   return (
-    <section className="relative z-20 mx-auto mt-5 w-full max-w-6xl px-4 md:mt-7">
-      <div className="rounded-[2.2rem] border border-white/10 bg-black/45 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_0_38px_rgba(78,60,170,0.16)] backdrop-blur-xl md:p-10">
-        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_0.95fr] lg:gap-12">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-purple-300/70 md:text-sm">Awareness</p>
-            <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-white md:text-5xl">
-              How much revenue are you losing from slow response time?
-            </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-300 md:text-lg">
-              Most companies don&apos;t lose demand at the ad. They lose it in the gap after the click.
-            </p>
-
-            <div className="mt-7 grid gap-4 rounded-2xl border border-white/10 bg-black/40 p-4 md:p-5">
-              <label className="text-sm text-neutral-300">
-                <div className="mb-2 flex items-center justify-between">
-                  <span>Monthly Leads</span>
-                  <span className="text-white">{roiValues.monthlyLeads}</span>
-                </div>
-                <input
-                  type="range"
-                  min={20}
-                  max={1000}
-                  step={5}
-                  value={roiValues.monthlyLeads}
-                  onChange={(event) => setRoiValues((previous) => ({ ...previous, monthlyLeads: Number(event.target.value) }))}
-                  className="acai-slider"
-                />
-              </label>
-
-              <label className="text-sm text-neutral-300">
-                <div className="mb-2 flex items-center justify-between">
-                  <span>Average Job Value</span>
-                  <span className="text-white">${roiValues.averageJobValue}</span>
-                </div>
-                <input
-                  type="range"
-                  min={150}
-                  max={3500}
-                  step={25}
-                  value={roiValues.averageJobValue}
-                  onChange={(event) => setRoiValues((previous) => ({ ...previous, averageJobValue: Number(event.target.value) }))}
-                  className="acai-slider"
-                />
-              </label>
-
-              <label className="text-sm text-neutral-300">
-                <div className="mb-2 flex items-center justify-between">
-                  <span>Missed Calls %</span>
-                  <span className="text-white">{roiValues.missedCallPercent}%</span>
-                </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={70}
-                  step={1}
-                  value={roiValues.missedCallPercent}
-                  onChange={(event) => setRoiValues((previous) => ({ ...previous, missedCallPercent: Number(event.target.value) }))}
-                  className="acai-slider"
-                />
-              </label>
-
-              <p className="pt-2 text-sm text-neutral-300 md:text-base">
-                You could be losing <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 bg-clip-text text-2xl font-semibold text-transparent md:text-3xl">{formattedLoss}</span>/month in missed opportunities.
-              </p>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-x-10 top-8 h-40 rounded-full bg-gradient-to-r from-blue-500/15 via-purple-500/25 to-red-500/15 blur-3xl" />
-            <div className="relative rounded-2xl bg-black/55 p-4 md:p-6">
-              <div className="pointer-events-none absolute inset-y-8 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-blue-400/70 via-purple-400/55 to-red-400/70" />
-              <motion.div
-                aria-hidden
-                className="pointer-events-none absolute left-1/2 top-8 h-3 w-3 -translate-x-1/2 rounded-full bg-white shadow-[0_0_20px_rgba(255,255,255,0.9),0_0_30px_rgba(96,70,255,0.65)]"
-                animate={{ y: activeFunnelIndex * 63 }}
-                transition={{ duration: 0.55, ease: "easeOut" }}
-              />
-
-              <div className="relative flex flex-col items-center gap-3 md:gap-4">
-                {funnelStages.map((stage, index) => (
-                  <motion.div
-                    key={stage.title}
-                    initial={{ opacity: 0, y: 14 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.35 }}
-                    transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
-                    className="relative"
-                    style={{ width: stageWidths[index] }}
-                  >
-                    <div
-                      className={`rounded-xl px-3 py-2.5 text-center transition-all duration-300 ${
-                        index === activeFunnelIndex
-                          ? "bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-red-500/20 shadow-[0_0_20px_rgba(122,88,255,0.25)]"
-                          : index < activeFunnelIndex
-                            ? "bg-black/45 opacity-70"
-                            : "bg-black/35 opacity-95"
-                      }`}
-                    >
-                      <h3 className="text-sm font-semibold text-white md:text-base">{stage.title}</h3>
-                      <p className="mt-0.5 text-xs leading-relaxed text-neutral-300 md:text-sm">{stage.description}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
+    <div className="mt-4 rounded-xl border border-white/6 bg-[#0f0f0f] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+      {/* Animated widget: swap this lead-routing mock with live lead feed data later. */}
+      <div className="flex items-center justify-between text-[12px] text-white/70">
+        <div className="flex items-center gap-2">
+          <span className="lead-dot inline-block h-2.5 w-2.5 rounded-full bg-emerald-400" />
+          <span className="font-semibold text-white">New Lead - Tampa, FL</span>
         </div>
+        <span>Just now</span>
+      </div>
+      <p className="mt-3 text-sm text-white/90">&quot;I want to redo my garage floor.&quot;</p>
+      <p className="mt-3 overflow-hidden whitespace-nowrap border-r border-blue-300/70 pr-1 text-sm text-blue-300 typing-route">
+        Routing to qualification...
+      </p>
+    </div>
+  );
+}
 
-        <div className="mt-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-[0.6fr_1fr]">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400 md:text-sm">System Flow</p>
-            <h3 className="mt-2 text-xl font-semibold leading-tight text-white md:text-2xl">
-              One connected system that closes every gap
-            </h3>
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-neutral-400 md:text-base">
-              Capture, response, qualification, and routing in one continuous flow.
-            </p>
-          </div>
-
-          <div className="relative">
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/8 via-purple-500/8 to-red-500/8 blur-3xl" />
-
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-5 md:p-6"
-              onMouseEnter={() => setIsCardHovered(true)}
-              onMouseLeave={() => setIsCardHovered(false)}
-              aria-label="Mica Growth System cards"
-            >
-              <AnimatePresence mode="wait">
-                {systemCards.map((card, index) => {
-                  if (index !== activeCardIndex) return null;
-                  return (
-                    <motion.div
-                      key={card.title}
-                      initial={{ opacity: 0, x: 40, scale: 0.97 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: -40, scale: 0.97 }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="flex items-start gap-4"
-                    >
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-purple-400/30 bg-purple-500/10">
-                        <card.Icon className="h-5 w-5 text-purple-300" strokeWidth={1.8} />
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-purple-400/60">{card.accent}</p>
-                        <h4 className="mt-0.5 text-lg font-semibold text-white">{card.title}</h4>
-                        <p className="mt-1 text-sm leading-relaxed text-neutral-400">{card.body}</p>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-
-              <div className="mt-4 flex gap-2">
-                {systemCards.map((card, index) => (
-                  <button
-                    key={card.title}
-                    onClick={() => setActiveCardIndex(index)}
-                    className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${index === activeCardIndex ? "bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 shadow-[0_0_8px_rgba(168,85,247,0.4)]" : "bg-white/10 hover:bg-white/20"}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-5 flex justify-center">
-              <Link
-                href="/ai"
-                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-purple-400/30 bg-gradient-to-r from-purple-600/20 via-purple-500/15 to-blue-500/20 px-8 py-3.5 text-sm font-bold uppercase tracking-[0.16em] text-white shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300 hover:border-purple-400/50 hover:shadow-[0_0_40px_rgba(168,85,247,0.35)] hover:scale-[1.03] md:px-10 md:py-4 md:text-base"
-              >
-                <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/20 to-red-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="relative">Explore The Mica Growth System</span>
-                <ArrowRight className="relative h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 md:h-5 md:w-5" />
-              </Link>
-            </div>
-          </div>
+function TrafficWidget() {
+  return (
+    <div className="mt-4 rounded-xl border border-white/6 bg-[#0f0f0f] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+      {/* Animated widget: replace this ad ticker with real campaign metrics later. */}
+      <p className="text-sm font-semibold text-white">Meta Campaign - FL Garage Floors</p>
+      <div className="mt-3 grid grid-cols-2 gap-3 text-sm text-white/80 sm:grid-cols-4">
+        <div>
+          <p className="text-white/45">CTR</p>
+          <p className="metric-pulse font-semibold text-white">4.2% <span className="text-emerald-400">↑</span></p>
         </div>
-
-        <div className="mt-14 grid grid-cols-1 items-start gap-8 border-t border-white/10 pt-10 lg:gap-10">
-          <div>
-            <p className="text-lg leading-relaxed text-neutral-200 md:text-xl">
-              Companies that respond to leads within an hour can see up to a <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 bg-clip-text font-semibold text-transparent">391%</span> increase in conversions.
-            </p>
-
-            <h3 className="mt-10 text-3xl font-semibold leading-tight text-white md:text-5xl">
-              See how Mica Growth captures this for you
-            </h3>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-300 md:text-lg">
-              We&apos;ll map your process and show exactly where revenue is leaking.
-            </p>
-            <ul className="mt-5 space-y-2 text-sm text-neutral-200 md:text-base">
-              <li>Lead response speed diagnostics</li>
-              <li>Qualification and routing bottleneck map</li>
-              <li>Actionable recovery plan for your team</li>
-            </ul>
-            <div className="mt-7">
-              <Link href="/contact" className="inline-flex rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
-                Get My Lead Analysis
-              </Link>
-            </div>
-          </div>
+        <div>
+          <p className="text-white/45">CPL</p>
+          <p className="metric-pulse font-semibold text-white">$18.40 <span className="text-emerald-400">↓</span></p>
+        </div>
+        <div>
+          <p className="text-white/45">Leads today</p>
+          <p className="metric-pulse font-semibold text-white">7</p>
+        </div>
+        <div>
+          <p className="text-white/45">Booked</p>
+          <p className="metric-pulse font-semibold text-white">3</p>
         </div>
       </div>
-    </section>
+      <div className="mt-4">
+        <div className="h-2 overflow-hidden rounded-full bg-white/8">
+          <div className="traffic-progress h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-amber-400" />
+        </div>
+        <p className="mt-2 text-sm text-white/60">[████████░░] Optimizing...</p>
+      </div>
+    </div>
+  );
+}
+
+function AutomationWidget() {
+  return (
+    <div className="mt-4 rounded-xl border border-white/6 bg-[#0f0f0f] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+      {/* Animated widget: replace this SMS thread simulation with live CRM messaging data later. */}
+      <div className="rounded-lg bg-white/[0.03] p-3">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-semibold text-white">Mica Growth AI</span>
+          <span className="text-white/50">0.8s ago</span>
+        </div>
+        <p className="mt-2 text-sm text-white/80">&quot;Hey! Saw you were interested in garage floor coating. Still looking?&quot;</p>
+      </div>
+      <div className="automation-reply mt-3 rounded-lg border border-emerald-400/20 bg-emerald-400/8 p-3 opacity-0">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-semibold text-white">Lead replied</span>
+          <span className="text-white/50">Just now</span>
+        </div>
+        <p className="mt-2 text-sm text-white/90">&quot;Yes! Can we book this week?&quot;</p>
+        <p className="mt-2 text-sm text-emerald-300">→ Booking link sent automatically</p>
+      </div>
+    </div>
+  );
+}
+
+function AuthorityWidget() {
+  return (
+    <div className="mt-4 rounded-xl border border-white/6 bg-[#0f0f0f] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+      {/* Animated widget: replace this review notification mock with live reputation events later. */}
+      <div className="authority-review rounded-lg border border-white/8 bg-white/[0.03] p-3 opacity-0">
+        <p className="text-sm font-semibold text-white">⭐⭐⭐⭐⭐ New Review - Google</p>
+        <p className="mt-2 text-sm text-white/85">&quot;Best garage floor in Tampa. Done in one day, looked amazing.&quot;</p>
+        <p className="mt-2 text-sm text-white/55">- James T., Riverview FL</p>
+        <p className="mt-3 text-sm text-amber-300">+1 to your authority score ✓</p>
+      </div>
+    </div>
+  );
+}
+
+function SystemWidget({ type }: { type: (typeof systemCards)[number]["widget"] }) {
+  if (type === "lead") return <AcquisitionWidget />;
+  if (type === "traffic") return <TrafficWidget />;
+  if (type === "automation") return <AutomationWidget />;
+  return <AuthorityWidget />;
+}
+
+export function CallRevenueFlowSection() {
+  return (
+    <>
+      <style jsx>{`
+        @keyframes lead-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.18); opacity: 1; }
+        }
+
+        @keyframes typing-route {
+          0%, 12% { width: 0; }
+          35%, 62% { width: 26ch; }
+          85%, 100% { width: 0; }
+        }
+
+        @keyframes progress-fill {
+          0%, 100% { width: 42%; }
+          50% { width: 86%; }
+        }
+
+        @keyframes metric-float {
+          0%, 100% { opacity: 0.78; transform: translateY(0); }
+          50% { opacity: 1; transform: translateY(-1px); }
+        }
+
+        @keyframes reply-fade {
+          0%, 25% { opacity: 0; transform: translateY(8px); }
+          38%, 82% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(8px); }
+        }
+
+        @keyframes review-rise {
+          0%, 20% { opacity: 0; transform: translateY(12px); }
+          35%, 84% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(12px); }
+        }
+
+        .lead-dot {
+          animation: lead-pulse 1.5s ease-in-out infinite;
+        }
+
+        .typing-route {
+          animation: typing-route 4.8s steps(26, end) infinite;
+        }
+
+        .traffic-progress {
+          animation: progress-fill 4.6s ease-in-out infinite;
+        }
+
+        .metric-pulse {
+          animation: metric-float 2.8s ease-in-out infinite;
+        }
+
+        .automation-reply {
+          animation: reply-fade 4s ease-in-out infinite;
+        }
+
+        .authority-review {
+          animation: review-rise 5s ease-in-out infinite;
+        }
+      `}</style>
+
+      <section className="w-full bg-[#080808] px-4 py-20 md:px-6 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-black uppercase tracking-tight text-white">
+              TIRED OF MARKETING
+            </h2>
+            <p className="mt-2 bg-gradient-to-r from-blue-500 via-purple-500 to-amber-400 bg-clip-text text-[clamp(2.5rem,5vw,4rem)] font-black uppercase tracking-tight text-transparent">
+              THAT DOESN'T GET FLOOR COATING?
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className="rounded-[14px] border border-white/[0.06] bg-[#111111] p-8"
+            >
+              <div className="space-y-6">
+                {painPoints.map((point) => (
+                  <div key={point.title} className="flex items-start gap-4 border-b border-white/6 pb-6 last:border-b-0 last:pb-0">
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-500/10">
+                      <X className="h-4 w-4 text-red-500" strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <h3 className="text-[15px] font-bold uppercase tracking-[0.04em] text-white">{point.title}</h3>
+                      <p className="mt-2 max-w-[34rem] text-[13px] leading-relaxed text-white/55">{point.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.45, delay: 0.05, ease: "easeOut" }}
+              className="rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-amber-400 p-px"
+            >
+              <div className="h-full rounded-2xl bg-[rgba(255,255,255,0.03)] p-10 backdrop-blur-md">
+                <div className="flex justify-end">
+                  <p className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-[11px] font-semibold uppercase tracking-[0.18em] text-transparent">
+                    WE FIX THIS
+                  </p>
+                </div>
+
+                <h3 className="mt-6 bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-[clamp(1.8rem,3.5vw,2.8rem)] font-black uppercase leading-tight text-transparent">
+                  WE GET FLOOR COATING.
+                  <br />
+                  WE GET FLORIDA.
+                </h3>
+
+                <p className="mt-4 text-[15px] leading-[1.7] text-white/85">
+                  We understand your buyers, your market, your slow seasons, and what it costs when a lead goes cold. We built Mica Growth specifically for Florida floor-coating contractors - so your phone rings, your calendar fills, and you just show up and coat.
+                </p>
+
+                <Link
+                  href="/#contact"
+                  className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#f97316_0%,#f59e0b_68%,#ec4899_100%)] px-6 text-sm font-bold uppercase tracking-[0.08em] text-white shadow-[0_0_24px_rgba(249,115,22,0.28)] transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_34px_rgba(249,115,22,0.4)]"
+                >
+                  SPEAK WITH A FLORIDA EPOXY EXPERT <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative isolate w-full overflow-hidden px-4 py-20 md:px-6 md:py-24">
+        {/* Epoxy background layering for the Mica Growth System section. */}
+        <div className="absolute inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat opacity-40" />
+        <div className="absolute inset-0 -z-10 bg-[rgba(0,0,0,0.65)]" />
+
+        <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-white/55">
+              THE MICA GROWTH SYSTEM
+            </p>
+            <h2 className="mt-4 text-[clamp(2rem,4.5vw,3.5rem)] font-black uppercase leading-tight text-white">
+              THE INFRASTRUCTURE BEHIND
+            </h2>
+            <p className="mt-2 bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-[clamp(2rem,4.5vw,3.5rem)] font-black uppercase leading-tight text-transparent">
+              SCALABLE GROWTH
+            </p>
+            <p className="mx-auto mt-5 max-w-[680px] text-[17px] leading-[1.6] text-white/70">
+              This is not pieced-together marketing. Every component is engineered to attract qualified Florida floor-coating buyers, increase conversion rates, and create predictable booked jobs - month after month.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-12 grid max-w-[1100px] grid-cols-1 gap-5 md:grid-cols-2">
+            {systemCards.map((card, index) => (
+              <motion.article
+                key={card.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.45, delay: index * 0.06, ease: "easeOut" }}
+                className="rounded-[18px] border border-white/8 bg-[rgba(10,10,10,0.75)] p-8 backdrop-blur-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(124,58,237,0.18)]"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/8 bg-black/45">
+                    <card.Icon className={`h-5 w-5 ${card.iconClass}`} />
+                  </div>
+                  <span className={`rounded-full bg-gradient-to-r px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${card.pillClass}`}>
+                    {card.pill}
+                  </span>
+                </div>
+
+                <h3 className="mt-5 text-[20px] font-bold uppercase leading-tight text-white">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-[14px] leading-relaxed text-white/70">{card.body}</p>
+
+                <SystemWidget type={card.widget} />
+              </motion.article>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <p className="text-sm text-white/60">
+              One system. Built for Florida floor-coating contractors. Nothing pieced together.
+            </p>
+            <Link
+              href="/#contact"
+              className="mx-auto mt-5 inline-flex h-14 w-full max-w-[320px] items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#f97316_0%,#f59e0b_68%,#ec4899_100%)] px-7 text-sm font-bold uppercase tracking-[0.08em] text-white shadow-[0_0_26px_rgba(249,115,22,0.28)] transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_36px_rgba(249,115,22,0.4)]"
+            >
+              SEE HOW THE SYSTEM WORKS <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

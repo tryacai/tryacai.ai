@@ -599,16 +599,16 @@ export const Hero = () => {
         >
           <button
             onClick={() => setModalOpen(true)}
-            className="group relative w-full sm:w-auto px-10 py-5 rounded-xl text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_0_34px_rgba(168,85,247,0.38)] active:scale-[0.98] overflow-hidden"
+            className="group relative w-full sm:w-auto px-10 py-5 rounded-xl text-white transition-all duration-200 hover:scale-[1.02] hover:brightness-110 hover:shadow-[0_0_30px_rgba(249,115,22,0.35)] active:scale-[0.98] overflow-hidden"
             style={{
-              backgroundImage: "linear-gradient(90deg, #facc15 0%, #3b82f6 35%, #a855f7 68%, #ec4899 100%)",
+              backgroundImage: "linear-gradient(135deg, #f97316 0%, #f59e0b 62%, #ec4899 100%)",
             }}
           >
             <span className="block text-lg font-bold tracking-wide">
-              Claim Your 15+ Projects now
+              Claim Your 15+ Projects Now &rarr;
             </span>
             <span className="block mt-1 text-xs font-medium text-white/80">
-              Spots for this month closing - book now
+              Spots for this month closing &mdash; book now.
             </span>
           </button>
         </motion.div>
@@ -709,7 +709,12 @@ export const Hero = () => {
       </div>
 
       {/* Marquee Banner Below Hero */}
-      <div className="relative z-10 mt-auto w-full bg-black border-t border-white/10">
+      <div
+        className="relative z-10 mt-auto w-full border-t border-white/10"
+        style={{
+          background: "linear-gradient(90deg, #1d4ed8 0%, #7c3aed 52%, #f59e0b 100%)",
+        }}
+      >
         <style>{`
           @keyframes scroll-marquee {
             from {
@@ -733,7 +738,7 @@ export const Hero = () => {
           <div className="marquee-track flex whitespace-nowrap gap-10">
             {/* Duplicate content for seamless loop */}
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex gap-10 font-medium text-white/80 text-base uppercase tracking-wider">
+              <div key={i} className="flex gap-10 text-[15px] font-bold text-white uppercase tracking-[0.12em]">
                 <span>Missed-lead follow-up in seconds</span>
                 <span>◆</span>
                 <span>Full visibility into every interaction</span>

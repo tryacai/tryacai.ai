@@ -1,6 +1,4 @@
-import { Container } from "@/components/container";
 import { Hero } from "@/components/hero";
-import { Background } from "@/components/background";
 import { CallRevenueFlowSection } from "@/components/call-revenue-flow-section";
 
 export default function Home() {
@@ -15,9 +13,9 @@ export default function Home() {
       {/* Marquee banner is now inside the Hero component */}
 
       {/* Next section starts after marquee */}
-      <Container className="relative z-20 flex flex-col pb-24">
+      <div className="relative z-20 flex flex-col pb-24">
         <CallRevenueFlowSection />
-  </Container>
+      </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/70 to-transparent" />
     </div>
