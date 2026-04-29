@@ -24,7 +24,7 @@ const navItems = [
 
 export function NavBar() {
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 w-full">
+    <div className="fixed top-0 left-0 right-0 z-[1000] w-full bg-black">
       <div className="hidden lg:block w-full">
         <DesktopNavbar navItems={navItems} />
       </div>
