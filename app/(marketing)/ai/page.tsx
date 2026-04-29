@@ -103,50 +103,59 @@ export default function MicaGrowthSystemPage() {
           </div>
         </section>
 
-        <section className="mx-auto mt-16 w-full max-w-[900px] md:mt-20">
+        <section className="mx-auto mt-16 w-full max-w-[1100px] md:mt-20">
           <div className="relative">
-            <div className="pointer-events-none absolute left-[26px] top-8 hidden h-[calc(100%-4rem)] w-[2px] bg-gradient-to-b from-blue-500 via-purple-500 to-amber-400 md:block" />
+            <div className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-[2px] -translate-x-1/2 bg-gradient-to-b from-blue-500 via-purple-500 to-amber-400 md:block" />
 
-            <div className="space-y-6 md:space-y-7">
-              {systemSteps.map((step, index) => (
-                <motion.article
-                  key={step.number}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.45, delay: index * 0.05, ease: "easeOut" }}
-                  className="rounded-[20px] border border-white/7 bg-[rgba(10,10,10,0.80)] p-7 backdrop-blur-xl transition-all duration-200 hover:scale-[1.01] hover:border-white/15 md:p-10"
-                >
-                  {/* Step card: update content for this module independently. */}
-                  <div className="flex items-start gap-5">
-                    <div className="relative mt-1 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] text-[22px] font-bold text-white">
-                      {step.number}
+            <div className="space-y-6 md:space-y-10">
+              {systemSteps.map((step, index) => {
+                const isLeft = index % 2 === 0;
+
+                return (
+                  <motion.div
+                    key={step.number}
+                    initial={{ opacity: 0, y: 28, x: isLeft ? -32 : 32 }}
+                    whileInView={{ opacity: 1, y: 0, x: 0 }}
+                    viewport={{ once: true, amount: 0.25 }}
+                    transition={{ duration: 0.55, delay: index * 0.06, ease: "easeOut" }}
+                    className="relative md:grid md:grid-cols-2 md:gap-10"
+                  >
+                    <div className={`${isLeft ? "md:col-start-1" : "md:col-start-2"}`}>
+                      <article className="rounded-[20px] border border-white/7 bg-[rgba(10,10,10,0.80)] p-7 backdrop-blur-xl transition-all duration-200 hover:scale-[1.01] hover:border-white/15 md:p-10">
+                        <div className="flex items-start gap-5">
+                          <div className="relative mt-1 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] text-[22px] font-bold text-white">
+                            {step.number}
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                              <h2 className="text-[22px] font-bold leading-tight text-white">{step.title}</h2>
+                              <span className={`rounded-full bg-gradient-to-r px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white ${step.categoryClass}`}>
+                                {step.category}
+                              </span>
+                            </div>
+
+                            <p className="mt-3 max-w-[600px] text-[15px] leading-[1.6] text-white/70">
+                              {step.description}
+                            </p>
+
+                            <ul className="mt-4 space-y-2.5">
+                              {step.bullets.map((bullet) => (
+                                <li key={bullet} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-white/65">
+                                  <span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text font-bold text-transparent">✦</span>
+                                  <span>{bullet}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </article>
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h2 className="text-[22px] font-bold leading-tight text-white">{step.title}</h2>
-                        <span className={`rounded-full bg-gradient-to-r px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white ${step.categoryClass}`}>
-                          {step.category}
-                        </span>
-                      </div>
-
-                      <p className="mt-3 max-w-[600px] text-[15px] leading-[1.6] text-white/70">
-                        {step.description}
-                      </p>
-
-                      <ul className="mt-4 space-y-2.5">
-                        {step.bullets.map((bullet) => (
-                          <li key={bullet} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-white/65">
-                            <span className="bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text font-bold text-transparent">✦</span>
-                            <span>{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </motion.article>
-              ))}
+                    <div className="pointer-events-none absolute left-1/2 top-10 hidden h-5 w-5 -translate-x-1/2 rounded-full border border-white/25 bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] shadow-[0_0_14px_rgba(59,130,246,0.5)] md:block" />
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>

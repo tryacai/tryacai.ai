@@ -268,7 +268,7 @@ export function CallRevenueFlowSection() {
                   </p>
                 </div>
 
-                <h3 className="mt-6 bg-[linear-gradient(135deg,#3b82f6,#f59e0b)] bg-clip-text text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold uppercase leading-tight text-transparent">
+                <h3 className="mt-6 text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold uppercase leading-tight text-white">
                   WE GET FLOOR COATING.
                   <br />
                   WE GET FLORIDA.
@@ -292,8 +292,8 @@ export function CallRevenueFlowSection() {
 
       <section className="relative isolate w-full overflow-hidden px-4 py-20 md:px-6 md:py-24">
         {/* Epoxy background layering for the Mica Growth System section. */}
-        <div className="absolute inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat opacity-40" />
-        <div className="absolute inset-0 -z-10 bg-[rgba(0,0,0,0.65)]" />
+        <div className="absolute inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat opacity-65" />
+        <div className="absolute inset-0 -z-10 bg-[rgba(0,0,0,0.48)]" />
 
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto max-w-4xl text-center">

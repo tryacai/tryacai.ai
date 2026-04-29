@@ -72,8 +72,11 @@ export default function StrategyCallClient() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-transparent text-white">
-      <div className="fixed inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed" />
-      <div className="fixed inset-0 -z-10 bg-[rgba(0,0,0,0.68)]" />
+      <div
+        className="fixed inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat"
+        style={{ opacity: 0.7, transform: "scale(1.08)", transformOrigin: "center" }}
+      />
+      <div className="fixed inset-0 -z-10 bg-black/25" />
 
       <style jsx>{`
         @keyframes pulse-dot {

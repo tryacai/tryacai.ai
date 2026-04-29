@@ -71,7 +71,7 @@ export const MobileNavbar = ({ navItems }: any) => {
                 onClick={() => setOpen(false)}
               >
                 <Phone className="h-4 w-4" />
-                Get Started
+                Claim Your Territory
               </Button>
             </div>
           </div>
