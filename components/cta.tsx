@@ -12,8 +12,9 @@ export const CTA = () => {
             <div
               className="absolute inset-0 w-full h-full opacity-10 bg-noise fade-vignette [mask-image:radial-gradient(#fff,transparent,75%)]"
               style={{
-                backgroundImage: "url(/noise.webp)",
-                backgroundSize: "30%",
+                backgroundImage: "url(/images/demo-gradient.svg), url(/noise.webp)",
+                backgroundSize: "cover, 30%",
+                backgroundBlendMode: "overlay",
               }}
             ></div>
             <div
@@ -25,17 +26,40 @@ export const CTA = () => {
 
             <div className="relative px-6 pb-14 pt-20 sm:px-10 sm:pb-20 lg:px-[4.5rem]">
               <h2 className="  text-center text-balance mx-auto text-3xl md:text-5xl font-semibold tracking-[-0.015em] text-white">
-                Ready to signup and join the waitlist?
+                Ready to transform your business?
               </h2>
-              <p className="mt-4 max-w-[26rem] text-center mx-auto  text-base/6 text-neutral-200">
-                <Balancer>
-                  Get instant access to our state of the art project and join
-                  the waitlist.
-                </Balancer>
-              </p>
 
-              <div className="relative z-10 mx-auto flex justify-center mt-6">
-                <Button>Join Waitlist</Button>
+              <div className="relative z-10 mx-auto flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
+                <Link href="/contact">
+                  <button className="group relative px-8 py-4 text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50">
+                    {/* Gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-red-600 transition-all duration-300 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-red-500"></div>
+                    
+                    {/* Animated gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                    
+                    {/* Button text */}
+                    <span className="relative z-10 flex items-center gap-2">
+                      Book Demo
+                      <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </button>
+                </Link>
+
+                <Link href="/contact">
+                  <button className="group relative px-8 py-4 text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50">
+                    {/* Gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-red-600 transition-all duration-300 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-red-500"></div>
+                    
+                    {/* Animated gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                    
+                    {/* Button text */}
+                    <span className="relative z-10">Get Connected</span>
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

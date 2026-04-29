@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Heading } from "./heading";
 import { Subheading } from "./subheading";
@@ -10,10 +11,9 @@ import Image from "next/image";
 export const Testimonials = () => {
   return (
     <div className="relative z-20 py-10 md:py-40">
-      <Heading as="h2">Loved by people all over the universe</Heading>
+      <Heading as="h2">Trusted by service businesses</Heading>
       <Subheading className="text-center max-w-lg mx-auto">
-        Every AI is used by millions of people around the globe.Our APIs have
-        fan bases and people fight for us over twitter.
+        Mica Growth helps plumbers and HVAC businesses never miss a call and capture more opportunities 24/7.
       </Subheading>
       <TestimonialGrid />
     </div>
@@ -31,26 +31,26 @@ const testimonials = [
   {
     name: "Manu Arora",
     quote:
-      "What a fantastic AI Every AI is, I just love it. It has completely transformed the way I approach problems and develop solutions.",
+      "Mica Growth has completely transformed how we handle customer calls. It's like having a receptionist who never sleeps and never misses an opportunity.",
     src: "https://i.pravatar.cc/150?img=1",
     designation: "Tech Innovator & Entrepreneur",
   },
   {
-    name: "Tyler Durden",
+    name: "Tyler Andrews",
     quote:
       "I made a soap with the help of AI, it was so easy to use. I'm so glad this happened because it revolutionized my entire business model and production process.",
     src: "https://i.pravatar.cc/150?img=2",
     designation: "Creative Director & Business Owner",
   },
   {
-    name: "Alice Johnson",
+    name: "Alex Johnson",
     quote:
       "This AI has transformed the way I work! It's like having a brilliant assistant who knows exactly what I need before I even ask.",
     src: "https://i.pravatar.cc/150?img=3",
     designation: "Senior Software Engineer",
   },
   {
-    name: "Bob Smith",
+    name: "Kyle Smith",
     quote:
       "Absolutely revolutionary, a game-changer for our industry. It has streamlined our processes and enhanced our productivity dramatically.",
     src: "https://i.pravatar.cc/150?img=4",
@@ -92,14 +92,14 @@ const testimonials = [
     designation: "Marketing Specialist",
   },
   {
-    name: "Henry Ford",
+    name: "Isabella Ford",
     quote:
       "It has saved us countless hours. Highly recommended for anyone looking to enhance their efficiency and productivity.",
     src: "https://i.pravatar.cc/150?img=10",
     designation: "Operations Analyst",
   },
   {
-    name: "Ivy Wilson",
+    name: "Max Wilson",
     quote:
       "A must-have tool for any professional. It's revolutionized the way we approach problem-solving and decision-making.",
     src: "https://i.pravatar.cc/150?img=11",
@@ -113,7 +113,7 @@ const testimonials = [
     designation: "Performance Manager",
   },
   {
-    name: "Kathy Adams",
+    name: "Mark Adams",
     quote:
       "It helps us achieve what was once thought impossible. The AI's capabilities are groundbreaking and have opened new avenues for us.",
     src: "https://i.pravatar.cc/150?img=13",
@@ -134,14 +134,14 @@ const testimonials = [
     designation: "Systems Integrator",
   },
   {
-    name: "Nathan Hill",
+    name: "Leandra Hill",
     quote:
       "The best investment we've made in years. It's not just a tool; it's a game-changer that has propelled our business forward.",
     src: "https://i.pravatar.cc/150?img=16",
     designation: "Investment Analyst",
   },
   {
-    name: "Olivia Scott",
+    name: "Marcus Scott",
     quote:
       "It consistently exceeds our expectations. Its adaptability and precision make it indispensable for our daily operations.",
     src: "https://i.pravatar.cc/150?img=17",
@@ -190,9 +190,14 @@ function Testimonial({
   src,
   designation,
   className,
+  onMouseEnter,
+  onMouseLeave,
   ...props
 }: Omit<React.ComponentPropsWithoutRef<"figure">, keyof Testimonial> &
-  Testimonial) {
+  Testimonial & {
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
+  }) {
   let animationDelay = useMemo(() => {
     let possibleAnimationDelays = [
       "0s",
@@ -211,12 +216,14 @@ function Testimonial({
   return (
     <figure
       className={cn(
-        "animate-fade-in rounded-3xl bg-transparent p-8 opacity-0 shadow-derek dark:bg-neutral-900",
+        "animate-fade-in rounded-3xl bg-transparent p-8 opacity-0 shadow-derek dark:bg-neutral-900 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.3),0_0_30px_rgba(147,51,234,0.3),0_0_30px_rgba(239,68,68,0.3)]",
         className
       )}
       style={{
         animationDelay,
       }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       {...props}
     >
       <div className="flex flex-col items-start">
@@ -256,8 +263,10 @@ function TestimonialColumn({
   containerClassName?: (reviewIndex: number) => string;
   shift?: number;
 }) {
+  const [isPaused, setIsPaused] = useState(false);
+
   return (
-    <TestimonialColumnContainer className={cn(className)} shift={shift}>
+    <TestimonialColumnContainer className={cn(className)} shift={shift} isPaused={isPaused}>
       {testimonials
         .concat(testimonials)
         .map((testimonial, testimonialIndex) => (
@@ -270,6 +279,8 @@ function TestimonialColumn({
             className={containerClassName?.(
               testimonialIndex % testimonials.length
             )}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
           />
         ))}
     </TestimonialColumnContainer>

@@ -1,37 +1,47 @@
 "use client";
 import { DesktopNavbar } from "./desktop-navbar";
 import { MobileNavbar } from "./mobile-navbar";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const navItems = [
   {
-    title: "Pricing",
-    link: "/pricing",
+    title: "Home",
+    link: "/",
+  },
+  {
+    title: "Mica Growth System",
+    link: "/ai",
+    highlightAI: true,
   },
   {
     title: "Blog",
     link: "/blog",
   },
   {
-    title: "Contact",
-    link: "/contact",
+    title: "FAQ",
+    link: "/faq",
   },
 ];
 
 export function NavBar() {
+  const [atTop, setAtTop] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setAtTop(window.scrollY <= 8);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <motion.nav
-      initial={{
-        y: -80,
-      }}
-      animate={{
-        y: 0,
-      }}
-      transition={{
-        ease: [0.6, 0.05, 0.1, 0.9],
-        duration: 0.8,
-      }}
-      className="max-w-7xl  fixed top-4  mx-auto inset-x-0 z-50 w-[95%] lg:w-full"
+    <div
+      className={`fixed top-0 left-0 right-0 z-[1000] w-full bg-black transition-all duration-300 ${
+        atTop ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
+      }`}
     >
       <div className="hidden lg:block w-full">
         <DesktopNavbar navItems={navItems} />
@@ -39,15 +49,6 @@ export function NavBar() {
       <div className="flex h-full w-full items-center lg:hidden ">
         <MobileNavbar navItems={navItems} />
       </div>
-    </motion.nav>
+    </div>
   );
-}
-
-{
-  /* <div className="hidden md:block ">
-        <DesktopNavbar />
-      </div>
-      <div className="flex h-full w-full items-center md:hidden ">
-        <MobileNavbar navItems={navItems} />
-      </div> */
 }

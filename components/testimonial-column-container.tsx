@@ -6,10 +6,12 @@ export function TestimonialColumnContainer({
   className,
   shift = 0,
   children,
+  isPaused = false,
 }: {
   className?: string;
   shift?: number;
   children: React.ReactNode;
+  isPaused?: boolean;
 }) {
   let columnRef = useRef<React.ElementRef<"div">>(null);
   let [columnHeight, setColumnHeight] = useState(0);
@@ -35,7 +37,10 @@ export function TestimonialColumnContainer({
     <div
       ref={columnRef}
       className={cn("animate-marquee space-y-8 py-4", className)}
-      style={{ "--marquee-duration": duration } as React.CSSProperties}
+      style={{ 
+        "--marquee-duration": duration,
+        animationPlayState: isPaused ? "paused" : "running"
+      } as React.CSSProperties}
     >
       {children}
     </div>

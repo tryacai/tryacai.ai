@@ -6,94 +6,144 @@ export type Tier = {
   priceYearly: string;
   description: string;
   features: string[];
+  featuresMonthly?: string[];
+  featuresYearly?: string[];
   featured: boolean;
   cta: string;
   onClick: () => void;
+  footnote?: string;
+  yearlyNote?: string;
+  yearlyBenefits?: string;
 };
 
 export const tiers: Tier[] = [
   {
-    name: "Hobby",
-    id: "tier-hobby",
-    href: "#",
-    priceMonthly: "$4/mo",
-    priceYearly: "$30/yr",
-    description: "Best for developers trying to use the platform.",
+    name: "One-Time Startup Fee",
+    id: "tier-setup",
+    href: "/contact",
+    priceMonthly: "Custom Pricing",
+    priceYearly: "Custom Pricing",
+    description: "Based on your business needs and call volume.",
     features: [
-      "5 API requests per day",
-      "Access to basic API endpoints",
-      "Email support within 48 hours",
-      "Community forum access",
-      "Monthly newsletter",
+      "Full system setup and AI training",
+      "Custom workflow based on your services",
+      "CRM and calendar integrations",
+      "Call routing and automation setup",
+      "Testing and deployment",
+      "Done-for-you implementation",
+    ],
+    featuresMonthly: [
+      "Full system setup and AI training",
+      "Custom workflow based on your services",
+      "CRM and calendar integrations",
+      "Call routing and automation setup",
+      "Testing and deployment",
+      "Done-for-you implementation",
+    ],
+    featuresYearly: [
+      "Full system setup and AI training",
+      "Custom workflow based on your services",
+      "CRM and calendar integrations",
+      "Call routing and automation setup",
+      "Testing and deployment",
+      "Done-for-you implementation",
     ],
     featured: false,
-    cta: "Browse Components",
-    onClick: () => {},
+    cta: "Get Started",
+    onClick: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/contact';
+      }
+    },
+    footnote: "One-time investment to get you up and running.",
   },
   {
-    name: "Starter",
-    id: "tier-starter",
-    href: "#",
-    priceMonthly: "$8/mo",
-    priceYearly: "$60/yr",
-    description: "Perfect for small businesses",
+    name: "3-Month Retainer",
+    id: "tier-3month-retainer",
+    href: "/contact",
+    priceMonthly: "Standard Rate",
+    priceYearly: "Standard Rate",
+    description: "Monthly maintenance and support. Cancel anytime.",
     features: [
-      "Everything in Hobby, plus",
-      "50 API requests per day",
-      "Access to advanced API endpoints",
-      "Email support within 24 hours",
-      "Community forum access",
-      "Monthly newsletter",
-      "Self hosting options",
+      "24/7 AI call handling and management",
+      "System monitoring and maintenance",
+      "Ongoing optimizations and updates",
+      "Performance tracking and reporting",
+      "Technical support",
+      "Cancel anytime—no long-term commitment",
+    ],
+    featuresMonthly: [
+      "24/7 AI call handling and management",
+      "System monitoring and maintenance",
+      "Ongoing optimizations and updates",
+      "Performance tracking and reporting",
+      "Technical support",
+      "Cancel anytime—no long-term commitment",
+    ],
+    featuresYearly: [
+      "24/7 AI call handling and management",
+      "System monitoring and maintenance",
+      "Ongoing optimizations and updates",
+      "Performance tracking and reporting",
+      "Technical support",
+      "Priority support and advanced features",
     ],
     featured: false,
-    cta: "Buy Now",
-    onClick: () => {},
+    cta: "Get Started",
+    onClick: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/contact';
+      }
+    },
+    footnote: "Standard monthly rate. Flexible and cancelable anytime.",
+    yearlyNote: "Includes priority support and advanced optimization features.",
   },
   {
-    name: "Professional",
-    id: "tier-professional",
-    href: "#",
-    priceMonthly: "$12/mo",
-    priceYearly: "$100/yr",
-    description: "Ideal for small to mid range startups",
+    name: "6-Month Retainer",
+    id: "tier-6month-retainer",
+    href: "/contact",
+    priceMonthly: "Save 20%",
+    priceYearly: "Save 20%",
+    description: "Save 20% on monthly maintenance costs. Cancel anytime.",
     features: [
-      "Everything in Starter, plus",
-      "500 API requests per day",
-      "Access to super advanced API endpoints",
-      "Email support within 12 hours",
-      "Private Community access",
-      "Monthly retreats",
-      "Self hosting options",
-      "Private infrastructure",
-      "On-Prem deployments",
+      "24/7 AI call handling and management",
+      "System monitoring and maintenance",
+      "Ongoing optimizations and updates",
+      "Performance tracking and reporting",
+      "Priority technical support",
+      "Advanced automation features",
+      "Save 20% on monthly fees",
+      "Cancel anytime—we're confident you'll stay",
+    ],
+    featuresMonthly: [
+      "24/7 AI call handling and management",
+      "System monitoring and maintenance",
+      "Ongoing optimizations and updates",
+      "Performance tracking and reporting",
+      "Priority technical support",
+      "Advanced automation features",
+      "Save 20% on monthly fees",
+      "Cancel anytime—we're confident you'll stay",
+    ],
+    featuresYearly: [
+      "24/7 AI call handling and management",
+      "System monitoring and maintenance",
+      "Ongoing optimizations and updates",
+      "Performance tracking and reporting",
+      "Priority technical support",
+      "Advanced automation features",
+      "Save 20% on monthly fees",
+      "Cancel anytime—we're confident you'll stay",
     ],
     featured: true,
-    cta: "Buy Now",
-    onClick: () => {},
-  },
-
-  {
-    name: "Enterprise",
-    id: "tier-enterprise",
-    href: "#",
-    priceMonthly: "Contact Us",
-    priceYearly: "Contact Us",
-    description: "Best for big fortune 500 companies.",
-    features: [
-      "Everything in professional, plus",
-      "500K API requests per day",
-      "Access to super advanced API endpoints",
-      "Email support within 12 hours",
-      "Private Community access",
-      "Monthly retreats",
-      "Self hosting options",
-      "Private infrastructure",
-      "On-Prem deployments",
-      "I retweet your tweets personally",
-    ],
-    featured: false,
-    cta: "Contact Us",
-    onClick: () => {},
+    cta: "Get Started",
+    onClick: () => {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/contact';
+      }
+    },
+    footnote: "Best value. Save 20% with 6-month commitment.",
+    yearlyNote: "Save 20% compared to standard monthly rate. Best value with full flexibility—cancel anytime.",
+    yearlyBenefits: "Save 20% on ongoing costs with priority support and advanced features.",
   },
 ];

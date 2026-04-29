@@ -1,12 +1,12 @@
 import { BlogLayout } from "@/components/blog-layout";
-import Thumbnail from "./thumbnail.jpeg";
 
 export const blog = {
-  author: { name: "Manu Arora", src: "/avatar.jpeg" },
-  date: "2021-07-14",
-  title: "Top 5 LLM of all time",
+  author: { name: "Mica Growth Team", src: "/Micalogo.png" },
+  date: "2026-04-04",
+  title: "Why Mica Growth",
   description:
-    "Explore the latest AI tools and applications that are revolutionizing various industries. From image generation to natural language processing, AI is changing the way we think and interact with the world.",
+    "Mica Growth was built to solve one core problem: service businesses losing revenue due to slow response times and missed follow-ups.",
+  image: "/whyacaipng.png",
 };
 
 export const metadata = {
@@ -19,68 +19,50 @@ export const metadata = {
 
 export default (props) => <BlogLayout blog={blog} {...props} />;
 
-## Lorem ipsum heading
+<p className="text-base md:text-lg leading-loose max-w-3xl mx-auto text-center text-zinc-700 dark:text-zinc-300 mb-8 md:mb-12">
+  Mica Growth was built to solve one core problem — service businesses losing revenue due to slow response times and missed follow-ups.
+</p>
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+<p className="text-base md:text-lg leading-loose max-w-3xl mx-auto text-center text-zinc-700 dark:text-zinc-300 mb-8 md:mb-12">
+  Most businesses don&apos;t lose leads at the ad. They lose them in the gap after the click.
+</p>
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+<p className="text-base md:text-lg leading-loose max-w-3xl mx-auto text-center text-zinc-700 dark:text-zinc-300 mb-8 md:mb-12">
+  Mica Growth closes that gap with instant response, qualification, and routing.
+</p>
 
-```jsx
-"use client";
+<p className="text-base md:text-lg leading-loose max-w-3xl mx-auto text-center text-zinc-700 dark:text-zinc-300 mb-12 md:mb-14">
+  Based in Tampa, Florida, we work closely with service businesses that rely on speed and responsiveness to win jobs.
+</p>
 
-import { useRouter } from "next/navigation";
-import { BlogWithSlug } from "@/lib/blog";
+<div className="my-12 grid grid-cols-1 gap-4 md:grid-cols-2">
+  <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 p-5">
+    <p className="text-sm text-zinc-500 dark:text-zinc-400">Response Advantage</p>
+    <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-100">78% of customers choose the first business to respond</p>
+  </div>
+  <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 p-5">
+    <p className="text-sm text-zinc-500 dark:text-zinc-400">Conversion Impact</p>
+    <p className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-100">Up to 391% increase in conversions with faster response</p>
+  </div>
+</div>
 
-export function BlogLayout({
-  blog,
-  children,
-}: {
-  blog: BlogWithSlug,
-  children: React.ReactNode,
-}) {
-  let router = useRouter();
-  return (
-    <div className="mt-16 lg:mt-32">
-      <div className="xl:relative">
-        <div className="mx-auto max-w-2xl">
-          <article>
-            <header className="flex flex-col">
-              <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-                {blog.title}
-              </h1>
-              <time
-                dateTime={blog.date}
-                className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
-              >
-                <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
-                <span className="ml-3">{blog.date.toString()}</span>
-              </time>
-            </header>
-            <div className="mt-8 prose prose-sm" data-mdx-content>
-              {children}
-            </div>
-          </article>
-        </div>
-      </div>
-    </div>
-  );
-}
-```
+<div className="my-16 md:my-20 text-center space-y-6 md:space-y-8">
+  <h2 className="text-xl md:text-2xl font-semibold text-zinc-600 dark:text-zinc-400">Why Us</h2>
 
-## Lorem ipsum heading
+  <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
+    The A.C.A.I. Way
+  </h3>
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+  <p className="text-2xl md:text-3xl font-medium text-zinc-800 dark:text-zinc-200">
+    Always connected. Always authentic. Always invested.
+  </p>
 
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+  <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400">
+    If our clients aren&apos;t winning, neither are we.
+  </p>
+</div>
 
-## Lorem ipsum heading
-
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
-
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
-
-## Lorem ipsum heading
-
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
-
-Nostrud sit reprehenderit labore enim minim veniam elit reprehenderit laborum ea consequat excepteur elit anim. Labore consequat Lorem dolor magna consequat sunt eu occaecat laboris mollit incididunt quis consectetur dolore. Cillum eiusmod ipsum ex do qui. Proident ex ullamco excepteur proident Lorem aliquip quis ex sunt nostrud qui excepteur velit proident laborum.
+<div className="mt-10 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5">
+  <p className="text-base text-zinc-700 dark:text-zinc-300">Phone: 848-253-9552</p>
+  <p className="mt-2 text-base text-zinc-700 dark:text-zinc-300">Email: support@micagrowth.co</p>
+</div>

@@ -6,11 +6,24 @@ import { cn } from "@/lib/utils";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "Everything AI",
+  title: {
+    default: "Mica Growth — Floor Coating Marketing Agency",
+    template: "%s | Mica Growth",
+  },
   description:
-    "Everything AI is a platform that provides a wide range of AI tools and services to help you stay on top of your business. Generate images, text and everything else that you need to get your business off the ground.",
+    "Mica Growth is the #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month — or your next month is free.",
   openGraph: {
-    images: ["https://ai-saas-template-aceternity.vercel.app/banner.png"],
+    title: "Mica Growth — Floor Coating Marketing Agency",
+    description:
+      "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
+    images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mica Growth — Floor Coating Marketing Agency",
+    description:
+      "The #1 performance-based marketing agency for floor coating businesses. Guaranteed booked jobs, AI-powered lead follow-up, and results in your first month.",
+    images: ["https://micagrowth.co/nevermissaleadpreviewimage.png"],
   },
 };
 

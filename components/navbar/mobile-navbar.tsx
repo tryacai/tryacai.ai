@@ -5,93 +5,78 @@ import { useState } from "react";
 import { IoIosMenu } from "react-icons/io";
 import { IoIosClose } from "react-icons/io";
 import { Button } from "../button";
+import { Phone } from "lucide-react";
 import { Logo } from "../Logo";
-import { useMotionValueEvent, useScroll } from "framer-motion";
-import { ModeToggle } from "../mode-toggle";
 
 export const MobileNavbar = ({ navItems }: any) => {
   const [open, setOpen] = useState(false);
 
-  const { scrollY } = useScroll();
-
-  const [showBackground, setShowBackground] = useState(false);
-
-  useMotionValueEvent(scrollY, "change", (value) => {
-    if (value > 100) {
-      setShowBackground(true);
-    } else {
-      setShowBackground(false);
-    }
-  });
-
   return (
-    <div
-      className={cn(
-        "flex justify-between bg-white dark:bg-neutral-900 items-center w-full rounded-full px-2.5 py-1.5 transition duration-200",
-        showBackground &&
-          "bg-neutral-50 dark:bg-neutral-900 shadow-[0px_-2px_0px_0px_var(--neutral-100),0px_2px_0px_0px_var(--neutral-100)] dark:shadow-[0px_-2px_0px_0px_var(--neutral-800),0px_2px_0px_0px_var(--neutral-800)]"
-      )}
-    >
-      <Logo />
-      <IoIosMenu
-        className="text-black dark:text-white h-6 w-6"
-        onClick={() => setOpen(!open)}
-      />
-      {open && (
-        <div className="fixed inset-0 bg-white dark:bg-black z-50 flex flex-col items-start justify-start space-y-10  pt-5  text-xl text-zinc-600  transition duration-200 hover:text-zinc-800">
-          <div className="flex items-center justify-between w-full px-5">
-            <Logo />
-            <div className="flex items-center space-x-2">
-              <ModeToggle />
-              <IoIosClose
-                className="h-8 w-8 text-black dark:text-white"
-                onClick={() => setOpen(!open)}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col items-start justify-start gap-[14px] px-8">
-            {navItems.map((navItem: any, idx: number) => (
-              <>
-                {navItem.children && navItem.children.length > 0 ? (
-                  <>
-                    {navItem.children.map((childNavItem: any, idx: number) => (
-                      <Link
-                        key={`link=${idx}`}
-                        href={childNavItem.link}
-                        onClick={() => setOpen(false)}
-                        className="relative max-w-[15rem] text-left text-2xl"
-                      >
-                        <span className="block text-black">
+    <div className="w-full bg-black border-b border-white/10">
+      <div className="h-16 flex items-center justify-between px-4">
+        <Logo />
+        <IoIosMenu
+          className="text-white h-6 w-6 cursor-pointer"
+          onClick={() => setOpen(!open)}
+        />
+        {open && (
+          <div className="fixed inset-0 bg-black z-40 flex flex-col items-start justify-start pt-20 px-6">
+            <IoIosClose
+              className="absolute top-6 right-6 h-8 w-8 text-white cursor-pointer"
+              onClick={() => setOpen(false)}
+            />
+            <div className="flex flex-col items-start justify-start gap-6 w-full">
+              {navItems.map((navItem: any, idx: number) => {
+                if (navItem.children && navItem.children.length > 0) {
+                  return (
+                    <div key={`group-${idx}`} className="flex flex-col items-start gap-3 w-full">
+                      <span className="text-sm text-neutral-400 font-medium uppercase">
+                        {navItem.title}
+                      </span>
+                      {navItem.children.map((childNavItem: any, childIdx: number) => (
+                        <Link
+                          key={`child=${idx}-${childIdx}`}
+                          href={childNavItem.link}
+                          onClick={() => setOpen(false)}
+                          className="text-white text-base font-medium hover:opacity-70 transition-opacity"
+                        >
                           {childNavItem.title}
-                        </span>
-                      </Link>
-                    ))}
-                  </>
-                ) : (
+                        </Link>
+                      ))}
+                    </div>
+                  );
+                }
+
+                return (
                   <Link
                     key={`link=${idx}`}
                     href={navItem.link}
                     onClick={() => setOpen(false)}
-                    className="relative"
+                    className={cn(
+                      "text-white text-lg font-medium hover:opacity-70 transition-opacity",
+                      navItem.highlightAI &&
+                        "bg-gradient-to-r from-red-400 via-purple-400 to-blue-400 bg-clip-text text-transparent"
+                    )}
                   >
-                    <span className="block text-[26px] text-black dark:text-white">
-                      {navItem.title}
-                    </span>
+                    {navItem.title}
                   </Link>
-                )}
-              </>
-            ))}
+                );
+              })}
+            </div>
+            <div className="w-full mt-8">
+              <Button 
+                as={Link} 
+                href="/#contact"
+                className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 hover:from-blue-600 hover:via-purple-600 hover:to-red-600 text-white flex items-center justify-center gap-2 border-0 shadow-none"
+                onClick={() => setOpen(false)}
+              >
+                <Phone className="h-4 w-4" />
+                Claim Your Territory
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-row w-full items-start gap-2.5  px-8 py-4 ">
-            <Button as={Link} href="/signup">
-              Sign Up
-            </Button>
-            <Button variant="simple" as={Link} href="/login">
-              Login
-            </Button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
