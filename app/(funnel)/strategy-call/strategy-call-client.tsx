@@ -1,32 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import Script from "next/script";
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import {
+  buildCalEmbedUrl,
   buildPostBookingRedirectUrl,
   isCalBookingSuccessMessage,
   isCalEmbedOrigin,
   readCalBookingDetails,
 } from "@/lib/cal-booking";
 
+const CAL_URL = "https://cal.com/micagrowth/15min";
 const POST_BOOKING_PATH = "/post-bookingpage";
-
-declare global {
-  interface Window {
-    Cal?: {
-      (action: string, namespace: string, options?: Record<string, unknown>): void;
-      ns?: Record<
-        string,
-        (action: string, options: Record<string, unknown>) => void
-      >;
-      loaded?: boolean;
-    };
-  }
-}
 
 export default function StrategyCallClient() {
   const router = useRouter();
@@ -42,35 +30,14 @@ export default function StrategyCallClient() {
     };
   }, [searchParams]);
 
-  const calInitializedRef = useRef(false);
-
-  const initializeCalEmbed = useCallback(() => {
-    if (calInitializedRef.current) return;
-    if (typeof window === "undefined" || !window.Cal) return;
-
-    const calRoot = document.querySelector("#cal-booking-embed");
-    if (!calRoot) return;
-
-    calRoot.innerHTML = "";
-
-    window.Cal("init", "15min", { origin: "https://cal.com" });
-
-    const namespace = window.Cal.ns?.["15min"];
-    if (!namespace) return;
-
-    namespace("inline", {
-      elementOrSelector: "#cal-booking-embed",
-      config: { layout: "month_view" },
-      calLink: "micagrowth/15min",
+  const calEmbedUrl = useMemo(() => {
+    return buildCalEmbedUrl(CAL_URL, {
+      fullName: leadContext.fullName,
+      businessEmail: leadContext.businessEmail,
+      phoneNumber: leadContext.phoneNumber,
+      companyName: leadContext.companyName,
     });
-
-    namespace("ui", {
-      hideEventTypeDetails: false,
-      layout: "month_view",
-    });
-
-    calInitializedRef.current = true;
-  }, []);
+  }, [leadContext]);
 
   useEffect(() => {
     const handleCalEvent = (e: MessageEvent) => {
@@ -107,12 +74,6 @@ export default function StrategyCallClient() {
     <div className="relative min-h-screen overflow-hidden bg-transparent text-white">
       <div className="fixed inset-0 -z-20 bg-[url('/epoxybackground.png')] bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed" />
       <div className="fixed inset-0 -z-10 bg-[rgba(0,0,0,0.68)]" />
-
-      <Script
-        src="https://app.cal.com/embed/embed.js"
-        strategy="lazyOnload"
-        onLoad={initializeCalEmbed}
-      />
 
       <style jsx>{`
         @keyframes pulse-dot {
@@ -230,7 +191,12 @@ export default function StrategyCallClient() {
             Takes 30 seconds to lock in your spot.
           </p>
           <div className="h-[calc(100vh-100px)] min-h-[500px] overflow-hidden rounded-2xl border border-white/10 bg-black/25 shadow-[0_0_30px_rgba(59,130,246,0.15)] backdrop-blur-sm">
-            <div id="cal-booking-embed" style={{ width: "100%", height: "100%", minHeight: "600px" }} />
+            <iframe
+              src={calEmbedUrl}
+              className="h-full w-full border-0"
+              style={{ colorScheme: "dark" }}
+              title="Book your free strategy call"
+            />
           </div>
         </motion.section>
       </div>
