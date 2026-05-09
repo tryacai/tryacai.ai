@@ -5,9 +5,6 @@ import { GeistSans } from "geist/font/sans";
 import { cn } from "@/lib/utils";
 import { ViewTransitions } from "next-view-transitions";
 
-const META_PIXEL_ID = "1215596613789536";
- 
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://micagrowth.co"),
   title: {
@@ -77,12 +74,8 @@ export default function RootLayout({
                 t.src=v;s=b.getElementsByTagName(e)[0];
                 s.parentNode.insertBefore(t,s)}(window, document,'script',
                 'https://connect.facebook.net/en_US/fbevents.js');
-                fbq('init', '${META_PIXEL_ID}');
+                fbq('init', '1215596613789536');
                 fbq('track', 'PageView');
-                console.log('[Meta Pixel] Initialized with ID ${META_PIXEL_ID}');
-                console.log('[Meta Pixel] PageView fired');
-                fbq('track', 'TestEvent');
-                console.log('[Meta Pixel] TestEvent fired — remove after verifying in Events Manager');
               `,
             }}
           />
@@ -91,7 +84,7 @@ export default function RootLayout({
               height="1"
               width="1"
               style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+              src="https://www.facebook.com/tr?id=1215596613789536&ev=PageView&noscript=1"
               alt=""
             />
           </noscript>
