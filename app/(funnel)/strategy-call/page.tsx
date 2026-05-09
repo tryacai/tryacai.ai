@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import StrategyCallClient from "./strategy-call-client";
 
 type StrategyCallPageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 function readQueryValue(
@@ -14,17 +14,21 @@ function readQueryValue(
   return value ?? "";
 }
 
-export default function StrategyCallPage({ searchParams }: StrategyCallPageProps) {
+export default async function StrategyCallPage({
+  searchParams,
+}: StrategyCallPageProps) {
+  const resolvedSearchParams = (await searchParams) ?? {};
+
   const leadSignals = [
-    readQueryValue(searchParams?.fbclid),
-    readQueryValue(searchParams?.full_name),
-    readQueryValue(searchParams?.name),
-    readQueryValue(searchParams?.business_email),
-    readQueryValue(searchParams?.email),
-    readQueryValue(searchParams?.phone_number),
-    readQueryValue(searchParams?.phone),
-    readQueryValue(searchParams?.company_name),
-    readQueryValue(searchParams?.company),
+    readQueryValue(resolvedSearchParams.fbclid),
+    readQueryValue(resolvedSearchParams.full_name),
+    readQueryValue(resolvedSearchParams.name),
+    readQueryValue(resolvedSearchParams.business_email),
+    readQueryValue(resolvedSearchParams.email),
+    readQueryValue(resolvedSearchParams.phone_number),
+    readQueryValue(resolvedSearchParams.phone),
+    readQueryValue(resolvedSearchParams.company_name),
+    readQueryValue(resolvedSearchParams.company),
   ];
 
   const hasLeadContext = leadSignals.some((value) => value.trim().length > 0);
