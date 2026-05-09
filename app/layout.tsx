@@ -52,6 +52,12 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html lang="en" suppressHydrationWarning className="dark">
+        <head>
+          <meta
+            name="facebook-domain-verification"
+            content="6mk9n6pk4urvjj67f28mamvy22dy65"
+          />
+        </head>
         <body
           className={cn(
             GeistSans.className,
