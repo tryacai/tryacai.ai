@@ -228,7 +228,7 @@ export default function MicaGrowthSystemPage() {
           </p>
 
           <Link
-            href="/strategy-call"
+            href="/?qualify=true"
             className="mx-auto mt-8 inline-flex h-[60px] min-w-[300px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#f97316,#f59e0b)] px-10 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(245,158,11,0.4)]"
           >
             CLAIM YOUR FLORIDA TERRITORY →

@@ -527,15 +527,26 @@ export const Hero = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    const checkHash = () => {
+    const checkEntryPoint = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("qualify") === "true") {
+        setModalOpen(true);
+        params.delete("qualify");
+        const query = params.toString();
+        const nextUrl = query ? `${window.location.pathname}?${query}${window.location.hash}` : `${window.location.pathname}${window.location.hash}`;
+        window.history.replaceState(null, "", nextUrl);
+        return;
+      }
+
       if (window.location.hash === "#contact") {
         setModalOpen(true);
         window.history.replaceState(null, "", window.location.pathname);
       }
     };
-    checkHash();
-    window.addEventListener("hashchange", checkHash);
-    return () => window.removeEventListener("hashchange", checkHash);
+
+    checkEntryPoint();
+    window.addEventListener("hashchange", checkEntryPoint);
+    return () => window.removeEventListener("hashchange", checkEntryPoint);
   }, []);
 
   return (
