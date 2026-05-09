@@ -5,7 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { cn } from "@/lib/utils";
 import { ViewTransitions } from "next-view-transitions";
 
-const META_PIXEL_ID = "2136581877122410";
+const META_PIXEL_ID = "1215596613789536";
  
 
 export const metadata: Metadata = {
