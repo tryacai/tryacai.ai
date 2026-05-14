@@ -5,6 +5,7 @@ import { Button } from "./button";
 import { HiArrowRight } from "react-icons/hi2";
 import { Badge } from "./badge";
 import { motion } from "framer-motion";
+import { VoiceDemoButton } from "./VoiceDemoButton";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -30,7 +31,7 @@ export const Hero = () => {
         className="flex justify-center"
       >
         <Badge onClick={() => router.push("/blog/top-5-llm-of-all-time")}>
-          We\'ve raised $69M seed funding
+          We&apos;ve raised $69M seed funding
         </Badge>
       </motion.div>
       <motion.h1
@@ -70,6 +71,24 @@ export const Hero = () => {
           Reliable AI-powered solutions for plumbing and HVAC businesses.
         </Balancer>
       </motion.p>
+      <motion.div
+        initial={{
+          y: 60,
+          opacity: 0,
+        }}
+        animate={{
+          y: 0,
+          opacity: 1,
+        }}
+        transition={{
+          ease: "easeOut",
+          duration: 0.5,
+          delay: 0.3,
+        }}
+        className="flex justify-center mt-8 relative z-10"
+      >
+        <VoiceDemoButton />
+      </motion.div>
       <motion.div
         initial={{
           y: 80,
